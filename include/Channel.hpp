@@ -6,13 +6,15 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/06/29 22:34:49 by root             ###   ########.fr       */
+/*   Updated: 2023/06/30 11:46:10 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 # include "library.hpp"
+
+class Client;
 
 class Channel
 {

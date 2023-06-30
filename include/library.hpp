@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/06/30 00:07:47 by root             ###   ########.fr       */
+/*   Updated: 2023/06/30 11:46:30 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <sys/types.h>
 # include <sys/socket.h>
 # include <netinet/in.h>
+# include <unistd.h>
 
 # include <iostream>
 # include <stdexcept>
@@ -29,6 +30,5 @@
 # include "Channel.hpp"
 # include "Client.hpp"
 # include "Server.hpp"
-# include "Socket.hpp"
 
 #endif

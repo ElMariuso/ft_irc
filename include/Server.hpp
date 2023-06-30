@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/06/30 00:17:48 by root             ###   ########.fr       */
+/*   Updated: 2023/06/30 12:50:25 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,25 @@ class Client;
 class Channel;
 class Socket;
 
-class Server: public Socket
+class Server
 {
     public:
-        Server();
+        Server(std::string port_str, std::string password);
         ~Server();
 
         /* Operators */
-        bool    operator==(const Server& rhs);
+        bool    operator==(const Server& rhs) const;
         Server& operator=(const Server& rhs);
 
         /* Functions */
         int     processServer();
 
+        /* Utils */
+        int     createPort(std::string port_str);
+        int     createServerSocket(int port);
+
     private:
+        int                             serverSocket;
         std::string                     name;
         std::string                     password;
         std::vector<struct pollfd>      fds;
