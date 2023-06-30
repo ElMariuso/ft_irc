@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/06/30 11:46:30 by root             ###   ########.fr       */
+/*   Updated: 2023/06/30 13:03:27 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 
 # include <iostream>
 # include <stdexcept>
+# include <cstdlib>
 
 # include <vector>
 # include <map>

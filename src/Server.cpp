@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/06/30 13:00:17 by root             ###   ########.fr       */
+/*   Updated: 2023/06/30 13:28:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,17 @@
 
 Server::Server(std::string port_str, std::string password)
 {
-    int port;
+    int ret;
 
-    port = this->createPort(port_str);
-    this->serverSocket = this->createServerSocket(port);
+    this->serverSocket = this->createServerSocket(std::atoi(port_str.c_str()));
     if (this->serverSocket < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;
-    this->processServer();
+    ret = this->processServer();
+    if (ret < 0)
+        throw (std::runtime_error("Problem during running the server!"));
 }
 Server::~Server() {}
-
-/* Operators */
-bool Server::operator==(const Server& rhs) const
-{
-    if (this->password != rhs.password)
-        return (false);
-    return (true);
-}
-
-Server& Server::operator=(const Server& rhs)
-{
-    if (rhs == *this)
-        return (*this);
-    return (*this);
-}
 
 /* Functions */
 int Server::processServer()
@@ -64,7 +50,7 @@ int Server::processServer()
             
             clientAddrLen = sizeof(clientAddr);
             new_socket = accept(this->serverSocket, (struct sockaddr*)&clientAddr, &clientAddrLen);
-            this->clientsList[new_socket] = new Client(); // new client
+            this->clientsList[new_socket] = new Client(); /* New Client */
             clientPfd.fd = new_socket;
             clientPfd.events = POLLIN;
             this->fds.push_back(clientPfd);
@@ -87,13 +73,6 @@ int Server::processServer()
 }
 
 /* Utils */
-int Server::createPort(std::string port_str)
-{
-    int port;
-    
-    return (port);
-}
-
 int Server::createServerSocket(int port)
 {
     struct sockaddr_in  addr;
