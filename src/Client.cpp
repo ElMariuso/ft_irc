@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 13:13:55 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/03 13:44:21 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,12 @@
 Client::Client() {
 }
 
-Client::Client(int fd) : _fd(fd), _nickname("DefaultNickname"), _username("DefaultUsername")
+Client::Client(int fd) : _fd(fd), _nickname("DefaultNickname")
 {
+	std::stringstream ss;
+	
+	ss << fd; // turn int to std::string
+	_username = "DefaultUsername" + ss.str() // put the file descriptor in client's default username to help identify him
 	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
 }
 
@@ -41,7 +45,7 @@ std::string	Client::receiveFromClient()
 	msg.clear(); // make sur "msg" start of empty
 	ret = recv(_fd, buffer, BUFFER_SIZE, 0) // fill "buffer" witch a string written on "_fd", maximum "BUFFER_SIZE" character, return the string's lenght or -1 when there is an error
 	
-	error = "recv command failed for client with fd : " + _fd;
+	error = "recv command failed for client : " + _username;
 	if (ret <= -1)
 		throw (error); // if recv function failed, throw an error
 		
