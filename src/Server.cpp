@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 23:28:33 by root             ###   ########.fr       */
+/*   Updated: 2023/07/04 00:19:51 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int Server::processServer()
         ready = poll(this->fds.data(), this->fds.size(), -1);
         if (ready < 0)
             return (-1);
-        std::cout << "Connection" << std::endl;
+        std::cout << "Login..." << std::endl;
         ret = this->manageNewConnection();
         if (ret < 0)
             return (-2);
