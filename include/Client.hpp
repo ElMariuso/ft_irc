@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 12:44:59 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/03 13:13:49 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,15 @@
 
 class Client
 {
+    private:
+		Client(); // default constructor should never be called
     public:
-        Client();
 		Client(int fd);
         ~Client();
 
 		/* function */
-		void		sendToClient(std::string str);
-		std::string	receiveFromClient();
+		void		sendToClient(std::string str); // write a string on the client's fd
+		std::string	receiveFromClient(); // receive and return a string written by the client
 
 		/* setters */
 		void		setNickname(std::string nickName);
