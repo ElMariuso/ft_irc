@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/29 20:14:13 by root              #+#    #+#              #
-#    Updated: 2023/06/30 11:40:17 by root             ###   ########.fr        #
+#    Updated: 2023/07/03 17:35:37 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,8 @@ SRC_DIR = src
 SRCS = $(wildcard  $(SRC_DIR)/main.cpp) \
 		$(wildcard  $(SRC_DIR)/Channel.cpp) \
 		$(wildcard  $(SRC_DIR)/Client.cpp) \
-		$(wildcard  $(SRC_DIR)/Server.cpp)
+		$(wildcard  $(SRC_DIR)/Server.cpp) \
+		$(wildcard  $(SRC_DIR)/Message.cpp)
 
 OBJ_DIR	= objs
 OBJ_FILES = $(notdir $(SRCS:.cpp=.o))
