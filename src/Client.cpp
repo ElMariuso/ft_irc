@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 11:29:29 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/03 11:40:19 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,9 @@ Client::Client(int fd) : _fd(fd)
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 }
 
-Client::~Client() {
+Client::~Client()
+{
+	close(_fd);
 }
 
 
