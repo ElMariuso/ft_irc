@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/06/30 13:28:34 by root             ###   ########.fr       */
+/*   Updated: 2023/07/03 12:41:10 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ int Server::processServer()
             
             clientAddrLen = sizeof(clientAddr);
             new_socket = accept(this->serverSocket, (struct sockaddr*)&clientAddr, &clientAddrLen);
-            this->clientsList[new_socket] = new Client(); /* New Client */
+            //this->clientsList[new_socket] = new Client(); /* New Client */
+			this->clientsList[new_socket] = new Client(new_socket); /* New Client */
             clientPfd.fd = new_socket;
             clientPfd.events = POLLIN;
             this->fds.push_back(clientPfd);

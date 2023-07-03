@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 11:40:19 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/03 12:46:03 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,33 @@ Client::~Client()
 	close(_fd);
 }
 
+/* function */
+
+void Client::sendToClient(std::string str)
+{
+	send(_fd, str.c_str(), str.size(), 0);
+}
+
+std::string	Client::receiveFromClient()
+{
+	ssize_t		ret;
+	char		buffer[BUFFER_SIZE + 1];
+	std::string	msg;
+	std::string	error;
+
+	msg.clear();//is it needed ?
+	ret = recv(_fd, buffer, BUFFER_SIZE, 0)
+	error = "recv command failed for client with fd : " + _fd;
+	if (ret <= -1)
+		throw (error);
+	buffer[ret] = '\0';
+	msg = msg + buffer;
+	return (msg);
+}
+
+/* setters */
+void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
+void Client::setUsername(std::string userName) { this->_username = userName; }
 
 /* getters */
 
