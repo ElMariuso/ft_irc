@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/04 11:39:57 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/07 09:49:51 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ class Client
 		/* mode function */
 		int		addMode(char mode); // add an user mode, return 0 if it went well
 		int		rmMode(char mode); // remove an user mode, return 0 if it went well
-		bool	hasMode(char mode); // search if client has mode activated
+		bool	hasMode(std::string mode); // search if client has mode activated with the mode's name
+		bool	hasModeLetter(char mode); // search if client has mode activated with the mode's letter
 
 		/* setters */
 		void		setNickname(std::string nickName);

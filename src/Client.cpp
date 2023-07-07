@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/04 11:40:28 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/07 09:49:29 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,34 @@ void	Client::rmMode(char mode)
 	return (0);
 }
 
-bool Client::hasMode(char mode)
+bool Client::hasMode(std::string mode)
+{
+	if (mode == "invisible")
+		return (hasModeLetter('i'));
+	if (mode == "wallops")
+		return (hasModeLetter('w'));
+	if (mode == "operator")
+		return (hasModeLetter('o'));
+	if (mode == "serverNotice")
+		return (hasModeLetter('s'));
+	if (mode == "hiddenHost")
+		return (hasModeLetter('x'));
+	if (mode == "away")
+		return (hasModeLetter('a'));
+	if (mode == "restricted")
+		return (hasModeLetter('r'));
+	if (mode == "quiet")
+		return (hasModeLetter('q'));
+	if (mode == "bot")
+		return (hasModeLetter('b'));
+	if (mode == "deaf")
+		return (hasModeLetter('D'));
+	if (mode == "callerID")
+		return (hasModeLetter('G'));
+	return (false);
+}
+
+bool Client::hasModeLetter(char mode)
 {
 	if (_modesList.find(mode) == std::string::npos)
 		return (false)
