@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 22:00:59 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 22:14:37 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,13 @@ int Server::processServer()
         /* Browse existing clients sockets */
         for (std::size_t i = 1; i < this->fds.size(); ++i)
         {
-            if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
-            {
-                client_socket = this->fds[i].fd;
-                std::cout << "[DEBUG] - Incoming message event on client socket: " << client_socket << std::endl;
-                // this->handleEvent(client_socket);
-            }
-            else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
+            // if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
+            // {
+            //     client_socket = this->fds[i].fd;
+            //     std::cout << "[DEBUG] - Incoming message event on client socket: " << client_socket << std::endl;
+            //     // this->handleEvent(client_socket);
+            // }
+            if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
             {
                 client_socket = this->fds[i].fd;
                 std::cout << "[DEBUG] - Disconnection event on client socket: " << client_socket << std::endl;
