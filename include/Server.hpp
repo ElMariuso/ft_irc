@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 19:10:13 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 19:58:02 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ class Server
         int     acceptNewConnection();
         void    addNewClient(int client_socket);
         void    handleNewConnection(Client &client);
+
+        /* Logout */
+        void    handleDisconnection(int client_socket);
         
         /* Utils */
         int     createServerSocket(int port);

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 19:11:23 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 20:18:57 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int Server::processServer()
             }
             this->addNewClient(new_socket);
             std::cout << "[DEBUG] - New connection accepted. Client socket: " << new_socket << std::endl;
-            this->handleNewConnection(this->clientsList.find(new_socket));
+            this->handleNewConnection(*(this->clientsList.find(new_socket))->second);
         }
 
         /* Browse existing clients sockets */
@@ -79,7 +79,7 @@ int Server::processServer()
             {
                 client_socket = this->fds[i].fd;
                 std::cout << "[DEBUG] - Disconnection event on client socket: " << client_socket << std::endl;
-                // this->handleDisconnection(client_socket);
+                this->handleDisconnection(client_socket);
                 i--; /* Client disconnected */
             }
         }
@@ -115,6 +115,17 @@ void Server::handleNewConnection(Client &client)
     std::string welcome = "Welcome to ft_irc!";
     
     client.sendToFD(welcome);
+}
+
+/* Logout */
+void Server::handleDisconnection(int client_socket)
+{
+    std::map<int, Client*>::iterator    it = clientsList.find(client_socket);
+    if (it != clientsList.end())
+    {
+        clientsList.erase(it);
+        delete it->second;
+    }
 }
 
 /* Utils */
