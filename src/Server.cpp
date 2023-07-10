@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 17:19:38 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 17:54:49 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,60 @@ Server::~Server() {}
 /* Functions */
 int Server::processServer()
 {
+    struct pollfd   serverPfd;
+    int             ready;
+    int             new_socket;
+    int             client_socket;
+
+    /* Init fds vector */
+    serverPfd.fd = this->serverSocket;
+    serverPfd.events = POLLIN;
+    this->fds.push_back(serverPfd);
+    /* Main loop */
+    while (true)
+    {
+        /* Wait for events on sockets */
+        std::cout << "[DEBUG] - Waiting for events with poll()..." << std::endl;
+        ready = poll(this->fds.data(), this->fds.size(), -1);
+        if (ready == -1)
+        {
+            std::cout << "[DEBUG] - Error in poll()!" << std::endl;
+            return (-1);
+        }
+        std::cout << "[DEBUG] - Number of events detected: " << ready << std::endl;
+        
+        /* Check if a new connection is in waiting */
+        if (this->fds[0].revents & POLLIN)
+        {
+            std::cout << "[DEBUG] - New connection detected!" << std::endl;
+            // new_socket = this->acceptNewConnection();
+            if (new_socket == -1)
+            {
+                std::cout << "[DEBUG] - Error in accept()!" << std::endl;
+                continue ;
+            }
+            std::cout << "[DEBUG] - Accepted new connection by: " << new_socket << std::endl;
+            // this->handleNewConnection(new_socket);
+        }
+
+        /* Browse existing clients sockets */
+        for (std::size_t i = 1; i < this->fds.size(); ++i)
+        {
+            if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
+            {
+                client_socket = this->fds[i].fd;
+                std::cout << "[DEBUG] - Incoming message event on client socket: " << client_socket << std::endl;
+                // this->handleEvent(client_socket);
+            }
+            else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
+            {
+                client_socket = this->fds[i].fd;
+                std::cout << "[DEBUG] - Disconnection event on client socket: " << client_socket << std::endl;
+                // this->handleDisconnection(client_socket);
+                i--; /* Client disconnected */
+            }
+        }
+    }
     return (0);
 }
 
@@ -40,7 +94,7 @@ int Server::createServerSocket(int port)
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->serverSocket == -1)
     {
-        std::cout << "Failed to create server socket" << std::endl;
+        std::cout << "[DEBUG] - Failed to create server socket" << std::endl;
         return (-1);
     }
     addr.sin_family = AF_INET;
@@ -49,15 +103,15 @@ int Server::createServerSocket(int port)
     if (bind(this->serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
     {
         close(this->serverSocket);
-        std::cout << "Failed to bind server socket" << std::endl;
+        std::cout << "[DEBUG] - Failed to bind server socket" << std::endl;
         return (-2);
     }
     if (listen(this->serverSocket, SOMAXCONN) < 0)
     {
         close(this->serverSocket);
-        std::cout << "Failed to listen on server socket" << std::endl;
+        std::cout << "[DEBUG] - Failed to listen on server socket" << std::endl;
         return (-3);
     }
-    std::cout << "Server socket created and listening on port" << std::endl;
+    std::cout << "[DEBUG] - Server socket created and listening on port" << std::endl;
     return (0);
 }
