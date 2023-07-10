@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 18:32:23 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 19:07:52 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,15 @@ int Server::processServer()
         if (this->fds[0].revents & POLLIN)
         {
             std::cout << "[DEBUG] - New connection detected!" << std::endl;
-            // new_socket = this->acceptNewConnection();
+            new_socket = this->acceptNewConnection();
             if (new_socket == -1)
             {
                 std::cout << "[DEBUG] - Error in accept()!" << std::endl;
                 continue ;
             }
+            this->addNewClient(new_socket);
             std::cout << "[DEBUG] - New connection accepted. Client socket: " << new_socket << std::endl;
-            // this->handleNewConnection(new_socket);
+            this->handleNewConnection(this->clientsList.find(new_socket));
         }
 
         /* Browse existing clients sockets */
@@ -84,6 +85,34 @@ int Server::processServer()
         }
     }
     return (0);
+}
+
+int Server::acceptNewConnection()
+{
+    int         client_socket;
+    sockaddr_in client_addr;
+    socklen_t   client_addr_len;
+
+    client_addr_len = sizeof(client_addr);
+    client_socket = accept(this->serverSocket, (struct sockaddr*)&client_addr, &client_addr_len);
+    return (client_socket);
+}
+
+void Server::addNewClient(int client_socket)
+{
+    struct pollfd   clientPfd;
+
+    Client *new_client = new Client(client_socket);
+    clientsList.insert(std::make_pair(client_socket, new_client));
+    clientPfd.fd = client_socket;
+    clientPfd.events = POLLIN;
+    this->fds.push_back(clientPfd);
+}
+
+void Server::handleNewConnection(Client &client)
+{
+    std::string welcome = "Welcome to ft_irc!";
+    client.sendToFD(welcome);
 }
 
 /* Utils */
