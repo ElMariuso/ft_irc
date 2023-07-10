@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 20:18:57 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 20:47:19 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,38 @@ Server::Server(std::string port_str, std::string password)
 {
     int ret;
 
+    /* Creating server socket */
     this->serverSocket = this->createServerSocket(std::atoi(port_str.c_str()));
     if (this->serverSocket < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;
+
+    /* Start server processing */
     ret = this->processServer();
     if (ret < 0)
         throw (std::runtime_error("Problem during running the server!"));
 }
-Server::~Server() {}
+
+Server::~Server()
+{
+    /* Remove clients list */
+    for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
+    {
+        close(it->first);
+        delete it->second;
+    }
+    this->clientsList.clear();
+
+    /* Remove channels list */
+    for (std::map<std::string, Channel*>::iterator it = this->channelsList.begin(); it != this->channelsList.end(); ++it)
+    {
+        delete it->second;
+    }
+    this->channelsList.clear();
+
+    /* Close server Socket */
+    close(this->serverSocket);
+}
 
 /* Main Process */
 int Server::processServer()
@@ -34,7 +57,7 @@ int Server::processServer()
     int             new_socket;
     int             client_socket;
 
-    /* Init fds vector */
+    /* Initialization of the poll descriptor for the server socket */
     serverPfd.fd = this->serverSocket;
     serverPfd.events = POLLIN;
     this->fds.push_back(serverPfd);
@@ -94,6 +117,7 @@ int Server::acceptNewConnection()
     sockaddr_in client_addr;
     socklen_t   client_addr_len;
 
+    /* Accept new connection */
     client_addr_len = sizeof(client_addr);
     client_socket = accept(this->serverSocket, (struct sockaddr*)&client_addr, &client_addr_len);
     return (client_socket);
@@ -103,6 +127,7 @@ void Server::addNewClient(int client_socket)
 {
     struct pollfd   clientPfd;
 
+    /* Add new client to the list */
     Client *new_client = new Client(client_socket);
     clientsList.insert(std::make_pair(client_socket, new_client));
     clientPfd.fd = client_socket;
@@ -120,11 +145,13 @@ void Server::handleNewConnection(Client &client)
 /* Logout */
 void Server::handleDisconnection(int client_socket)
 {
-    std::map<int, Client*>::iterator    it = clientsList.find(client_socket);
-    if (it != clientsList.end())
+    /* Manage logout */
+    std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
+    if (it != this->clientsList.end())
     {
-        clientsList.erase(it);
+        close(it->first);
         delete it->second;
+        this->clientsList.erase(it);
     }
 }
 
@@ -133,6 +160,7 @@ int Server::createServerSocket(int port)
 {
     struct sockaddr_in  addr;
 
+    /* Creating socket server */
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->serverSocket == -1)
     {
