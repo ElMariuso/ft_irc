@@ -6,12 +6,16 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 16:56:18 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 18:31:44 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBRARY_HPP
 # define LIBRARY_HPP
+
+/* Define ******************************************************************* */
+
+# define BUFFER_SIZE 1024
 
 /* Includes ***************************************************************** */
 
@@ -24,9 +28,11 @@
 # include <iostream>
 # include <stdexcept>
 # include <cstdlib>
+# include <sstream>
 
 # include <vector>
 # include <map>
+# include <string>
 
 /* Includes.h *************************************************************** */
 

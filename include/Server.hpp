@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 22:20:22 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 18:32:10 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,7 @@ class Server
 
         /* Functions */
         int     processServer();
-        int     manageNewConnection();
-        int     receiveMessage();
-        int     manageLogout();
-
+        
         /* Utils */
         int     createServerSocket(int port);
 
