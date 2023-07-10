@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/04 00:19:51 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 16:59:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ Server::~Server() {}
 /* Functions */
 int Server::processServer()
 {
-    int             ret;
+    // int             ret;
     int             ready;
     struct pollfd   serverPfd;
 
@@ -42,14 +42,13 @@ int Server::processServer()
         ready = poll(this->fds.data(), this->fds.size(), -1);
         if (ready < 0)
             return (-1);
-        std::cout << "Login..." << std::endl;
-        ret = this->manageNewConnection();
-        if (ret < 0)
-            return (-2);
+        std::cout << "Checking for new connections..." << std::endl;
+        // ret = this->manageNewConnection();
+        // if (ret < 0)
+        //     return (-2);
         // this->receiveMessage();
-        this->manageLogout();
-    }
-    while (true);
+        // this->manageLogout();
+    } while (true);
     return (0);
 }
 
@@ -133,19 +132,25 @@ int Server::createServerSocket(int port)
 
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (this->serverSocket == -1)
+    {
+        std::cout << "Failed to create server socket" << std::endl;
         return (-1);
+    }
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
     if (bind(this->serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
     {
         close(this->serverSocket);
+        std::cout << "Failed to bind server socket" << std::endl;
         return (-2);
     }
     if (listen(this->serverSocket, SOMAXCONN) < 0)
     {
         close(this->serverSocket);
+        std::cout << "Failed to listen on server socket" << std::endl;
         return (-3);
     }
+    std::cout << "Server socket created and listening on port" << std::endl;
     return (0);
 }
