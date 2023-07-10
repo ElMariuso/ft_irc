@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/07 09:49:29 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/10 18:29:52 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ Client::~Client()
 }
 
 /* function */
-void Client::sendToClient(std::string str)
+void Client::sendToFD(std::string str)
 {
 	send(_fd, str.c_str(), str.size(), 0); // write "str" on "_fd"
 }
 
-std::string	Client::receiveFromClient()
+std::string	Client::receiveFromFD()
 {
 	ssize_t		ret;
 	char		buffer[BUFFER_SIZE + 1];

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 18:17:22 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 18:30:02 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ class Client
         ~Client();
 
 		/* function */
-		void		sendToClient(std::string str); // write a string on the client's fd
-		std::string	receiveFromClient(); // receive and return a string written by the client
+		void		sendToFD(std::string str); // write a string on the client's fd
+		std::string	receiveFromFD(); // receive and return a string written by the client
 
 		/* mode function */
 		int		addMode(char mode); // add an user mode, return 0 if it went well
