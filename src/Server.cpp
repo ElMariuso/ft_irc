@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 20:47:19 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 20:51:55 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,15 +167,20 @@ int Server::createServerSocket(int port)
         std::cout << "[DEBUG] - Failed to create server socket" << std::endl;
         return (-1);
     }
+
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
+    
+    /* Bind data to the server socket */
     if (bind(this->serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
     {
         close(this->serverSocket);
         std::cout << "[DEBUG] - Failed to bind server socket" << std::endl;
         return (-2);
     }
+
+    /* Put the server socket on listen */
     if (listen(this->serverSocket, SOMAXCONN) < 0)
     {
         close(this->serverSocket);
