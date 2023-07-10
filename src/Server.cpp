@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 17:54:49 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 17:57:17 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int Server::processServer()
                 std::cout << "[DEBUG] - Error in accept()!" << std::endl;
                 continue ;
             }
-            std::cout << "[DEBUG] - Accepted new connection by: " << new_socket << std::endl;
+            std::cout << "[DEBUG] - New connection accepted. Client socket: " << new_socket << std::endl;
             // this->handleNewConnection(new_socket);
         }
 
