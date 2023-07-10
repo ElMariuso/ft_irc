@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 23:35:54 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 23:39:27 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,8 +98,16 @@ int Server::processServer()
             {
                 client_socket = this->fds[i].fd;
                 std::cout << "[DEBUG] - Incoming event on client socket: " << client_socket << std::endl;
-                if (this->handleEvent(client_socket) != 0)
-                    return (-2);
+                if (this->handleEvent(client_socket) == 0)
+                {
+                    std::cout << "[DEBUG] - Client disconnected on event: " << client_socket << std::endl;
+                    this->handleDisconnection(client_socket);
+                
+                    /* Remove from fds */
+                    this->fds.erase(this->fds.begin() + i);
+
+                    i--; /* Client disconnected */
+                }
             }
             else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
             {
@@ -163,16 +171,16 @@ int Server::handleEvent(int client_socket)
         if (ret < 0)
         {
             std::cout << "[DEBUG] - Error in recv() on client socket: " << client_socket << std::endl;
-            return (-1);
+            return (ret);
         }
-        return (0);
+        return (ret);
     }
 
     /* Processing of data received from the client */
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
     std::cout << "[DEBUG] - Received message from client " << client_socket << ": " << msg << std::endl;
-    return (0);
+    return (ret);
 }
 
 /* Logout */
