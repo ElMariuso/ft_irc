@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 20:43:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 22:25:17 by root             ###   ########.fr       */
+/*   Updated: 2023/07/11 00:07:05 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ int main(int argc, char **argv)
     }
     catch (const std::exception& e)
     {
-        std::cerr << "[ERROR] : " << e.what() << std::endl;
+        Debug::error_message(e.what());
         return (1);
     }
-    std::cout << "Leaving ft_irc..." << std::endl;
+    Debug::debug_message("Leaving...");
     return (0);
 }
