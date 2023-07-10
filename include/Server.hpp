@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 19:06:55 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 19:10:13 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,10 @@ class Server
         Server(std::string port_str, std::string password);
         ~Server();
 
-        /* Functions */
+        /* Main Process */
         int     processServer();
+
+        /* New connection */
         int     acceptNewConnection();
         void    addNewClient(int client_socket);
         void    handleNewConnection(Client &client);

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 19:07:52 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 19:11:23 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Server::Server(std::string port_str, std::string password)
 }
 Server::~Server() {}
 
-/* Functions */
+/* Main Process */
 int Server::processServer()
 {
     struct pollfd   serverPfd;
@@ -87,6 +87,7 @@ int Server::processServer()
     return (0);
 }
 
+/* New connection */
 int Server::acceptNewConnection()
 {
     int         client_socket;
@@ -112,6 +113,7 @@ void Server::addNewClient(int client_socket)
 void Server::handleNewConnection(Client &client)
 {
     std::string welcome = "Welcome to ft_irc!";
+    
     client.sendToFD(welcome);
 }
 
