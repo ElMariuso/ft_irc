@@ -6,13 +6,13 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 22:14:37 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 22:42:50 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
-Server::Server(std::string port_str, std::string password)
+Server::Server(std::string port_str, std::string password, std::string name)
 {
     int ret;
 
@@ -21,6 +21,7 @@ Server::Server(std::string port_str, std::string password)
     if (ret < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;
+    this->name = name;
 
     /* Start server processing */
     ret = this->processServer();
@@ -30,6 +31,7 @@ Server::Server(std::string port_str, std::string password)
 
 Server::~Server()
 {
+    std::cout << "[DEBUG] - Closing " << this->name << "..." << std::endl;
     /* Remove clients list */
     for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
     {
@@ -62,7 +64,7 @@ int Server::processServer()
     serverPfd.events = POLLIN;
     this->fds.push_back(serverPfd);
     /* Main loop */
-    while (true)
+    do
     {
         /* Wait for events on sockets */
         std::cout << "[DEBUG] - Waiting for events with poll()..." << std::endl;
@@ -92,21 +94,22 @@ int Server::processServer()
         /* Browse existing clients sockets */
         for (std::size_t i = 1; i < this->fds.size(); ++i)
         {
-            // if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
-            // {
-            //     client_socket = this->fds[i].fd;
-            //     std::cout << "[DEBUG] - Incoming message event on client socket: " << client_socket << std::endl;
-            //     // this->handleEvent(client_socket);
-            // }
-            if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
+            if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
             {
                 client_socket = this->fds[i].fd;
-                std::cout << "[DEBUG] - Disconnection event on client socket: " << client_socket << std::endl;
+                std::cout << "[DEBUG] - Incoming event on client socket: " << client_socket << std::endl;
+                if (this->handleEvent(client_socket) != 0)
+                    return (-2);
+            }
+            else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
+            {
+                client_socket = this->fds[i].fd;
+                std::cout << "[DEBUG] - Client disconnected: " << client_socket << std::endl;
                 this->handleDisconnection(client_socket);
                 i--; /* Client disconnected */
             }
         }
-    }
+    } while (true);
     return (0);
 }
 
@@ -137,9 +140,41 @@ void Server::addNewClient(int client_socket)
 
 void Server::handleNewConnection(Client &client)
 {
-    std::string welcome = "Welcome to ft_irc!";
+    std::string welcome = "Welcome to " + this->name + "!";
     
     client.sendToFD(welcome);
+}
+
+/* Messages */
+int Server::handleEvent(int client_socket)
+{
+    ssize_t		ret;
+    char		buffer[BUFFER_SIZE + 1];
+    std::string msg;
+
+    msg.clear();
+    ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
+    if (ret <= 0)
+    {
+        if (ret == 0)
+        {
+            /* Disconnection */
+            std::cout << "[DEBUG] - Client disconnected: " << client_socket << std::endl;
+            this->handleDisconnection(client_socket);
+        }
+        else
+        {
+            std::cout << "[DEBUG] - Error in recv() on client socket: " << client_socket << std::endl;
+            return (-1);
+        }
+        return (0);
+    }
+
+    /* Processing of data received from the client */
+    buffer[ret] = '\0'; // null terminate the string received
+	msg = msg + buffer;
+    std::cout << "[DEBUG] - Received message from client " << client_socket << ": " << msg << std::endl;
+    return (0);
 }
 
 /* Logout */
