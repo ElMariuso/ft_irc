@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 20:51:55 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 22:00:59 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ Server::Server(std::string port_str, std::string password)
     int ret;
 
     /* Creating server socket */
-    this->serverSocket = this->createServerSocket(std::atoi(port_str.c_str()));
-    if (this->serverSocket < 0)
+    ret = this->createServerSocket(std::atoi(port_str.c_str()));
+    if (ret < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;
 
