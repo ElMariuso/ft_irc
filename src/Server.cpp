@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 22:42:50 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 23:35:54 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,12 @@ int Server::processServer()
             else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
             {
                 client_socket = this->fds[i].fd;
-                std::cout << "[DEBUG] - Client disconnected: " << client_socket << std::endl;
+                std::cout << "[DEBUG] - Client disconnected on main loop: " << client_socket << std::endl;
                 this->handleDisconnection(client_socket);
+                
+                /* Remove from fds */
+                this->fds.erase(this->fds.begin() + i);
+
                 i--; /* Client disconnected */
             }
         }
@@ -156,13 +160,7 @@ int Server::handleEvent(int client_socket)
     ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
     if (ret <= 0)
     {
-        if (ret == 0)
-        {
-            /* Disconnection */
-            std::cout << "[DEBUG] - Client disconnected: " << client_socket << std::endl;
-            this->handleDisconnection(client_socket);
-        }
-        else
+        if (ret < 0)
         {
             std::cout << "[DEBUG] - Error in recv() on client socket: " << client_socket << std::endl;
             return (-1);
@@ -182,11 +180,17 @@ void Server::handleDisconnection(int client_socket)
 {
     /* Manage logout */
     std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
-    if (it != this->clientsList.end())
+
+    if (this->clientsList.size() == 0)
+        std::cout << "[DEBUG] - No clients connected to the server" << std::endl;
+    else
     {
+        /* Clean clientsList map */
         close(it->first);
         delete it->second;
         this->clientsList.erase(it);
+
+        std::cout << "[DEBUG] - Logout done" << std::endl;
     }
 }
 
@@ -194,13 +198,23 @@ void Server::handleDisconnection(int client_socket)
 int Server::createServerSocket(int port)
 {
     struct sockaddr_in  addr;
+    int                 optVal;
+    int                 optValSize;
 
+    optVal = 1;
+    optValSize = sizeof(optVal);
     /* Creating socket server */
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&optVal, optValSize) == -1)
+    {
+        std::cout << "[DEBUG] - Failed to create server socket options" << std::endl;
+        return (-1);
+    }
+	fcntl(this->serverSocket, F_SETFL, O_NONBLOCK);
     if (this->serverSocket == -1)
     {
         std::cout << "[DEBUG] - Failed to create server socket" << std::endl;
-        return (-1);
+        return (-2);
     }
 
     addr.sin_family = AF_INET;
@@ -211,8 +225,8 @@ int Server::createServerSocket(int port)
     if (bind(this->serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
     {
         close(this->serverSocket);
-        std::cout << "[DEBUG] - Failed to bind server socket" << std::endl;
-        return (-2);
+        std::cout << "[DEBUG] - Failed to bind server socket on port: " << port << std::endl;
+        return (-3);
     }
 
     /* Put the server socket on listen */
@@ -220,7 +234,7 @@ int Server::createServerSocket(int port)
     {
         close(this->serverSocket);
         std::cout << "[DEBUG] - Failed to listen on server socket" << std::endl;
-        return (-3);
+        return (-4);
     }
     std::cout << "[DEBUG] - Server socket created and listening on port" << std::endl;
     return (0);
