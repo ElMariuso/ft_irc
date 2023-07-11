@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/11 11:59:38 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/11 12:38:55 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,9 @@ bool Channel::isOp(Client client)
 	if (it != _operators.end())
 		return (true);
 	return (false);
+}
+
+void	Channel::setTopic(std::string topic)
+{
+	_topic = topic;
 }
