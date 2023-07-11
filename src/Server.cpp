@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 23:39:27 by root             ###   ########.fr       */
+/*   Updated: 2023/07/11 00:20:08 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ Server::Server(std::string port_str, std::string password, std::string name)
 
 Server::~Server()
 {
-    std::cout << "[DEBUG] - Closing " << this->name << "..." << std::endl;
+    Debug::debug_message("Closing " + this->name + "...");
     /* Remove clients list */
     for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
     {
@@ -67,27 +67,27 @@ int Server::processServer()
     do
     {
         /* Wait for events on sockets */
-        std::cout << "[DEBUG] - Waiting for events with poll()..." << std::endl;
+        Debug::debug_message("Waiting for events with poll()...");
         ready = poll(this->fds.data(), this->fds.size(), -1);
         if (ready == -1)
         {
-            std::cout << "[DEBUG] - Error in poll()!" << std::endl;
+            Debug::error_message("Error in poll()!");
             return (-1);
         }
-        std::cout << "[DEBUG] - Number of events detected: " << ready << std::endl;
+        Debug::debug_message("Number of events detected: " + ready);
         
         /* Check if a new connection is in waiting */
         if (this->fds[0].revents & POLLIN)
         {
-            std::cout << "[DEBUG] - New connection detected!" << std::endl;
+            Debug::debug_message("New connection detected!");
             new_socket = this->acceptNewConnection();
             if (new_socket == -1)
             {
-                std::cout << "[DEBUG] - Error in accept()!" << std::endl;
+                Debug::error_message("Error in accept()!");
                 continue ;
             }
             this->addNewClient(new_socket);
-            std::cout << "[DEBUG] - New connection accepted. Client socket: " << new_socket << std::endl;
+            Debug::debug_message("New connection accepted. Client socket: " + new_socket);
             this->handleNewConnection(*(this->clientsList.find(new_socket))->second);
         }
 
@@ -97,10 +97,10 @@ int Server::processServer()
             if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
             {
                 client_socket = this->fds[i].fd;
-                std::cout << "[DEBUG] - Incoming event on client socket: " << client_socket << std::endl;
+                Debug::debug_message("Incoming event on client socket: " + client_socket);
                 if (this->handleEvent(client_socket) == 0)
                 {
-                    std::cout << "[DEBUG] - Client disconnected on event: " << client_socket << std::endl;
+                    Debug::debug_message("Client disconnected on event: " + client_socket);
                     this->handleDisconnection(client_socket);
                 
                     /* Remove from fds */
@@ -112,7 +112,7 @@ int Server::processServer()
             else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
             {
                 client_socket = this->fds[i].fd;
-                std::cout << "[DEBUG] - Client disconnected on main loop: " << client_socket << std::endl;
+                Debug::debug_message("Client disconnected on disconnection handling: " + client_socket);
                 this->handleDisconnection(client_socket);
                 
                 /* Remove from fds */
@@ -170,7 +170,7 @@ int Server::handleEvent(int client_socket)
     {
         if (ret < 0)
         {
-            std::cout << "[DEBUG] - Error in recv() on client socket: " << client_socket << std::endl;
+            Debug::error_message("Error in recv() on client socket: " + client_socket);
             return (ret);
         }
         return (ret);
@@ -179,7 +179,7 @@ int Server::handleEvent(int client_socket)
     /* Processing of data received from the client */
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
-    std::cout << "[DEBUG] - Received message from client " << client_socket << ": " << msg << std::endl;
+    Debug::debug_message(client_socket + " send a message: " + msg);
     return (ret);
 }
 
@@ -190,15 +190,15 @@ void Server::handleDisconnection(int client_socket)
     std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
 
     if (this->clientsList.size() == 0)
-        std::cout << "[DEBUG] - No clients connected to the server" << std::endl;
+        Debug::debug_message("No clients connected to the server");
     else
     {
         /* Clean clientsList map */
         close(it->first);
         delete it->second;
         this->clientsList.erase(it);
-
-        std::cout << "[DEBUG] - Logout done" << std::endl;
+        
+        Debug::debug_message("Logout done");
     }
 }
 
@@ -215,13 +215,13 @@ int Server::createServerSocket(int port)
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&optVal, optValSize) == -1)
     {
-        std::cout << "[DEBUG] - Failed to create server socket options" << std::endl;
+        Debug::error_message("Failed to create server socket options");
         return (-1);
     }
 	fcntl(this->serverSocket, F_SETFL, O_NONBLOCK);
     if (this->serverSocket == -1)
     {
-        std::cout << "[DEBUG] - Failed to create server socket" << std::endl;
+        Debug::error_message("Failed to create server socket");
         return (-2);
     }
 
@@ -233,7 +233,7 @@ int Server::createServerSocket(int port)
     if (bind(this->serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
     {
         close(this->serverSocket);
-        std::cout << "[DEBUG] - Failed to bind server socket on port: " << port << std::endl;
+        Debug::error_message("Failed to bind server socket on port: " + port);
         return (-3);
     }
 
@@ -241,9 +241,9 @@ int Server::createServerSocket(int port)
     if (listen(this->serverSocket, SOMAXCONN) < 0)
     {
         close(this->serverSocket);
-        std::cout << "[DEBUG] - Failed to listen on server socket" << std::endl;
+        Debug::error_message("Failed to listen on server socket");
         return (-4);
     }
-    std::cout << "[DEBUG] - Server socket created and listening on port" << std::endl;
+    Debug::debug_message("Server socket created and listening on port");
     return (0);
 }
