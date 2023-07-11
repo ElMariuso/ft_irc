@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 16:04:59 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/11 17:48:16 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,9 +154,11 @@ void Server::addNewClient(int client_socket)
 
 void Server::handleNewConnection(Client &client)
 {
+    (void)client;
     std::string welcome = "Welcome to " + this->name + "!";
+    std::string welcomeResponse = ":" + this->name + " 001 " + client.getNickname() + " :" + welcome + "\r\n";
     
-    client.sendToFD(welcome);
+    client.sendToFD(welcomeResponse);
 }
 
 /* Messages */
