@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 14:06:06 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/11 16:02:54 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@
 
 # include "Channel.hpp"
 # include "Client.hpp"
-# include "Debug.hpp"
+# include "Utils.hpp"
 # include "Message.hpp"
 # include "Server.hpp"
 
