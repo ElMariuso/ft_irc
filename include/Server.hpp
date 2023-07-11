@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 23:26:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:17:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 class Client;
 class Channel;
-class Socket;
+class Message;
 
 class Server
 {
@@ -35,6 +35,10 @@ class Server
         /* Messages */
         int                             handleEvent(int client_socket);
         void                            getMessages(const std::string &message, int from);
+
+        /* Commands */
+        void                            nickCommand(Message &new_message, int from);
+        void                            msgCommand(Message &new_message, int from);
 
         /* Logout */
         void                            handleDisconnection(int client_socket);

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:11:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:25:02 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,34 +192,52 @@ int Server::handleEvent(int client_socket)
 
 void Server::getMessages(const std::string &message, int from)
 {
-    std::map<int, Client*>::iterator    it;
     Message                             new_message(message);
-    std::string                         newNickname;
-    std::string                         dest;
     
     if (new_message.getType() == NICK)
-    {
-        it = this->clientsList.find(from);
-        if (it != this->clientsList.end())
-        {
-            newNickname = new_message.getArgs().at(0);
-            it->second->setNickname(newNickname);
-            it->second->sendToFD(new_message.nicknameMessage(*this, *it->second));
-        }
-    }
+        this->nickCommand(new_message, from);
     else if (new_message.getType() == PRIVMSG)
+        this->msgCommand(new_message, from);
+}
+
+/* Commands */
+void Server::nickCommand(Message &new_message, int from)
+{
+    std::map<int, Client*>::iterator    it;
+    std::string                         newNickname;
+
+    it = this->clientsList.find(from);
+    if (it != this->clientsList.end())
     {
-        it = this->clientsList.find(from);
-        if (it != this->clientsList.end())
+        newNickname = new_message.getArgs().at(0);
+        it->second->setNickname(newNickname);
+        it->second->sendToFD(new_message.nicknameMessage(*this, *it->second));
+    }
+}
+
+void Server::msgCommand(Message &new_message, int from)
+{
+    std::map<int, Client*>::iterator    it;
+    std::map<int, Client*>::iterator    dest;
+    std::string                         destStr;
+    
+    it = this->clientsList.find(from);
+    if (it != this->clientsList.end())
+    {
+        destStr = new_message.getArgs().at(0);
+        if (destStr[0] == '#') /* Channel */
         {
-            dest = new_message.getArgs().at(0);
-            if (dest[0] == '#') /* Channel */
+            std::cout << "Channel" << std::endl;
+        }
+        else /* User */
+        {
+            for (dest = clientsList.begin(); dest != clientsList.end(); ++dest)
             {
-                std::cout << "Channel" << std::endl;
-            }
-            else /* User */
-            {
-                std::cout << "User" << std::endl;
+                if (dest->second->getNickname() == destStr)
+                {
+                    
+                    break ;
+                }
             }
         }
     }
