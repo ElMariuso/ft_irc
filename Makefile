@@ -6,7 +6,7 @@
 #    By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/29 20:14:13 by root              #+#    #+#              #
-#    Updated: 2023/07/11 12:31:47 by bvernimm         ###   ########.fr        #
+#    Updated: 2023/07/11 12:44:14 by bvernimm         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,6 @@ SRCS = $(wildcard  $(SRC_DIR)/main.cpp) \
 		$(wildcard  $(SRC_DIR)/Client.cpp) \
 		$(wildcard  $(SRC_DIR)/Server.cpp) \
 		$(wildcard  $(SRC_DIR)/Message.cpp) \
-		$(wildcard  $(SRC_DIR)/Utils.cpp) \
 		$(wildcard  $(SRC_DIR)/Debug.cpp)
 
 OBJ_DIR	= objs
