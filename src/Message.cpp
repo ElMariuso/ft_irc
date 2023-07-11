@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 17:35:11 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:24:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:46:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,13 @@ std::string Message::nicknameMessage(Server &server, Client &client)
 {
     std::string success = "Your nickname has been changed successfully!";
     std::string message = ":" + server.getName() + " 001 " + client.getNickname() + " :" + success + "\r\n";
+
+    return (message);
+}
+
+std::string Message::sendMessage(std::string dest, std::string msg)
+{
+    std::string message = "PRIVMSG " + dest + msg + "\r\n";
 
     return (message);
 }

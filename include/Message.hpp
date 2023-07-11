@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:55:45 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:24:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:48:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Message
         /* To Send */
         std::string                 welcomeMessage(Server &server, Client &client);
         std::string                 nicknameMessage(Server &server, Client &client);
+        std::string                 sendMessage(std::string dest, std::string msg);
 
         /* Getters */
         std::string                 getPrefix() const;

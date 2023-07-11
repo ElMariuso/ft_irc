@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:33:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:52:12 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,6 +206,7 @@ void Server::nickCommand(Message &new_message, int from)
     std::map<int, Client*>::iterator    it;
     std::string                         newNickname;
 
+    Utils::debug_message("Nickname command received!");
     it = this->clientsList.find(from);
     if (it != this->clientsList.end())
     {
@@ -221,7 +222,9 @@ void Server::msgCommand(Message &new_message, int from)
     std::map<int, Client*>::iterator            dest;
     std::map<std::string, Channel*>::iterator   channelIt;
     std::string                                 destStr;
+    std::string                                 toSend;
     
+    Utils::debug_message("Message command received!");
     it = this->clientsList.find(from);
     if (it != this->clientsList.end())
     {
@@ -243,7 +246,8 @@ void Server::msgCommand(Message &new_message, int from)
             {
                 if (dest->second->getNickname() == destStr) /* Found user */
                 {
-                    
+                    toSend = new_message.getArgs().at(1);
+                    it->second->sendToFD(new_message.sendMessage(destStr, toSend));
                     break ;
                 }
             }
