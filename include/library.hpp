@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 12:43:52 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/11 14:06:06 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@
 # include <stdexcept>
 # include <cstdlib>
 # include <sstream>
+# include <csignal>
 
 # include <vector>
 # include <map>

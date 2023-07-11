@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 12:44:04 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/11 14:18:41 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,4 +28,15 @@ std::string	Debug::intToString(int nb)
 	
 	ss << nb;
 	return (ss.str());
+}
+
+bool Debug::stop(int indicator)
+{
+	static bool	stop;
+	
+	if (indicator == 0)
+		stop = false;
+	if (indicator == 2)
+		stop = true;
+	return (stop);
 }

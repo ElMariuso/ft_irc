@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 12:45:57 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/11 14:19:24 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ int Server::processServer()
         /* Wait for events on sockets */
         Debug::debug_message("Waiting for events with poll()...");
         ready = poll(this->fds.data(), this->fds.size(), -1);
-        if (ready == -1)
+		if (Debug::stop(1))
+			break ;
+        if (ready == -1 && !Debug::stop(1))
         {
             Debug::error_message("Error in poll()!");
             return (-1);
@@ -121,7 +123,7 @@ int Server::processServer()
                 i--; /* Client disconnected */
             }
         }
-    } while (true);
+    } while (!Debug::stop(1));
     return (0);
 }
 
