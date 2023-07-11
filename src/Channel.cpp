@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/05 10:29:03 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/10 20:15:44 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	Channel::addMode(char mode)
 	return (0);
 }
 	
-void	Channel::rmMode(char mode)
+int	Channel::rmMode(char mode)
 {
 	if (mode == 't' || mode == 'n' || mode == 's' || mode == 'i' || mode == 'k' || mode == 'p' || mode == 'l') // list of existing modes
 	{
@@ -44,6 +44,6 @@ void	Channel::rmMode(char mode)
 bool Channel::hasMode(char mode)
 {
 	if (_modesList.find(mode) == std::string::npos)
-		return (false)
+		return (false);
 	return (true);
 }

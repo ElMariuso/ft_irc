@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 18:29:52 by root             ###   ########.fr       */
+/*   Updated: 2023/07/10 20:17:24 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Client::Client(int fd) : _fd(fd), _nickname("DefaultNickname")
 	std::stringstream ss;
 	
 	ss << fd; // turn int to std::string
-	_username = "DefaultUsername" + ss.str() // put the file descriptor in client's default username to help identify him
+	_username = "DefaultUsername" + ss.str(); // put the file descriptor in client's default username to help identify him
 	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
 }
 
@@ -43,7 +43,7 @@ std::string	Client::receiveFromFD()
 	std::string	error;
 
 	msg.clear(); // make sur "msg" start of empty
-	ret = recv(_fd, buffer, BUFFER_SIZE, 0) // fill "buffer" witch a string written on "_fd", maximum "BUFFER_SIZE" character, return the string's lenght or -1 when there is an error
+	ret = recv(_fd, buffer, BUFFER_SIZE, 0); // fill "buffer" witch a string written on "_fd", maximum "BUFFER_SIZE" character, return the string's lenght or -1 when there is an error
 	
 	error = "recv command failed for client : " + _username;
 	if (ret <= -1)
@@ -69,7 +69,7 @@ int	Client::addMode(char mode)
 	return (0);
 }
 	
-void	Client::rmMode(char mode)
+int	Client::rmMode(char mode)
 {
 	if (mode == 'i' || mode == 'w' || mode == 'o' || mode == 's' || mode == 'x' || mode == 'a' || mode == 'r' || mode == 'q' || mode == 'b' || mode == 'D' || mode == 'G') // list of existing modes
 	{
@@ -113,7 +113,7 @@ bool Client::hasMode(std::string mode)
 bool Client::hasModeLetter(char mode)
 {
 	if (_modesList.find(mode) == std::string::npos)
-		return (false)
+		return (false);
 	return (true);
 }
 
