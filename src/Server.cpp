@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 00:20:08 by root             ###   ########.fr       */
+/*   Updated: 2023/07/11 12:33:04 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int Server::processServer()
             Debug::error_message("Error in poll()!");
             return (-1);
         }
-        Debug::debug_message("Number of events detected: " + ready);
+        Debug::debug_message("Number of events detected: " + intToString(ready));
         
         /* Check if a new connection is in waiting */
         if (this->fds[0].revents & POLLIN)
@@ -87,7 +87,7 @@ int Server::processServer()
                 continue ;
             }
             this->addNewClient(new_socket);
-            Debug::debug_message("New connection accepted. Client socket: " + new_socket);
+            Debug::debug_message("New connection accepted. Client socket: " + intToString(new_socket));
             this->handleNewConnection(*(this->clientsList.find(new_socket))->second);
         }
 
@@ -97,10 +97,10 @@ int Server::processServer()
             if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
             {
                 client_socket = this->fds[i].fd;
-                Debug::debug_message("Incoming event on client socket: " + client_socket);
+                Debug::debug_message("Incoming event on client socket: " + intToString(client_socket));
                 if (this->handleEvent(client_socket) == 0)
                 {
-                    Debug::debug_message("Client disconnected on event: " + client_socket);
+                    Debug::debug_message("Client disconnected on event: " + intToString(client_socket));
                     this->handleDisconnection(client_socket);
                 
                     /* Remove from fds */
@@ -112,7 +112,7 @@ int Server::processServer()
             else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
             {
                 client_socket = this->fds[i].fd;
-                Debug::debug_message("Client disconnected on disconnection handling: " + client_socket);
+                Debug::debug_message("Client disconnected on disconnection handling: " + intToString(client_socket));
                 this->handleDisconnection(client_socket);
                 
                 /* Remove from fds */
@@ -170,7 +170,7 @@ int Server::handleEvent(int client_socket)
     {
         if (ret < 0)
         {
-            Debug::error_message("Error in recv() on client socket: " + client_socket);
+            Debug::error_message("Error in recv() on client socket: " + intToString(client_socket));
             return (ret);
         }
         return (ret);
@@ -179,7 +179,7 @@ int Server::handleEvent(int client_socket)
     /* Processing of data received from the client */
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
-    Debug::debug_message(client_socket + " send a message: " + msg);
+    Debug::debug_message(intToString(client_socket) + " send a message: " + msg);
     return (ret);
 }
 
@@ -233,7 +233,7 @@ int Server::createServerSocket(int port)
     if (bind(this->serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
     {
         close(this->serverSocket);
-        Debug::error_message("Failed to bind server socket on port: " + port);
+        Debug::error_message("Failed to bind server socket on port: " + intToString(port));
         return (-3);
     }
 
