@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:28:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:33:50 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ void Server::msgCommand(Message &new_message, int from)
         {
             for (channelIt = this->channelsList.begin(); channelIt != this->channelsList.end(); ++channelIt)
             {
-                if (channelIt->second->getName() == destStr)
+                if (channelIt->second->getName() == destStr) /* Found channel */
                 {
                     
                     break ;
@@ -241,7 +241,7 @@ void Server::msgCommand(Message &new_message, int from)
         {
             for (dest = this->clientsList.begin(); dest != this->clientsList.end(); ++dest)
             {
-                if (dest->second->getNickname() == destStr)
+                if (dest->second->getNickname() == destStr) /* Found user */
                 {
                     
                     break ;
