@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 22:57:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/11 23:31:45 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,9 +162,10 @@ void Server::handleNewConnection(Client &client)
 /* Messages */
 int Server::handleEvent(int client_socket)
 {
-    ssize_t		ret;
-    char		buffer[BUFFER_SIZE + 1];
-    std::string msg;
+    ssize_t		                ret;
+    char		                buffer[BUFFER_SIZE + 1];
+    std::string                 msg;
+    std::vector<std::string>    commands;
 
     msg.clear();
     ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
@@ -183,7 +184,9 @@ int Server::handleEvent(int client_socket)
 	msg = msg + buffer;
     Utils::debug_message(Utils::intToString(client_socket) + " send a message: " + msg);
 
-    this->getMessages(msg, client_socket);
+    commands = this->splitCommands(msg, '\n');
+    for (std::size_t i = 0; i != commands.size(); ++i)
+        this->getMessages(commands.at(i), client_socket);
     return (ret);
 }
 
@@ -268,6 +271,17 @@ int Server::createServerSocket(int port)
     }
     Utils::debug_message("Server socket created and listening on port");
     return (0);
+}
+
+std::vector<std::string> Server::splitCommands(const std::string &message, char delimiter)
+{
+    std::vector<std::string>    commands;
+    std::stringstream           ss(message);
+    std::string                 command;
+
+    while (std::getline(ss, command, delimiter))
+        commands.push_back(command);
+    return (commands);
 }
 
 /* Getters */

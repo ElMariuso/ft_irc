@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 20:17:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/11 23:26:44 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Server
         
         /* Utils */
         int                             createServerSocket(int port);
+        std::vector<std::string>        splitCommands(const std::string &message, char delimiter);
 
         /* Getters */
         int                             getServerSocket();
