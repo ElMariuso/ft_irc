@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:52:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 01:20:12 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,8 +246,12 @@ void Server::msgCommand(Message &new_message, int from)
             {
                 if (dest->second->getNickname() == destStr) /* Found user */
                 {
+                    Utils::debug_message("Send message to: " + Utils::intToString(dest->first));
                     toSend = new_message.getArgs().at(1);
-                    it->second->sendToFD(new_message.sendMessage(destStr, toSend));
+
+                    std::cout << "SEND: " << toSend << " to " << dest->second->getFd() << std::endl;
+
+                    dest->second->sendToFD(new_message.sendMessage(*this, *dest->second, toSend));
                     break ;
                 }
             }
