@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 17:35:11 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 22:57:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/11 23:46:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ MessageType Message::setType()
     this->defaultMessage.erase(0, this->defaultMessage.find(' ') + 1);
     if (type == "NICK")
         return (NICK);
+    else if (type == "PRIVMSG")
+        return (PRIVMSG);
     return (UNKNOW);
 }
 

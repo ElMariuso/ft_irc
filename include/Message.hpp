@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:55:45 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 20:25:31 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/11 23:46:26 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@
 enum MessageType
 {
     UNKNOW,
+    RESPONSE,
     NICK,
-    RESPONSE
+    PRIVMSG
 };
 
 class Server;

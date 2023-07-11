@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 23:31:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:11:09 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ void Server::getMessages(const std::string &message, int from)
     std::map<int, Client*>::iterator    it;
     Message                             new_message(message);
     std::string                         newNickname;
+    std::string                         dest;
     
     if (new_message.getType() == NICK)
     {
@@ -204,6 +205,22 @@ void Server::getMessages(const std::string &message, int from)
             newNickname = new_message.getArgs().at(0);
             it->second->setNickname(newNickname);
             it->second->sendToFD(new_message.nicknameMessage(*this, *it->second));
+        }
+    }
+    else if (new_message.getType() == PRIVMSG)
+    {
+        it = this->clientsList.find(from);
+        if (it != this->clientsList.end())
+        {
+            dest = new_message.getArgs().at(0);
+            if (dest[0] == '#') /* Channel */
+            {
+                std::cout << "Channel" << std::endl;
+            }
+            else /* User */
+            {
+                std::cout << "User" << std::endl;
+            }
         }
     }
 }
