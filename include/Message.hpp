@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 16:55:45 by root              #+#    #+#             */
-/*   Updated: 2023/07/03 17:51:41 by root             ###   ########.fr       */
+/*   Updated: 2023/07/11 20:25:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,45 @@
 # define MESSAGE_HPP
 # include "library.hpp"
 
+enum MessageType
+{
+    UNKNOW,
+    NICK,
+    RESPONSE
+};
+
+class Server;
+class Client;
+
 class Message
 {
     public:
-        enum MessageType
-        {
-            CONNECT,
-            DISCONNECT,
-            REQUEST,
-            RESPONSE,
-            UPDATE,
-            CHAT
-        };
-        Message(MessageType type, const std::string& data);
+        Message();
+        Message(bool isResponse);
+        Message(const std::string &message);
         ~Message();
 
+        /* Utils */
+        void                        parsing(const std::string &message);
+
+        /* Setters */
+        std::string                 setPrefix();
+        MessageType                 setType();
+
+        /* To Send */
+        std::string                 welcomeMessage(Server &server, Client &client);
+        std::string                 nicknameMessage(Server &server, Client &client);
+
         /* Getters */
-        MessageType getType() const;
-        std::string getData() const;
+        std::string                 getPrefix() const;
+        MessageType                 getType() const;
+        std::vector<std::string>    getArgs() const;
 
     private:
-        MessageType type;
-        std::string data;
+        std::string                 defaultMessage;
+        std::string                 prefix;
+        MessageType                 type;
+        std::vector<std::string>    args;
 };
 
 #endif

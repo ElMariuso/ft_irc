@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 14:09:49 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/11 20:17:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,30 @@ class Server
         ~Server();
 
         /* Main Process */
-        int     processServer();
+        int                             processServer();
 
         /* New connection */
-        int     acceptNewConnection();
-        void    addNewClient(int client_socket);
-        void    handleNewConnection(Client &client);
+        int                             acceptNewConnection();
+        void                            addNewClient(int client_socket);
+        void                            handleNewConnection(Client &client);
 
         /* Messages */
-        int     handleEvent(int client_socket);
+        int                             handleEvent(int client_socket);
+        void                            getMessages(const std::string &message, int from);
 
         /* Logout */
-        void    handleDisconnection(int client_socket);
+        void                            handleDisconnection(int client_socket);
         
         /* Utils */
-        int     createServerSocket(int port);
+        int                             createServerSocket(int port);
+
+        /* Getters */
+        int                             getServerSocket();
+        std::string                     getName();
+        std::string                     getPassword();
+        std::vector<struct pollfd>      getFds();
+        std::map<int, Client*>          getClientsList();
+        std::map<std::string, Channel*> getChannelsList();
 
     private:
         int                             serverSocket;

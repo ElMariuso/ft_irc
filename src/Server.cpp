@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 17:48:16 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/11 20:27:50 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,11 +154,9 @@ void Server::addNewClient(int client_socket)
 
 void Server::handleNewConnection(Client &client)
 {
-    (void)client;
-    std::string welcome = "Welcome to " + this->name + "!";
-    std::string welcomeResponse = ":" + this->name + " 001 " + client.getNickname() + " :" + welcome + "\r\n";
+    Message new_message(true);
     
-    client.sendToFD(welcomeResponse);
+    client.sendToFD(new_message.welcomeMessage(*this, client));
 }
 
 /* Messages */
@@ -184,7 +182,26 @@ int Server::handleEvent(int client_socket)
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
     Utils::debug_message(Utils::intToString(client_socket) + " send a message: " + msg);
+
+    this->getMessages(msg, client_socket);
     return (ret);
+}
+
+void Server::getMessages(const std::string &message, int from)
+{
+    std::map<int, Client*>::iterator    it;
+    Message                             new_message(message);
+
+    if (new_message.getType() == NICK)
+    {
+        it = this->clientsList.find(from);
+        if (it != this->clientsList.end())
+        {
+            Client *client = it->second;
+            client->setNickname(new_message.getArgs().at(0));
+            client->sendToFD(new_message.nicknameMessage(*this, *client));
+        }
+    }
 }
 
 /* Logout */
@@ -251,3 +268,11 @@ int Server::createServerSocket(int port)
     Utils::debug_message("Server socket created and listening on port");
     return (0);
 }
+
+/* Getters */
+int Server::getServerSocket() { return (this->serverSocket); }
+std::string Server::getName() { return (this->name); }
+std::string Server::getPassword() { return (this->password); }
+std::vector<struct pollfd> Server::getFds() { return (this->fds); }
+std::map<int, Client*> Server::getClientsList() { return (this->clientsList); }
+std::map<std::string, Channel*> Server::getChannelsList() { return (this->channelsList); }
