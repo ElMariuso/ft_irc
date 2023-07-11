@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 17:35:11 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 20:32:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/11 22:57:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,23 +26,22 @@ Message::~Message() {}
 /* Utils */
 void Message::parsing(const std::string &message)
 {
+    std::size_t pos;
+    
     this->defaultMessage = message;
     if (message[0] == ':')
         this->prefix = this->setPrefix();
     this->type = this->setType();
-    for (std::size_t i = 0; i != this->defaultMessage.size(); ++i)
+    while ((pos = this->defaultMessage.find(' ')) != std::string::npos)
     {
-        if (this->defaultMessage[i] == ':')
-        {
-            this->defaultMessage.erase(0, 1);
-            this->args.push_back(this->defaultMessage);
-            break ;
-        }
-        else
-        {
-            this->args.push_back(this->defaultMessage.substr(0, this->defaultMessage.find(' ')));
-            this->defaultMessage.erase(0, this->defaultMessage.find(' '));
-        }
+        std::string arg = this->defaultMessage.substr(0, pos);
+        this->args.push_back(arg);
+        this->defaultMessage.erase(0, pos + 1);
+    }
+    if (!this->defaultMessage.empty())
+    {
+        this->defaultMessage = this->defaultMessage.substr(0, this->defaultMessage.find('\r'));
+        this->args.push_back(this->defaultMessage);
     }
 }
 
@@ -52,16 +51,16 @@ std::string Message::setPrefix()
     std::string prefix;
 
     prefix = this->defaultMessage.substr(0, this->defaultMessage.find(' '));
-    this->defaultMessage.erase(0, this->defaultMessage.find(' '));
+    this->defaultMessage.erase(0, this->defaultMessage.find(' ') + 1);
     return (prefix);
 }
 
 MessageType Message::setType()
 {
     std::string type;
-
+    
     type = this->defaultMessage.substr(0, this->defaultMessage.find(' '));
-    this->defaultMessage.erase(0, this->defaultMessage.find(' '));
+    this->defaultMessage.erase(0, this->defaultMessage.find(' ') + 1);
     if (type == "NICK")
         return (NICK);
     return (UNKNOW);

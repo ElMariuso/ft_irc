@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 20:27:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/11 22:57:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,15 +191,16 @@ void Server::getMessages(const std::string &message, int from)
 {
     std::map<int, Client*>::iterator    it;
     Message                             new_message(message);
-
+    std::string                         newNickname;
+    
     if (new_message.getType() == NICK)
     {
         it = this->clientsList.find(from);
         if (it != this->clientsList.end())
         {
-            Client *client = it->second;
-            client->setNickname(new_message.getArgs().at(0));
-            client->sendToFD(new_message.nicknameMessage(*this, *client));
+            newNickname = new_message.getArgs().at(0);
+            it->second->setNickname(newNickname);
+            it->second->sendToFD(new_message.nicknameMessage(*this, *it->second));
         }
     }
 }
