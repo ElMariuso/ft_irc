@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/11 13:05:15 by root             ###   ########.fr       */
+/*   Updated: 2023/07/12 00:31:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,3 +93,10 @@ void	Channel::setTopic(std::string topic)
 {
 	_topic = topic;
 }
+
+/* Getters */
+std::string Channel::getName() { return (this->_name); }
+std::map<int, Client*> Channel::getConnected() { return (this->_connected); }
+std::vector<int> Channel::getOperators() { return (this->_operators); }
+std::string Channel::getModesList() { return (this->_modesList); }
+std::string Channel::getTopic() { return (this->_topic); }

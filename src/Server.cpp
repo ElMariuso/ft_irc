@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:25:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 00:28:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,9 +217,10 @@ void Server::nickCommand(Message &new_message, int from)
 
 void Server::msgCommand(Message &new_message, int from)
 {
-    std::map<int, Client*>::iterator    it;
-    std::map<int, Client*>::iterator    dest;
-    std::string                         destStr;
+    std::map<int, Client*>::iterator            it;
+    std::map<int, Client*>::iterator            dest;
+    std::map<std::string, Channel*>::iterator   channelIt;
+    std::string                                 destStr;
     
     it = this->clientsList.find(from);
     if (it != this->clientsList.end())
@@ -227,11 +228,18 @@ void Server::msgCommand(Message &new_message, int from)
         destStr = new_message.getArgs().at(0);
         if (destStr[0] == '#') /* Channel */
         {
-            std::cout << "Channel" << std::endl;
+            for (channelIt = this->channelsList.begin(); channelIt != this->channelsList.end(); ++channelIt)
+            {
+                if (channelIt->second->getName() == destStr)
+                {
+                    
+                    break ;
+                }
+            }  
         }
         else /* User */
         {
-            for (dest = clientsList.begin(); dest != clientsList.end(); ++dest)
+            for (dest = this->clientsList.begin(); dest != this->clientsList.end(); ++dest)
             {
                 if (dest->second->getNickname() == destStr)
                 {
