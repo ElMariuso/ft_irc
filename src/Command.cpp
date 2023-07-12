@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 22:51:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 23:49:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,19 @@ void Command::nickMessages(Server &server, Client *client, std::string newNickna
     // {
     //     client.sendToFD(nick432);
     // }    
+}
+
+void Command::msgMessages(Server &server, Client *src, Client *dest, std::string message)
+{
+    (void)server;
+    std::string msg001_1 = ":" + src->getNickname() + "!" + src->getUsername() + "@" + src->getHostname();
+    std::string msg001_2 = " RPL_PRIVMSG " + dest->getNickname() + " :" + message + "\r\n";
+    std::string msg001 = msg001_1 + msg001_2;
+
+    src->sendToFD(msg001);
+    dest->sendToFD(msg001);
+
+    // :pseudonyme!ident@hôte RPL_PRIVMSG destinataire :message
 }
 
 /* Nick Utils */
