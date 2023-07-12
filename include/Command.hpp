@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 15:38:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 16:54:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 enum MessageType
 {
     UNKNOW,
-    MSGPRIV,
+    PRIVMSG,
     NICK
 };
 
@@ -28,16 +28,19 @@ class Command
         ~Command();
 
         /* Setters */
-        void        setMessage(const std::string &message);
-        void        setType();
+        void                        setMessage(const std::string &message);
+        void                        setType();
+        void                        setArgs();
 
         /* Getters */
-        std::string getMessage();
-        MessageType getType();
+        std::string                 getMessage();
+        MessageType                 getType();
+        std::vector<std::string>    getArgs();
         
     private:
-        std::string message;
-        MessageType type;
+        std::string                 message;
+        MessageType                 type;
+        std::vector<std::string>    args;
 };
 
 #endif
