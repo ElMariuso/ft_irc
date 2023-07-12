@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 17:17:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:33:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,14 +191,12 @@ int Server::handleEvent(int client_socket)
 void Server::getMessages(const std::string &message, int from)
 {
     Command command(message);
-    (void)message;
     (void)from;
-    // Message                             new_message(message);
     
-    // if (new_message.getType() == NICK)
-    //     this->nickCommand(new_message, from);
-    // else if (new_message.getType() == PRIVMSG)
-    //     this->msgCommand(new_message, from);
+    if (command.getType() == PRIVMSG)
+        std::cout << "PRIVMSG" << std::endl;
+    else if (command.getType() == NICK)
+        std::cout << "NICK" << std::endl;
 }
 
 /* Logout */
