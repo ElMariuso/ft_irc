@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 17:14:56 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:16:12 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ Client::Client(int fd) : _fd(fd)
 	this->_username = "User" + ss.str(); // put the file descriptor in client's default username to help identify him
 	this->_nickname = "Guest" + ss.str();
 	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
+	this->_hostname = "127.0.0.1";
 }
 
 Client::~Client()
