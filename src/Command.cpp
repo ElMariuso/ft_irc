@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 19:48:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 21:40:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void Command::welcomeMessages(Server &server, Client &client)
     Utils::debug_message("Send welcome message to: " + client.getUsername());
     client.sendToFD(welcome001);
     client.sendToFD(welcome002);
-    client.sendToFD(welcome003);
-    client.sendToFD(welcome004);
+    // client.sendToFD(welcome003);
+    // client.sendToFD(welcome004);
 }
 
 void Command::nickMessages(Server &server, Client *client, std::string newNickname)
