@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 17:35:11 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 12:49:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 14:01:33 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,9 @@ void Message::parsing(const std::string &message)
     if (message[0] == ':')
         this->prefix = this->setPrefix();
     this->type = this->setType();
-    while ((pos = this->defaultMessage.find(' ')) != std::string::npos)
+
+    pos = this->defaultMessage.find(' ');
+    if (pos != std::string::npos)
     {
         std::string arg = this->defaultMessage.substr(0, pos);
         this->args.push_back(arg);
@@ -40,7 +42,9 @@ void Message::parsing(const std::string &message)
     }
     if (!this->defaultMessage.empty())
     {
-        this->defaultMessage = this->defaultMessage.substr(0, this->defaultMessage.find('\r'));
+        pos = this->defaultMessage.find(':');
+        if (pos != std::string::npos)
+            this->defaultMessage.erase(0, pos + 1);
         this->args.push_back(this->defaultMessage);
     }
 }

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 12:28:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 13:35:04 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ void Server::msgCommand(Message &new_message, int from)
 
                     std::cout << "SEND: '" << toSend << "' to " << dest->second->getFd() << std::endl;
 
-                    dest->second->sendToFD(new_message.sendMessage(*it->second, *dest->second, toSend));
+                    // dest->second->sendToFD(new_message.sendMessage(*it->second, *dest->second, toSend));
                     break ;
                 }
             }
