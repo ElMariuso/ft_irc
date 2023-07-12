@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 18:38:15 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 19:30:42 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,8 @@ void Command::welcomeMessages(Server &server, Client &client)
 
 void Command::nickMessages(Server &server, Client *client, std::string newNickname)
 {
-    std::string nick001 = ":" + server.getName() + " NICK " + client->getNickname() \
-        + " :..." + "\r\n";
+    std::string nick001 = ":" + server.getName() + " 001 " + newNickname \
+        + " :You're now known as " + newNickname + "\r\n";
     std::string nick431 = ":" + server.getName() + " 431 *" \
         + " :No nickname given" + "\r\n";
     std::string nick432 = ":" + server.getName() + " 432 * " + newNickname \
@@ -132,6 +132,9 @@ void Command::setArgs()
     }
     if (!this->message.empty() && this->message[0] == ':')
         this->args.push_back(this->message);
+    
+    if (this->message.find('\r') != std::string::npos)
+        std::cout << this->message << " has a \r" << std::endl;
 }
 
 /* Getters */
