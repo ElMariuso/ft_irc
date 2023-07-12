@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 19:47:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 19:48:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void Command::nickMessages(Server &server, Client *client, std::string newNickna
     std::string nick433 = ":" + server.getName() + " 433 * " + newNickname \
         + " :Nickname is already in use" + "\r\n";
     
-    std::cout << "newNickname: " << newNickname << std::endl;
     if (newNickname.empty())
     {
         Utils::debug_message("Not enough arguments on NICK from: " + client->getUsername());
