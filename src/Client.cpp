@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 12:34:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:14:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,10 @@ bool Client::hasModeLetter(char mode)
 /* setters */
 void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
 void Client::setUsername(std::string userName) { this->_username = userName; }
+void Client::setHostname() {}
 
 /* getters */
 int			Client::getFd() { return (this->_fd); }
 std::string	Client::getNickname() { return (this->_nickname); }
 std::string	Client::getUsername() { return (this->_username); }
+std::string	Client::getHostname() { return (this->_hostname); } 

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 17:08:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:14:11 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,13 @@ class Client
 		/* setters */
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
+		void		setHostname();
 		
 		/* getters */
 		int			getFd();
 		std::string	getNickname();
 		std::string	getUsername();
+		std::string	getHostname();
         
     private:
         int         _fd;
