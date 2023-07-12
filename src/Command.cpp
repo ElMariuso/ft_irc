@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 16:54:08 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:13:08 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,15 @@ Command::Command(const std::string &message)
     this->setArgs();
 }
 Command::~Command() {}
+
+/* Commands */
+void Command::welcomeMessage(Server &server, Client &client)
+{
+    std::string welcome001 = ":" + server.getName() + " 001 " + client.getNickname() \
+        + " :Welcome to " + server.getName() + " " + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + "\r\n";
+    // :servername 001 nickname :Welcome to the Internet Relay Network nickname!user@host\r\n
+    client.sendToFD(welcome001);
+}
 
 /* Setters */
 void Command::setMessage(const std::string &message) { this->message = message; }
