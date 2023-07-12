@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 18:23:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 18:24:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,9 @@ void Command::nickMessages(Server &server, Client &client, std::string newNickna
         + " :Nickname is already in use" + "\r\n";
     
     if (newNickname.empty())
-    {
         client.sendToFD(nick431);   
-    }
     else if (Command::nicknameIsAlreadyInUse(server, newNickname))
-    {
         client.sendToFD(nick433);
-    }
     else
     {
         client.setNickname(newNickname);
