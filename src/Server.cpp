@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 17:56:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 18:33:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ void Server::getMessages(const std::string &message, int from)
         if (command.getType() == PRIVMSG)
             std::cout << "PRIVMSG from client " << client->getFd() << std::endl;
         else if (command.getType() == NICK)
-            std::cout << "NICK from client " << client->getFd() << std::endl;
+            Command::nickMessages(*this, client, command.getArgs().at(0));
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(from));

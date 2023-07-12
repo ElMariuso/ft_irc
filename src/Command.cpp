@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 18:24:19 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 18:38:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ void Command::welcomeMessages(Server &server, Client &client)
     client.sendToFD(welcome004);
 }
 
-void Command::nickMessages(Server &server, Client &client, std::string newNickname)
+void Command::nickMessages(Server &server, Client *client, std::string newNickname)
 {
-    std::string nick001 = ":" + server.getName() + " NICK " + client.getNickname() \
+    std::string nick001 = ":" + server.getName() + " NICK " + client->getNickname() \
         + " :..." + "\r\n";
     std::string nick431 = ":" + server.getName() + " 431 *" \
         + " :No nickname given" + "\r\n";
@@ -50,14 +50,22 @@ void Command::nickMessages(Server &server, Client &client, std::string newNickna
     std::string nick433 = ":" + server.getName() + " 433 * " + newNickname \
         + " :Nickname is already in use" + "\r\n";
     
+    std::cout << "newNickname: " << newNickname << std::endl;
     if (newNickname.empty())
-        client.sendToFD(nick431);   
+    {
+        Utils::debug_message("Not enough arguments on NICK from: " + client->getUsername());
+        client->sendToFD(nick431);
+    }
     else if (Command::nicknameIsAlreadyInUse(server, newNickname))
-        client.sendToFD(nick433);
+    {
+        Utils::debug_message(client->getUsername() + " tried to change his nickname to something that already exists");
+        client->sendToFD(nick433);
+    }
     else
     {
-        client.setNickname(newNickname);
-        client.sendToFD(nick001);
+        Utils::debug_message("Change " + client->getUsername() + " nickname to: " + newNickname);
+        client->setNickname(newNickname);
+        client->sendToFD(nick001);
     }
 
     /* Can be added later */
