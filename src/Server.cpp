@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 13:35:04 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 15:31:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,9 +154,9 @@ void Server::addNewClient(int client_socket)
 
 void Server::handleNewConnection(Client &client)
 {
-    Message new_message(true);
+    // Message new_message(true);
     
-    client.sendToFD(new_message.welcomeMessage(*this, client));
+    // client.sendToFD(new_message.welcomeMessage(*this, client));
 }
 
 /* Messages */
@@ -184,79 +184,41 @@ int Server::handleEvent(int client_socket)
 	msg = msg + buffer;
     Utils::debug_message(Utils::intToString(client_socket) + " send a message: " + msg);
 
-    commands = this->splitCommands(msg, '\n');
-    for (std::size_t i = 0; i != commands.size(); ++i)
-        this->getMessages(commands.at(i), client_socket);
+    // commands = this->splitCommands(msg, '\n');
+    // for (std::size_t i = 0; i != commands.size(); ++i)
+    //     this->getMessages(commands.at(i), client_socket);
     return (ret);
 }
 
 void Server::getMessages(const std::string &message, int from)
 {
-    Message                             new_message(message);
+    // Message                             new_message(message);
     
-    if (new_message.getType() == NICK)
-        this->nickCommand(new_message, from);
-    else if (new_message.getType() == PRIVMSG)
-        this->msgCommand(new_message, from);
+    // if (new_message.getType() == NICK)
+    //     this->nickCommand(new_message, from);
+    // else if (new_message.getType() == PRIVMSG)
+    //     this->msgCommand(new_message, from);
 }
 
 /* Commands */
 void Server::nickCommand(Message &new_message, int from)
 {
-    std::map<int, Client*>::iterator    it;
-    std::string                         newNickname;
+    // std::map<int, Client*>::iterator    it;
+    // std::string                         newNickname;
 
-    Utils::debug_message("Nickname command received!");
-    it = this->clientsList.find(from);
-    if (it != this->clientsList.end())
-    {
-        newNickname = new_message.getArgs().at(0);
-        it->second->setNickname(newNickname);
-        it->second->sendToFD(new_message.nicknameMessage(*this, *it->second));
-    }
+    // Utils::debug_message("Nickname command received!");
+    // it = this->clientsList.find(from);
+    // if (it != this->clientsList.end())
+    // {
+    //     newNickname = new_message.getArgs().at(0);
+    //     it->second->setNickname(newNickname);
+    //     it->second->sendToFD(new_message.nicknameMessage(*this, *it->second));
+    // }
 }
 
 void Server::msgCommand(Message &new_message, int from)
 {
-    std::map<int, Client*>::iterator            it;
-    std::map<int, Client*>::iterator            dest;
-    std::map<std::string, Channel*>::iterator   channelIt;
-    std::string                                 destStr;
-    std::string                                 toSend;
     
-    Utils::debug_message("Message command received!");
-    it = this->clientsList.find(from);
-    if (it != this->clientsList.end())
-    {
-        destStr = new_message.getArgs().at(0);
-        if (destStr[0] == '#') /* Channel */
-        {
-            for (channelIt = this->channelsList.begin(); channelIt != this->channelsList.end(); ++channelIt)
-            {
-                if (channelIt->second->getName() == destStr) /* Found channel */
-                {
-                    
-                    break ;
-                }
-            }  
-        }
-        else /* User */
-        {
-            for (dest = this->clientsList.begin(); dest != this->clientsList.end(); ++dest)
-            {
-                if (dest->second->getNickname() == destStr) /* Found user */
-                {
-                    Utils::debug_message("Send message to: " + Utils::intToString(dest->first));
-                    toSend = new_message.getArgs().at(1);
-
-                    std::cout << "SEND: '" << toSend << "' to " << dest->second->getFd() << std::endl;
-
-                    // dest->second->sendToFD(new_message.sendMessage(*it->second, *dest->second, toSend));
-                    break ;
-                }
-            }
-        }
-    }
 }
 
 /* Logout */
