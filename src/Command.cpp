@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 19:30:42 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 19:47:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,30 +111,23 @@ void Command::setType()
 
 void Command::setArgs()
 {
-    std::string arg;
-    std::size_t spaceIndex;
-    
-    while (!this->message.empty() && this->message[0] != ':')
+    std::size_t pos;
+
+    pos = this->message.find(' ');
+    if (pos != std::string::npos)
     {
-        spaceIndex = this->message.find(' ');
-        if (spaceIndex != std::string::npos)
-        {
-            arg = this->message.substr(0, spaceIndex);
-            this->args.push_back(arg);
-            this->message.erase(0, spaceIndex + 1);
-        }
-        else
-        {
-            arg = this->message;
-            this->args.push_back(arg);
-            this->message.clear();
-        }
+        std::string arg = this->message.substr(0, pos);
+        this->args.push_back(arg);
+        this->message.erase(0, pos + 1);
     }
-    if (!this->message.empty() && this->message[0] == ':')
+    if (!this->message.empty())
+    {
+        this->message = this->message.substr(0, this->message.find('\r'));
+        pos = this->message.find(':');
+        if (pos != std::string::npos)
+            this->message.erase(0, pos + 1);
         this->args.push_back(this->message);
-    
-    if (this->message.find('\r') != std::string::npos)
-        std::cout << this->message << " has a \r" << std::endl;
+    }
 }
 
 /* Getters */
