@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 17:56:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 18:23:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,55 @@ void Command::welcomeMessages(Server &server, Client &client)
     client.sendToFD(welcome002);
     client.sendToFD(welcome003);
     client.sendToFD(welcome004);
+}
+
+void Command::nickMessages(Server &server, Client &client, std::string newNickname)
+{
+    std::string nick001 = ":" + server.getName() + " NICK " + client.getNickname() \
+        + " :..." + "\r\n";
+    std::string nick431 = ":" + server.getName() + " 431 *" \
+        + " :No nickname given" + "\r\n";
+    std::string nick432 = ":" + server.getName() + " 432 * " + newNickname \
+        + " :Erroneous nickname" + "\r\n";
+    std::string nick433 = ":" + server.getName() + " 433 * " + newNickname \
+        + " :Nickname is already in use" + "\r\n";
+    
+    if (newNickname.empty())
+    {
+        client.sendToFD(nick431);   
+    }
+    else if (Command::nicknameIsAlreadyInUse(server, newNickname))
+    {
+        client.sendToFD(nick433);
+    }
+    else
+    {
+        client.setNickname(newNickname);
+        client.sendToFD(nick001);
+    }
+
+    /* Can be added later */
+    // else if ()
+    // {
+    //     client.sendToFD(nick432);
+    // }    
+}
+
+/* Utils */
+bool Command::nicknameIsAlreadyInUse(Server &server, std::string newNickname)
+{
+    std::map<int, Client*>              clients;
+    std::map<int, Client*>::iterator    it;
+
+    clients = server.getClientsList();
+    it = clients.begin();
+    while (it != clients.end())
+    {
+        if (it->second->getNickname() == newNickname)
+            return (true);
+        ++it;
+    }
+    return (false);
 }
 
 /* Setters */
