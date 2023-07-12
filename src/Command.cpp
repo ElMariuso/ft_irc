@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 17:21:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:30:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,18 @@ Command::~Command() {}
 void Command::welcomeMessage(Server &server, Client &client)
 {
     std::string welcome001 = ":" + server.getName() + " 001 " + client.getNickname() \
-        + " :Welcome to " + server.getName() + " " + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + "\r\n";
+        + " :Welcome to " + server.getName() + ", " + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + "\r\n";
     std::string welcome002 = ":" + server.getName() + " 002 " + client.getNickname() \
         + " :Your host is " + server.getName() + ", running version 0.1" + "\r\n";
+    std::string welcome003 = ":" + server.getName() + " 003 " + client.getNickname() \
+        + " :..." + "\r\n";
+    std::string welcome004 = ":" + server.getName() + " 004 " + client.getNickname() \
+        + " :..." + "\r\n";
         
     client.sendToFD(welcome001);
     client.sendToFD(welcome002);
+    client.sendToFD(welcome003);
+    client.sendToFD(welcome004);
 }
 
 /* Setters */
