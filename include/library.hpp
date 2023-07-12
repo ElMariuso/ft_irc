@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   library.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 16:02:54 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/12 15:35:26 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@
 # include "Channel.hpp"
 # include "Client.hpp"
 # include "Utils.hpp"
-# include "Message.hpp"
+# include "Command.hpp"
 # include "Server.hpp"
 
 #endif

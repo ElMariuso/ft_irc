@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 15:31:18 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 15:44:12 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,7 @@ class Server
         /* Messages */
         int                             handleEvent(int client_socket);
         void                            getMessages(const std::string &message, int from);
-
-        /* Commands */
-        void                            nickCommand(Message &new_message, int from);
-        void                            msgCommand(Message &new_message, int from);
-
+        
         /* Logout */
         void                            handleDisconnection(int client_socket);
         

@@ -6,7 +6,7 @@
 #    By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/29 20:14:13 by root              #+#    #+#              #
-#    Updated: 2023/07/12 15:30:21 by mthiry           ###   ########.fr        #
+#    Updated: 2023/07/12 15:34:23 by mthiry           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,8 @@ SRCS = $(wildcard  $(SRC_DIR)/main.cpp) \
 		$(wildcard  $(SRC_DIR)/Channel.cpp) \
 		$(wildcard  $(SRC_DIR)/Client.cpp) \
 		$(wildcard  $(SRC_DIR)/Server.cpp) \
-		$(wildcard  $(SRC_DIR)/Utils.cpp)
+		$(wildcard  $(SRC_DIR)/Utils.cpp) \
+		$(wildcard  $(SRC_DIR)/Command.cpp)
 
 OBJ_DIR	= objs
 OBJ_FILES = $(notdir $(SRCS:.cpp=.o))

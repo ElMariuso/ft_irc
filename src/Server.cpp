@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 15:31:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 16:20:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,7 @@ void Server::addNewClient(int client_socket)
 
 void Server::handleNewConnection(Client &client)
 {
+    (void)client;
     // Message new_message(true);
     
     // client.sendToFD(new_message.welcomeMessage(*this, client));
@@ -184,41 +185,23 @@ int Server::handleEvent(int client_socket)
 	msg = msg + buffer;
     Utils::debug_message(Utils::intToString(client_socket) + " send a message: " + msg);
 
-    // commands = this->splitCommands(msg, '\n');
-    // for (std::size_t i = 0; i != commands.size(); ++i)
-    //     this->getMessages(commands.at(i), client_socket);
+    commands = this->splitCommands(msg, '\n');
+    for (std::size_t i = 0; i != commands.size(); ++i)
+        this->getMessages(commands.at(i), client_socket);
     return (ret);
 }
 
 void Server::getMessages(const std::string &message, int from)
 {
+    Command command(message);
+    (void)message;
+    (void)from;
     // Message                             new_message(message);
     
     // if (new_message.getType() == NICK)
     //     this->nickCommand(new_message, from);
     // else if (new_message.getType() == PRIVMSG)
     //     this->msgCommand(new_message, from);
-}
-
-/* Commands */
-void Server::nickCommand(Message &new_message, int from)
-{
-    // std::map<int, Client*>::iterator    it;
-    // std::string                         newNickname;
-
-    // Utils::debug_message("Nickname command received!");
-    // it = this->clientsList.find(from);
-    // if (it != this->clientsList.end())
-    // {
-    //     newNickname = new_message.getArgs().at(0);
-    //     it->second->setNickname(newNickname);
-    //     it->second->sendToFD(new_message.nicknameMessage(*this, *it->second));
-    // }
-}
-
-void Server::msgCommand(Message &new_message, int from)
-{
-    
 }
 
 /* Logout */
