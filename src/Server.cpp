@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 16:20:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:17:34 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,10 +154,7 @@ void Server::addNewClient(int client_socket)
 
 void Server::handleNewConnection(Client &client)
 {
-    (void)client;
-    // Message new_message(true);
-    
-    // client.sendToFD(new_message.welcomeMessage(*this, client));
+    Command::welcomeMessage(*this, client);
 }
 
 /* Messages */
