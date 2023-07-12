@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 23:32:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/13 00:48:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,11 @@ enum MessageType
 {
     UNKNOW,
     PRIVMSG,
-    NICK
+    NICK,
+    USER,
+    JOIN,
+    PONG,
+    MODE
 };
 
 class Command

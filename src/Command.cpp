@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 23:49:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/13 00:50:07 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,14 @@ void Command::setType()
         this->type = PRIVMSG;
     else if (type == "NICK")
         this->type = NICK;
+    else if (type == "USER")
+        this->type = USER;
+    else if (type == "JOIN")
+        this->type = JOIN;
+    else if (type == "PONG")
+        this->type = PONG;
+    else if (type == "MODE")
+        this->type = MODE;
     else
         this->type = UNKNOW;
 }
