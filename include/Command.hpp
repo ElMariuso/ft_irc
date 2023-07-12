@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 17:13:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:56:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Command
         ~Command();
 
         /* Commands */
-        static void                 welcomeMessage(Server &server, Client &client);
+        static void                 welcomeMessages(Server &server, Client &client);
 
         /* Setters */
         void                        setMessage(const std::string &message);

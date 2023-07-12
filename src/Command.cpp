@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 17:42:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:56:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Command::Command(const std::string &message)
 Command::~Command() {}
 
 /* Commands */
-void Command::welcomeMessage(Server &server, Client &client)
+void Command::welcomeMessages(Server &server, Client &client)
 {
     std::string welcome001 = ":" + server.getName() + " 001 " + client.getNickname() \
         + " :Welcome to " + server.getName() + ", " + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + "\r\n";
