@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 17:33:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:40:45 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,12 +191,19 @@ int Server::handleEvent(int client_socket)
 void Server::getMessages(const std::string &message, int from)
 {
     Command command(message);
-    (void)from;
-    
-    if (command.getType() == PRIVMSG)
-        std::cout << "PRIVMSG" << std::endl;
-    else if (command.getType() == NICK)
-        std::cout << "NICK" << std::endl;
+
+    std::map<int, Client*>::iterator clientIterator = this->clientsList.find(from);
+    if (clientIterator != this->clientsList.end())
+    {
+        Client* client = clientIterator->second;
+
+        if (command.getType() == PRIVMSG)
+            std::cout << "PRIVMSG from client " << client->getFd() << std::endl;
+        else if (command.getType() == NICK)
+            std::cout << "NICK from client " << client->getFd() << std::endl;
+    }
+    else
+        Utils::error_message("Client not found from socket: " + Utils::intToString(from));
 }
 
 /* Logout */
