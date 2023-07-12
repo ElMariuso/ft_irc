@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/12 17:30:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 17:42:50 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void Command::welcomeMessage(Server &server, Client &client)
     std::string welcome004 = ":" + server.getName() + " 004 " + client.getNickname() \
         + " :..." + "\r\n";
         
+    Utils::debug_message("Send welcome message to: " + client.getUsername());
     client.sendToFD(welcome001);
     client.sendToFD(welcome002);
     client.sendToFD(welcome003);
