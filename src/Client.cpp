@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 11:49:49 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/12 12:34:45 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Client.hpp"
 
-Client::Client() {
-}
+Client::Client() {}
 
-Client::Client(int fd) : _fd(fd), _nickname("DefaultNickname")
+Client::Client(int fd) : _fd(fd)
 {
 	std::stringstream ss;
 	
 	ss << fd; // turn int to std::string
-	_username = "DefaultUsername" + ss.str(); // put the file descriptor in client's default username to help identify him
+	this->_username = "User" + ss.str(); // put the file descriptor in client's default username to help identify him
+	this->_nickname = "Guest" + ss.str();
 	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
 }
 

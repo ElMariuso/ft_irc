@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 17:35:11 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 01:32:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 12:49:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,11 @@ std::string Message::nicknameMessage(Server &server, Client &client)
     return (message);
 }
 
-std::string Message::sendMessage(Server &server, Client &client, std::string msg)
+std::string Message::sendMessage(Client &send, Client &dest, std::string msg)
 {
-    std::string message = ":" + server.getName() + " PRIVMSG " + client.getNickname() + " " + msg + "\r\n";
+    std::string message = ":" + send.getNickname() + "!" + send.getUsername() + "@" + "localhost" + " PRIVMSG " + dest.getNickname() + " " + msg + "\r\n";
 
-    std::cout << "Message: " << message << std::endl;
+    std::cout << message << std::endl;
 
     return (message);
 }

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 01:20:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 12:28:24 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,9 +249,9 @@ void Server::msgCommand(Message &new_message, int from)
                     Utils::debug_message("Send message to: " + Utils::intToString(dest->first));
                     toSend = new_message.getArgs().at(1);
 
-                    std::cout << "SEND: " << toSend << " to " << dest->second->getFd() << std::endl;
+                    std::cout << "SEND: '" << toSend << "' to " << dest->second->getFd() << std::endl;
 
-                    dest->second->sendToFD(new_message.sendMessage(*this, *dest->second, toSend));
+                    dest->second->sendToFD(new_message.sendMessage(*it->second, *dest->second, toSend));
                     break ;
                 }
             }
