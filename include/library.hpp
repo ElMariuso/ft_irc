@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 19:46:56 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/12 22:31:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,15 @@
 # include <netinet/in.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <arpa/inet.h>
 
 # include <iostream>
 # include <stdexcept>
 # include <cstdlib>
 # include <sstream>
 # include <csignal>
+# include <cstring>
+# include <netdb.h>
 
 # include <vector>
 # include <map>
