@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/14 22:32:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/14 23:48:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,11 @@ class Command
 
         /* Commands */
         static void                 welcomeMessages(Server &server, Client &client);
+        static void                 privmsgMessages(Server *server, Client *src, std::string destNickname, std::string message);
         static void                 nickMessages(Server &server, Client *client, std::string newNickname);
-        static void                 msgMessages(Server &server, Client *src, Client *dest, std::string message);
+
+        /* Messages Utils */
+        static Client*              checkForUser(Server &server, std::string nickname);
 
         /* Nick Utils */
         static bool                 nicknameIsAlreadyInUse(Server &server, std::string newNickname);

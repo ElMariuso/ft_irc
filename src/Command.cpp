@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/14 22:33:56 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/14 23:52:07 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,35 @@ void Command::welcomeMessages(Server &server, Client &client)
     client.sendToFD(welcome002);
     // client.sendToFD(welcome003);
     // client.sendToFD(welcome004);
+}
+
+void Command::privmsgMessages(Server *server, Client *src, std::string destNickname, std::string message)
+{
+    Client      *dest = Command::checkForUser(*server, destNickname);
+    std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
+        + " :No suck nick/channel" "\r\n";
+
+    if (dest == NULL)
+    {
+        Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing user.");
+        src->sendToFD(msg401);
+        return ;
+    }
+
+    std::string msg001 = ":" + src->getNickname() + " PRIVMSG " + dest->getNickname() + " :" + message + "\r\n";
+
+    Utils::debug_message(src->getNickname() + " send a message to " + dest->getNickname());
+    dest->sendToFD(msg001);
+    //402
+    //404
+    //407
+    //411
+    //412
+    //413
+    //414
+    //301
+
+    // :pseudonyme!ident@hôte RPL_PRIVMSG destinataire :message
 }
 
 void Command::nickMessages(Server &server, Client *client, std::string newNickname)
@@ -73,15 +102,26 @@ void Command::nickMessages(Server &server, Client *client, std::string newNickna
     }   
 }
 
-void Command::msgMessages(Server &server, Client *src, Client *dest, std::string message)
+/* Messages Utils */
+Client* Command::checkForUser(Server &server, std::string nickname)
 {
-    (void)server;
-    std::string msg001 = ":" + src->getNickname() + " PRIVMSG " + dest->getNickname() + " :" + message + "\r\n";
+    std::map<int, Client*>              clients;
+    std::map<int, Client*>::iterator    it;
 
-    // src->sendToFD(msg001);
-    dest->sendToFD(msg001);
-
-    // :pseudonyme!ident@hôte RPL_PRIVMSG destinataire :message
+    clients = server.getClientsList();
+    it = clients.begin();
+    if (clients.size() == 1)
+    {
+        std::cout << "SALUT" << std::endl;
+        return (NULL);
+    }
+    while (it != clients.end())
+    {
+        if (it->second && it->second->getNickname() == nickname)
+            return (it->second);
+        ++it;
+    }
+    return (NULL);
 }
 
 /* Nick Utils */

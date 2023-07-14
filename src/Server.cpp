@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 23:40:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/14 23:35:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -198,21 +198,7 @@ void Server::getMessages(const std::string &message, int from)
         Client* client = clientIterator->second;
 
         if (command.getType() == PRIVMSG)
-        {
-            std::string destStr = command.getArgs().at(0);
-            Client      *dest = NULL;
-
-            std::map<int, Client*>::iterator    destIterator;
-            for (destIterator = this->clientsList.begin(); destIterator != this->clientsList.end(); ++destIterator)
-            {
-                if (destIterator->second->getNickname() == destStr)
-                {
-                    dest = destIterator->second;
-                    break ;
-                }
-            }
-            Command::msgMessages(*this, client, dest, command.getArgs().at(1));
-        }
+            Command::privmsgMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
         else if (command.getType() == NICK)
             Command::nickMessages(*this, client, command.getArgs().at(0));
     }
