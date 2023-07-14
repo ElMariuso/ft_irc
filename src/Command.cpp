@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/15 00:30:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:37:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,6 @@ void Command::privmsgMessagesChannel(Server *server, Client *src, std::string de
         Utils::debug_message(src->getNickname() + " send a message to " + dest->getName());
     }
     (void)message;
-
-    //404
 }
 
 void Command::privmsgMessagesUser(Server *server, Client *src, std::string destNickname, std::string message)
@@ -75,7 +73,7 @@ void Command::privmsgMessagesUser(Server *server, Client *src, std::string destN
     if (dest == NULL) // ERR_NOSUCHNICK (401)
     {
         std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
-            + " :No suck nick/channel" + "\r\n";
+            + " :No such nick/channel" + "\r\n";
         
         Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing user.");
         src->sendToFD(msg401);
