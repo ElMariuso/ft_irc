@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/15 00:14:06 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:22:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 # include "library.hpp"
 
 class Server;
+class Channel;
 class Client;
 
 enum MessageType
@@ -42,6 +43,7 @@ class Command
         static void                 nickMessages(Server &server, Client *client, std::string newNickname);
 
         /* Messages Utils */
+        static Channel*             checkForChannel(Server &server, std::string nickname);
         static Client*              checkForUser(Server &server, std::string nickname);
 
         /* Nick Utils */

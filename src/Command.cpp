@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/15 00:15:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:23:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,19 @@ void Command::privmsgMessagesChannel(Server *server, Client *src, std::string de
 void Command::privmsgMessagesUser(Server *server, Client *src, std::string destNickname, std::string message)
 {
     Client      *dest = Command::checkForUser(*server, destNickname);
-    std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
-        + " :No suck nick/channel" + "\r\n";
 
     if (dest == NULL)
     {
+        std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
+            + " :No suck nick/channel" + "\r\n";
+        
         Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing user.");
         src->sendToFD(msg401);
     }
     else
     {
-        std::string msg001 = ":" + src->getNickname() + " PRIVMSG " + dest->getNickname() + " :" + message + "\r\n";
+        std::string msg001 = ":" + src->getNickname() + " PRIVMSG " \
+            + dest->getNickname() + " :" + message + "\r\n";
 
         Utils::debug_message(src->getNickname() + " send a message to " + dest->getNickname());
         dest->sendToFD(msg001);
@@ -120,6 +122,20 @@ void Command::nickMessages(Server &server, Client *client, std::string newNickna
 }
 
 /* Messages Utils */
+Channel* Command::checkForChannel(Server &server, std::string nickname)
+{
+    std::map<std::string, Channel*>             channels;
+    std::map<std::string, Channel*>::iterator   it;
+
+    channels = server.getChannelsList();
+    it = channels.find(nickname);
+    if (channels.size() == 0 || channels.size() == 1)
+        return (NULL);
+    if (it != channels.end())
+        return (it->second);
+    return (NULL);
+}
+
 Client* Command::checkForUser(Server &server, std::string nickname)
 {
     std::map<int, Client*>              clients;
