@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/14 19:43:08 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/14 20:30:47 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Command::msgMessages(Server &server, Client *src, Client *dest, std::string
     (void)server;
     std::string msg001 = ":" + src->getNickname() + " PRIVMSG " + dest->getNickname() + " :" + message + "\r\n";
 
-    src->sendToFD(msg001);
+    // src->sendToFD(msg001);
     dest->sendToFD(msg001);
 
     // :pseudonyme!ident@hôte RPL_PRIVMSG destinataire :message
