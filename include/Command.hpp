@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/13 00:48:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/14 22:32:34 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Command
 
         /* Nick Utils */
         static bool                 nicknameIsAlreadyInUse(Server &server, std::string newNickname);
+        static bool                 isNotRightNickname(Server &server, std::string newNickname);
 
         /* Setters */
         void                        setMessage(const std::string &message);

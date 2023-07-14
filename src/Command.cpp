@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/14 20:30:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/14 22:33:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,14 @@ void Command::nickMessages(Server &server, Client *client, std::string newNickna
         Utils::debug_message("Not enough arguments on NICK from: " + client->getUsername());
         client->sendToFD(nick431);
     }
+    else if (Command::isNotRightNickname(server, newNickname))
+    {
+        Utils::debug_message(client->getUsername() + " tried to change his nickname to an invalid nickname.");
+        client->sendToFD(nick432);
+    } 
     else if (Command::nicknameIsAlreadyInUse(server, newNickname))
     {
-        Utils::debug_message(client->getUsername() + " tried to change his nickname to something that already exists");
+        Utils::debug_message(client->getUsername() + " tried to change his nickname to something that already exists.");
         client->sendToFD(nick433);
     }
     else
@@ -65,13 +70,7 @@ void Command::nickMessages(Server &server, Client *client, std::string newNickna
         Utils::debug_message("Change " + client->getUsername() + " nickname to: " + newNickname);
         client->setNickname(newNickname);
         client->sendToFD(nick001);
-    }
-
-    /* Can be added later */
-    // else if ()
-    // {
-    //     client.sendToFD(nick432);
-    // }    
+    }   
 }
 
 void Command::msgMessages(Server &server, Client *src, Client *dest, std::string message)
@@ -99,6 +98,13 @@ bool Command::nicknameIsAlreadyInUse(Server &server, std::string newNickname)
             return (true);
         ++it;
     }
+    return (false);
+}
+
+bool Command::isNotRightNickname(Server &server, std::string newNickname)
+{
+    if (newNickname == server.getName())
+        return (true);
     return (false);
 }
 
