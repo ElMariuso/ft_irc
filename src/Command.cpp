@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/15 00:23:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:30:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,20 @@ void Command::privmsgMessages(Server *server, Client *src, std::string destNickn
 
 void Command::privmsgMessagesChannel(Server *server, Client *src, std::string destNickname, std::string message)
 {
-    (void)server;
-    (void)src;
-    (void)destNickname;
+    Channel *dest = Command::checkForChannel(*server, destNickname);
+    
+    if (dest == NULL) // ERR_CANNOTSENDTOCHAN (404)
+    {
+        std::string msg404 = ":" + server->getName() + " 404 " + destNickname \
+            + " :Cannot send to channel" + "\r\n";
+
+        Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing channel.");
+        src->sendToFD(msg404);
+    }
+    else // Sending to channels
+    {
+        Utils::debug_message(src->getNickname() + " send a message to " + dest->getName());
+    }
     (void)message;
 
     //404
@@ -59,9 +70,9 @@ void Command::privmsgMessagesChannel(Server *server, Client *src, std::string de
 
 void Command::privmsgMessagesUser(Server *server, Client *src, std::string destNickname, std::string message)
 {
-    Client      *dest = Command::checkForUser(*server, destNickname);
+    Client  *dest = Command::checkForUser(*server, destNickname);
 
-    if (dest == NULL)
+    if (dest == NULL) // ERR_NOSUCHNICK (401)
     {
         std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
             + " :No suck nick/channel" + "\r\n";
@@ -69,7 +80,7 @@ void Command::privmsgMessagesUser(Server *server, Client *src, std::string destN
         Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing user.");
         src->sendToFD(msg401);
     }
-    else
+    else // Sending to users
     {
         std::string msg001 = ":" + src->getNickname() + " PRIVMSG " \
             + dest->getNickname() + " :" + message + "\r\n";
