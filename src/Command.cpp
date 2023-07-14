@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/15 01:05:19 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/15 01:09:52 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,11 @@ void Command::privmsgMessagesChannel(Server *server, Client *src, std::string de
     }
     else // Sending to channels
     {
+        std::string msg001 = ":" + src->getNickname() + " PRIVMSG " \
+            + destNickname + " :" + message + "\r\n";
         for (std::map<int, Client*>::iterator it = dest->getConnected().begin(); it != dest->getConnected().end(); ++it)
         {
             Client  *client = it->second;
-            std::string msg001 = ":" + src->getNickname() + " PRIVMSG " \
-                + destNickname + " :" + message + "\r\n";
 
             Utils::debug_message(src->getNickname() + " send a message to " + client->getNickname());
             client->sendToFD(msg001);
