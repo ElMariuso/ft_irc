@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/14 23:52:07 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:05:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void Command::privmsgMessages(Server *server, Client *src, std::string destNickn
 {
     Client      *dest = Command::checkForUser(*server, destNickname);
     std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
-        + " :No suck nick/channel" "\r\n";
+        + " :No suck nick/channel" + "\r\n";
 
     if (dest == NULL)
     {
@@ -111,10 +111,7 @@ Client* Command::checkForUser(Server &server, std::string nickname)
     clients = server.getClientsList();
     it = clients.begin();
     if (clients.size() == 1)
-    {
-        std::cout << "SALUT" << std::endl;
         return (NULL);
-    }
     while (it != clients.end())
     {
         if (it->second && it->second->getNickname() == nickname)
