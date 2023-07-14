@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/15 00:05:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/15 00:15:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,24 @@ void Command::welcomeMessages(Server &server, Client &client)
 
 void Command::privmsgMessages(Server *server, Client *src, std::string destNickname, std::string message)
 {
+    if (destNickname[0] == '#')
+        Command::privmsgMessagesChannel(server, src, destNickname, message);
+    else
+        Command::privmsgMessagesUser(server, src, destNickname, message);
+}
+
+void Command::privmsgMessagesChannel(Server *server, Client *src, std::string destNickname, std::string message)
+{
+    (void)server;
+    (void)src;
+    (void)destNickname;
+    (void)message;
+
+    //404
+}
+
+void Command::privmsgMessagesUser(Server *server, Client *src, std::string destNickname, std::string message)
+{
     Client      *dest = Command::checkForUser(*server, destNickname);
     std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
         + " :No suck nick/channel" + "\r\n";
@@ -49,23 +67,22 @@ void Command::privmsgMessages(Server *server, Client *src, std::string destNickn
     {
         Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing user.");
         src->sendToFD(msg401);
-        return ;
     }
+    else
+    {
+        std::string msg001 = ":" + src->getNickname() + " PRIVMSG " + dest->getNickname() + " :" + message + "\r\n";
 
-    std::string msg001 = ":" + src->getNickname() + " PRIVMSG " + dest->getNickname() + " :" + message + "\r\n";
-
-    Utils::debug_message(src->getNickname() + " send a message to " + dest->getNickname());
-    dest->sendToFD(msg001);
+        Utils::debug_message(src->getNickname() + " send a message to " + dest->getNickname());
+        dest->sendToFD(msg001);
+    }
     //402
-    //404
+
     //407
     //411
     //412
     //413
     //414
     //301
-
-    // :pseudonyme!ident@hôte RPL_PRIVMSG destinataire :message
 }
 
 void Command::nickMessages(Server &server, Client *client, std::string newNickname)
@@ -110,7 +127,7 @@ Client* Command::checkForUser(Server &server, std::string nickname)
 
     clients = server.getClientsList();
     it = clients.begin();
-    if (clients.size() == 1)
+    if (clients.size() == 0 || clients.size() == 1)
         return (NULL);
     while (it != clients.end())
     {
