@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 21:29:41 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 21:39:36 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,7 @@ void Server::getMessages(const std::string &message, const int from)
         else if (command.getType() != UNKNOW)
         {
             Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
+            Command::authentificationMessages(*this, *client);
         }
     }
     else

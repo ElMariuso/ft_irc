@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 21:26:31 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 21:38:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,18 @@ void Command::welcomeMessages(const Server &server, Client *client, const std::s
     }
 }
 
-// void Command::
+void Command::authentificationMessages(const Server &server, const Client &client)
+{
+    std::stringstream   authentification;
+    std::string         message;
+
+    authentification << ":" << server.getName() << " 451 " << client.getNickname() << " :You have not registered" << "\r\n";
+    message = authentification.str();
+
+    std::cout << "SALUT: " << message << std::endl;
+
+    client.sendToFD(message);
+}
 
 void Command::privmsgMessages(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
