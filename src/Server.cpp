@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 17:35:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 18:04:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,7 @@ int Server::acceptNewConnection()
     /* Accept new connection */
     client_addr_len = sizeof(client_addr);
     client_socket = accept(this->serverSocket, (struct sockaddr*)&client_addr, &client_addr_len);
+    fcntl(client_socket, F_SETFL, O_NONBLOCK);
     return (client_socket);
 }
 
