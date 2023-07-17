@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 15:35:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:41:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,30 +138,23 @@ void Command::nickMessages(Server &server, Client *client, std::string newNickna
 }
 
 /* Messages Utils */
-Channel* Command::checkForChannel(Server &server, std::string nickname)
+Channel* Command::checkForChannel(const Server &server, const std::string &nickname)
 {
-    std::map<std::string, Channel*>             channels;
-    std::map<std::string, Channel*>::iterator   it;
-
-    channels = server.getChannelsList();
-    it = channels.find(nickname);
-    if (channels.size() == 0 || channels.size() == 1)
-        return (NULL);
+    const std::map<std::string, Channel*>           &channels = server.getChannelsList();
+    std::map<std::string, Channel*>::const_iterator it = channels.find(nickname);
+    
     if (it != channels.end())
         return (it->second);
     return (NULL);
 }
 
-Client* Command::checkForUser(Server &server, std::string nickname)
+Client* Command::checkForUser(const Server &server, const std::string &nickname)
 {
-    std::map<int, Client*>              clients;
-    std::map<int, Client*>::iterator    it;
-
-    clients = server.getClientsList();
-    it = clients.begin();
+    const std::map<int, Client*>  &clients = server.getClientsList();
+    
     if (clients.size() == 0 || clients.size() == 1)
         return (NULL);
-    while (it != clients.end())
+    for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
     {
         if (it->second && it->second->getNickname() == nickname)
             return (it->second);

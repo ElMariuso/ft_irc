@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 15:29:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:39:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ class Command
         static void                 nickMessages(Server &server, Client *client, std::string newNickname);
 
         /* Messages Utils */
-        static Channel*             checkForChannel(Server &server, std::string nickname);
-        static Client*              checkForUser(Server &server, std::string nickname);
+        static Channel*             checkForChannel(const Server &server, const std::string &nickname);
+        static Client*              checkForUser(const Server &server, const std::string &nickname);
 
         /* Nick Utils */
         static bool                 nicknameIsAlreadyInUse(const Server &server, const std::string &newNickname);
