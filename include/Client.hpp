@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/10 18:30:02 by root             ###   ########.fr       */
+/*   Updated: 2023/07/12 22:28:40 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
-
 # include "library.hpp"
 
 class Client
@@ -36,16 +35,19 @@ class Client
 		/* setters */
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
+		void		setHostname();
 		
 		/* getters */
 		int			getFd();
 		std::string	getNickname();
 		std::string	getUsername();
+		std::string	getHostname();
         
     private:
         int         _fd;
         std::string _nickname;
         std::string _username;
+		std::string	_hostname;
 		std::string _modesList;
 };
 

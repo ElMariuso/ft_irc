@@ -3,25 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 11:49:49 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/12 22:48:35 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Client.hpp"
 
-Client::Client() {
-}
+Client::Client() {}
 
-Client::Client(int fd) : _fd(fd), _nickname("DefaultNickname")
+Client::Client(int fd) : _fd(fd)
 {
 	std::stringstream ss;
 	
 	ss << fd; // turn int to std::string
-	_username = "DefaultUsername" + ss.str(); // put the file descriptor in client's default username to help identify him
+	this->_username = "User" + ss.str(); // put the file descriptor in client's default username to help identify him
+	this->_nickname = "Guest" + ss.str();
 	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
+	this->_hostname = "127.0.0.1";
+	this->setHostname();
 }
 
 Client::~Client()
@@ -120,8 +122,48 @@ bool Client::hasModeLetter(char mode)
 /* setters */
 void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
 void Client::setUsername(std::string userName) { this->_username = userName; }
+void Client::setHostname()
+{
+	sockaddr_storage	addr;
+    socklen_t 			len;
+    char 				clientHost[NI_MAXHOST];
+    char 				*clientIP;
+	struct sockaddr_in	*s;
+	struct hostent		*hostEntry;
+
+	len = sizeof(addr);
+    if (getsockname(this->_fd, (struct sockaddr*)&addr, &len) == -1)
+	{
+		Utils::error_message("Error getting socket information");
+		return ;
+    }
+	if (addr.ss_family == AF_INET)
+	{
+		s = (struct sockaddr_in*)&addr;
+		clientIP = inet_ntoa(s->sin_addr);
+	}
+	else if (addr.ss_family == AF_INET6)
+	{
+		Utils::error_message("IPv6 address not supported");
+		return ;
+    }
+	else
+	{
+		Utils::error_message("Unsupported address family");
+		return ;
+	}
+	hostEntry = gethostbyname(clientIP);
+	if (hostEntry == NULL)
+	{
+		Utils::error_message("Error during reverse resolution");
+		return ;
+	}
+	Utils::ft_strncpy(clientHost, hostEntry->h_name, NI_MAXHOST);
+	this->_hostname = clientHost;
+}
 
 /* getters */
 int			Client::getFd() { return (this->_fd); }
 std::string	Client::getNickname() { return (this->_nickname); }
 std::string	Client::getUsername() { return (this->_username); }
+std::string	Client::getHostname() { return (this->_hostname); } 

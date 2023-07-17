@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   library.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 16:02:54 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/12 22:31:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define WHITE      "\033[37m"
 # define PINK       "\033[38;5;206m"
 
+# define BOLD       "\x02"
+
 /* Define ******************************************************************* */
 
 # define BUFFER_SIZE 1024
@@ -38,12 +40,15 @@
 # include <netinet/in.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <arpa/inet.h>
 
 # include <iostream>
 # include <stdexcept>
 # include <cstdlib>
 # include <sstream>
 # include <csignal>
+# include <cstring>
+# include <netdb.h>
 
 # include <vector>
 # include <map>
@@ -54,7 +59,7 @@
 # include "Channel.hpp"
 # include "Client.hpp"
 # include "Utils.hpp"
-# include "Message.hpp"
+# include "Command.hpp"
 # include "Server.hpp"
 
 #endif

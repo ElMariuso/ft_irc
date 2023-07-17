@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 12:38:16 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/12 00:29:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,20 @@ class Channel
     public:
 
 		/* mode function */
-		int		addMode(char mode); // add an channel mode, return 0 if it went well
-		int		rmMode(char mode); // remove an channel mode, return 0 if it went well
-		bool	hasMode(char mode); // search if channel has mode activated
-		int		addOp(Client client); // add a channel operator, return 0 if it went well
-		int		rmOp(Client client); // remove a channel operator, return 0 if it went well
-		bool	isOp(Client client); // search if client is a channel operator
-		void	setTopic(std::string topic); // change the channel topic
+		int						addMode(char mode); // add an channel mode, return 0 if it went well
+		int						rmMode(char mode); // remove an channel mode, return 0 if it went well
+		bool					hasMode(char mode); // search if channel has mode activated
+		int						addOp(Client client); // add a channel operator, return 0 if it went well
+		int						rmOp(Client client); // remove a channel operator, return 0 if it went well
+		bool					isOp(Client client); // search if client is a channel operator
+		void					setTopic(std::string topic); // change the channel topic
+
+		/* Getters */
+		std::string				getName();
+        std::map<int, Client*>  getConnected();
+		std::vector<int> 		getOperators();
+		std::string				getModesList();
+		std::string				getTopic();
 		
     private:
         std::string             _name;

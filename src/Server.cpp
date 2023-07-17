@@ -6,7 +6,11 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
+<<<<<<< HEAD
+/*   Updated: 2023/07/14 23:35:15 by mthiry           ###   ########.fr       */
+=======
 /*   Updated: 2023/07/17 03:08:55 by mthiry           ###   ########.fr       */
+>>>>>>> main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,19 +158,16 @@ void Server::addNewClient(int client_socket)
 
 void Server::handleNewConnection(Client &client)
 {
-    (void)client;
-    std::string welcome = "Welcome to " + this->name + "!";
-    std::string welcomeResponse = ":" + this->name + " 001 " + client.getNickname() + " :" + welcome + "\r\n";
-    
-    client.sendToFD(welcomeResponse);
+    Command::welcomeMessages(*this, client);
 }
 
 /* Messages */
 int Server::handleEvent(int client_socket)
 {
-    ssize_t		ret;
-    char		buffer[BUFFER_SIZE + 1];
-    std::string msg;
+    ssize_t		                ret;
+    char		                buffer[BUFFER_SIZE + 1];
+    std::string                 msg;
+    std::vector<std::string>    commands;
 
     msg.clear();
     ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
@@ -184,7 +185,29 @@ int Server::handleEvent(int client_socket)
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
     Utils::debug_message(Utils::intToString(client_socket) + " send a message: " + msg);
+
+    commands = this->splitCommands(msg, '\n');
+    for (std::size_t i = 0; i != commands.size(); ++i)
+        this->getMessages(commands.at(i), client_socket);
     return (ret);
+}
+
+void Server::getMessages(const std::string &message, int from)
+{
+    Command command(message);
+
+    std::map<int, Client*>::iterator clientIterator = this->clientsList.find(from);
+    if (clientIterator != this->clientsList.end())
+    {
+        Client* client = clientIterator->second;
+
+        if (command.getType() == PRIVMSG)
+            Command::privmsgMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
+        else if (command.getType() == NICK)
+            Command::nickMessages(*this, client, command.getArgs().at(0));
+    }
+    else
+        Utils::error_message("Client not found from socket: " + Utils::intToString(from));
 }
 
 /* Logout */
@@ -252,6 +275,17 @@ int Server::createServerSocket(int port)
     return (0);
 }
 
+std::vector<std::string> Server::splitCommands(const std::string &message, char delimiter)
+{
+    std::vector<std::string>    commands;
+    std::stringstream           ss(message);
+    std::string                 command;
+
+    while (std::getline(ss, command, delimiter))
+        commands.push_back(command);
+    return (commands);
+}
+
 /* Setters */
 void Server::setServerSocket(int serverSocket) { this->serverSocket = serverSocket; }
 void Server::setName(std::string name) { this->name = name; }
@@ -262,3 +296,11 @@ void Server::setClient(int fd, Client *client) { this->clientsList.insert(std::m
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
+
+/* Getters */
+int Server::getServerSocket() { return (this->serverSocket); }
+std::string Server::getName() { return (this->name); }
+std::string Server::getPassword() { return (this->password); }
+std::vector<struct pollfd> Server::getFds() { return (this->fds); }
+std::map<int, Client*> Server::getClientsList() { return (this->clientsList); }
+std::map<std::string, Channel*> Server::getChannelsList() { return (this->channelsList); }

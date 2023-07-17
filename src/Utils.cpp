@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 16:02:05 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/07/12 22:48:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,15 @@ bool Utils::stop(int indicator)
 	if (indicator == 2)
 		stop = true;
 	return (stop);
+}
+
+char*	Utils::ft_strncpy(char* dest, const char* src, size_t n)
+{
+    size_t	i;
+	
+    for (i = 0; i < n && src[i] != '\0'; ++i)
+        dest[i] = src[i];
+    for (; i < n; ++i)
+        dest[i] = '\0';
+    return (dest);
 }
