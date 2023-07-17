@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/11 17:48:16 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 03:08:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,3 +251,14 @@ int Server::createServerSocket(int port)
     Utils::debug_message("Server socket created and listening on port");
     return (0);
 }
+
+/* Setters */
+void Server::setServerSocket(int serverSocket) { this->serverSocket = serverSocket; }
+void Server::setName(std::string name) { this->name = name; }
+void Server::setPassword(std::string password) { this->password = password; }
+void Server::setFd(struct pollfd fd) { this->fds.push_back(fd); }
+void Server::setFds(std::vector<struct pollfd> fds) { this->fds = fds; }
+void Server::setClient(int fd, Client *client) { this->clientsList.insert(std::make_pair(fd, client)); }
+void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
+void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
+void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
