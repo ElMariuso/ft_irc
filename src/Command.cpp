@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 22:50:15 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 01:18:26 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,34 +206,46 @@ void Command::setType()
 
 void Command::setArgs()
 {
-    std::size_t pos;
-    std::string member;
+    std::string         member;
+    std::istringstream  iss(this->message);
+    bool                breakReached;
+    std::stringstream   rest;
 
-    while (!this->message.empty())
+    breakReached = false;
+    while (std::getline(iss, member, ' '))
     {
-        pos = this->message.find(' ');
-        if (pos != std::string::npos)
+        if (member[0] == ':')
         {
-            member = this->message.substr(0, pos);
-            this->args.push_back(member);
-            this->message.erase(0, pos + 1);
-        }
-        else
-        {
-            member = this->message.substr(0, this->message.find('\r'));
-            this->args.push_back(member);
-            this->message.clear();
-        }
-        if (this->message[0] == ':')
+            breakReached = true;
             break ;
+        }
+        if (!member.empty())
+            this->args.push_back(member);
     }
-    if (!this->message.empty())
+    if (breakReached)
     {
-        this->message = this->message.substr(0, this->message.find('\r'));
-        pos = this->message.find(':');
-        if (pos != std::string::npos)
-            this->message.erase(0, pos);
-        this->args.push_back(this->message);
+        rest << member;
+        while (std::getline(iss, member))
+        {
+            if (!member.empty())
+                rest << ' ' << member;
+        }
+        member = rest.str();
+        if (!member.empty())
+        {
+            if (member.length() >= 2)
+                member = member.substr(0, member.length() - 1);
+            this->args.push_back(member);
+        }
+    }
+    else if (!this->args.empty())
+    {
+        member = this->args.back();
+        if (member.length() >= 2)
+        {
+            member = member.substr(0, member.length() - 1);
+            this->args.back() = member;
+        }
     }
 }
 
