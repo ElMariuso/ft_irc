@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 16:53:15 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:00:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,13 +153,10 @@ Client* Command::checkForUser(const Server &server, const std::string &nickname)
 {
     const std::map<int, Client*>  &clients = server.getClientsList();
     
-    if (clients.size() == 0 || clients.size() == 1)
-        return (NULL);
     for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
     {
         if (it->second && it->second->getNickname() == nickname)
             return (it->second);
-        ++it;
     }
     return (NULL);
 }
@@ -179,9 +176,7 @@ bool Command::nicknameIsAlreadyInUse(const Server &server, const std::string &ne
 
 bool Command::isNotRightNickname(const Server &server, const std::string &newNickname)
 {
-    if (newNickname == server.getName())
-        return (true);
-    return (false);
+    return (newNickname != server.getName());
 }
 
 /* Setters */
