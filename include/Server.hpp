@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 17:33:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:35:44 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,18 @@ class Server
 
         /* New connection */
         int                             acceptNewConnection();
-        void                            addNewClient(int client_socket);
+        void                            addNewClient(const int client_socket);
 
         /* Messages */
-        int                             handleEvent(int client_socket);
-        void                            getMessages(const std::string &message, int from);
+        int                             handleEvent(const int client_socket);
+        void                            getMessages(const std::string &message, const int from);
         
         /* Logout */
-        void                            handleDisconnection(int client_socket);
+        void                            handleDisconnection(const int client_socket);
         
         /* Utils */
-        int                             createServerSocket(int port);
-        std::vector<std::string>        splitCommands(const std::string &message, char delimiter);
+        int                             createServerSocket(const int port);
+        std::vector<std::string>        splitCommands(const std::string &message, const char delimiter);
 
         /* Setters */
         void                            setServerSocket(int serverSocket);

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 17:33:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:35:50 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ int Server::acceptNewConnection()
     return (client_socket);
 }
 
-void Server::addNewClient(int client_socket)
+void Server::addNewClient(const int client_socket)
 {
     struct pollfd   clientPfd;
 
@@ -152,7 +152,7 @@ void Server::addNewClient(int client_socket)
 }
 
 /* Messages */
-int Server::handleEvent(int client_socket)
+int Server::handleEvent(const int client_socket)
 {
     ssize_t		                ret;
     char		                buffer[BUFFER_SIZE + 1];
@@ -182,7 +182,7 @@ int Server::handleEvent(int client_socket)
     return (ret);
 }
 
-void Server::getMessages(const std::string &message, int from)
+void Server::getMessages(const std::string &message, const int from)
 {
     Command command(message);
 
@@ -201,7 +201,7 @@ void Server::getMessages(const std::string &message, int from)
 }
 
 /* Logout */
-void Server::handleDisconnection(int client_socket)
+void Server::handleDisconnection(const int client_socket)
 {
     /* Manage logout */
     std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
@@ -220,7 +220,7 @@ void Server::handleDisconnection(int client_socket)
 }
 
 /* Utils */
-int Server::createServerSocket(int port)
+int Server::createServerSocket(const int port)
 {
     struct sockaddr_in  addr;
     int                 optVal;
@@ -265,7 +265,7 @@ int Server::createServerSocket(int port)
     return (0);
 }
 
-std::vector<std::string> Server::splitCommands(const std::string &message, char delimiter)
+std::vector<std::string> Server::splitCommands(const std::string &message, const char delimiter)
 {
     std::vector<std::string>    commands;
     std::stringstream           ss(message);
