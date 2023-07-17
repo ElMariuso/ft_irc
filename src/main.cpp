@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 20:43:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/15 00:48:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 23:51:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void ctrlcHandler(int signal)
 {
 	(void)signal;
 	Utils::stop(2);
+    std::cout << std::endl;
 }
 
 int main(int argc, char **argv)
