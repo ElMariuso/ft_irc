@@ -6,11 +6,18 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/12 00:31:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:07:26 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Channel.hpp"
+
+Channel::Channel(const std::string &name)
+{
+	this->setName(name);
+	this->setTopic(NULL);
+}
+Channel::~Channel() {}
 
 /* mode function */
 int	Channel::addMode(char mode)
@@ -89,10 +96,14 @@ bool Channel::isOp(Client client)
 	return (false);
 }
 
-void	Channel::setTopic(std::string topic)
-{
-	_topic = topic;
-}
+/* Setters */
+void Channel::setName(const std::string &name) { this->_name = name; }
+void Channel::setConnected(Client *client) { this->_connected.insert(std::make_pair(client->getFd(), client)); }
+void Channel::setConnectedList(std::map<int, Client*> connected) { this->_connected = connected; }
+void Channel::setOperator(int fd) { this->_operators.push_back(fd); }
+void Channel::setOperators(std::vector<int> operators) { this->_operators = operators; }
+void Channel::setModesList(const std::string &modesList) { this->_modesList = modesList; }
+void Channel::setTopic(const std::string &topic) { this->_topic = topic; }
 
 /* Getters */
 std::string Channel::getName() { return (this->_name); }
