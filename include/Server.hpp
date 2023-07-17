@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 14:39:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:31:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,12 @@ class Server
         void                            setChannels(std::map<std::string, Channel*> channels);
 
         /* Getters */
-        int                             getServerSocket();
-        std::string                     getName();
-        std::string                     getPassword();
-        std::vector<struct pollfd>      getFds();
-        std::map<int, Client*>          getClientsList();
-        std::map<std::string, Channel*> getChannelsList();
+        int                             getServerSocket() const;
+        std::string                     getName() const;
+        std::string                     getPassword() const;
+        std::vector<struct pollfd>      getFds() const;
+        std::map<int, Client*>          getClientsList() const;
+        std::map<std::string, Channel*> getChannelsList() const;
 
     private:
         int                             serverSocket;

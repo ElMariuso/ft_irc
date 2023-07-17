@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/15 01:09:52 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:35:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,23 +171,19 @@ Client* Command::checkForUser(Server &server, std::string nickname)
 }
 
 /* Nick Utils */
-bool Command::nicknameIsAlreadyInUse(Server &server, std::string newNickname)
+bool Command::nicknameIsAlreadyInUse(const Server &server, const std::string &newNickname)
 {
-    std::map<int, Client*>              clients;
-    std::map<int, Client*>::iterator    it;
+    const std::map<int, Client*>  &clients = server.getClientsList();
 
-    clients = server.getClientsList();
-    it = clients.begin();
-    while (it != clients.end())
+    for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
     {
         if (it->second->getNickname() == newNickname)
             return (true);
-        ++it;
     }
     return (false);
 }
 
-bool Command::isNotRightNickname(Server &server, std::string newNickname)
+bool Command::isNotRightNickname(const Server &server, const std::string &newNickname)
 {
     if (newNickname == server.getName())
         return (true);

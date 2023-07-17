@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 14:50:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:31:47 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,9 +294,9 @@ void Server::setChannel(std::string name, Channel *channel) { this->channelsList
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
 
 /* Getters */
-int Server::getServerSocket() { return (this->serverSocket); }
-std::string Server::getName() { return (this->name); }
-std::string Server::getPassword() { return (this->password); }
-std::vector<struct pollfd> Server::getFds() { return (this->fds); }
-std::map<int, Client*> Server::getClientsList() { return (this->clientsList); }
-std::map<std::string, Channel*> Server::getChannelsList() { return (this->channelsList); }
+int Server::getServerSocket() const { return (this->serverSocket); }
+std::string Server::getName() const { return (this->name); }
+std::string Server::getPassword() const { return (this->password); }
+std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
+std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
+std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
