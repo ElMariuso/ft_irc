@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 22:06:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:08:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,11 @@ class Channel
 		void 					setTopic(const std::string &topic); // change the channel topic
 
 		/* Getters */
-		std::string				getName();
-        std::map<int, Client*>  getConnected();
-		std::vector<int> 		getOperators();
-		std::string				getModesList();
-		std::string				getTopic();
+		std::string				getName() const;
+        std::map<int, Client*>  getConnected() const;
+		std::vector<int> 		getOperators() const;
+		std::string				getModesList() const;
+		std::string				getTopic() const;
 		
     private:
         std::string             _name;

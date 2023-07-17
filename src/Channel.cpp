@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/17 22:07:26 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:08:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,8 @@ void Channel::setModesList(const std::string &modesList) { this->_modesList = mo
 void Channel::setTopic(const std::string &topic) { this->_topic = topic; }
 
 /* Getters */
-std::string Channel::getName() { return (this->_name); }
-std::map<int, Client*> Channel::getConnected() { return (this->_connected); }
-std::vector<int> Channel::getOperators() { return (this->_operators); }
-std::string Channel::getModesList() { return (this->_modesList); }
-std::string Channel::getTopic() { return (this->_topic); }
+std::string Channel::getName() const { return (this->_name); }
+std::map<int, Client*> Channel::getConnected() const { return (this->_connected); }
+std::vector<int> Channel::getOperators() const { return (this->_operators); }
+std::string Channel::getModesList() const { return (this->_modesList); }
+std::string Channel::getTopic() const { return (this->_topic); }
