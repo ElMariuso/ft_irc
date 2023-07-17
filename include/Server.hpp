@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 16:14:40 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:33:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Channel;
 class Server
 {
     public:
-        Server(std::string port_str, std::string password, std::string name);
+        Server(const std::string port_str, const std::string password, const std::string name);
         ~Server();
 
         /* Main Process */

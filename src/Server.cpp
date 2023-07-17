@@ -6,13 +6,13 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 17:15:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:33:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
-Server::Server(std::string port_str, std::string password, std::string name)
+Server::Server(const std::string port_str, const std::string password, const std::string name)
 {
     int ret;
 
