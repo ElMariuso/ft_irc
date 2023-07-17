@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 17:08:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 19:56:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ bool Client::hasModeLetter(char mode)
 }
 
 /* setters */
+void Client::setIsAuthenticated(bool isAuthenticated) { this->isAuthenticated = isAuthenticated; }
 void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
 void Client::setUsername(std::string userName) { this->_username = userName; }
 void Client::setHostname()
@@ -165,6 +166,7 @@ void Client::setHostname()
 
 /* getters */
 int			Client::getFd() const { return (this->_fd); }
+bool		Client::getIsAuthenticated() const { return (this->isAuthenticated); }
 std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 

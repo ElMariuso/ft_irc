@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 15:46:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 19:56:35 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,18 +33,21 @@ class Client
 		bool	hasModeLetter(char mode); // search if client has mode activated with the mode's letter
 
 		/* Setters */
+		void		setIsAuthenticated(bool isAuthenticated);
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
 		void		setHostname();
 		
 		/* Getters */
 		int			getFd() const;
+		bool		getIsAuthenticated() const;
 		std::string	getNickname() const;
 		std::string	getUsername() const;
 		std::string	getHostname() const;
         
     private:
         int         _fd;
+		bool		isAuthenticated;
         std::string _nickname;
         std::string _username;
 		std::string	_hostname;
