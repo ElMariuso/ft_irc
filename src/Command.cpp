@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 01:18:26 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 01:20:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,10 +231,9 @@ void Command::setArgs()
                 rest << ' ' << member;
         }
         member = rest.str();
-        if (!member.empty())
+        if (!member.empty() && member.length() >= 2)
         {
-            if (member.length() >= 2)
-                member = member.substr(0, member.length() - 1);
+            member = member.substr(0, member.length() - 1);
             this->args.push_back(member);
         }
     }
