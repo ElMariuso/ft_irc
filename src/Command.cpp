@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 15:41:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:53:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,22 +21,23 @@ Command::Command(const std::string &message)
 Command::~Command() {}
 
 /* Commands */
-void Command::welcomeMessages(Server &server, Client &client)
+void Command::welcomeMessages(const Server &server, const Client &client)
 {
-    std::string welcome001 = ":" + server.getName() + " 001 " + client.getNickname() \
-        + " :Welcome to " + server.getName() + ", " + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + "\r\n";
-    std::string welcome002 = ":" + server.getName() + " 002 " + client.getNickname() \
-        + " :Your host is " + server.getName() + ", running version 0.1" + "\r\n";
-    std::string welcome003 = ":" + server.getName() + " 003 " + client.getNickname() \
-        + " :..." + "\r\n";
-    std::string welcome004 = ":" + server.getName() + " 004 " + client.getNickname() \
-        + " :..." + "\r\n";
-        
-    Utils::debug_message("Send welcome message to: " + client.getUsername());
-    client.sendToFD(welcome001);
-    client.sendToFD(welcome002);
-    // client.sendToFD(welcome003);
-    // client.sendToFD(welcome004);
+    std::stringstream   welcome;
+    std::string         allMessages;
+
+    welcome << ":" << server.getName() << " 001 " << client.getNickname() << " :Welcome to " << server.getName() \
+        << ", " << client.getNickname() << "!" << client.getUsername() << "@" << client.getHostname() << "\r\n";
+    welcome << ":" << server.getName() << " 002 " << client.getNickname() << " :Your host is " << server.getName() \
+        << ", running version 0.1" << "\r\n";
+    // std::string welcome003 = ":" + server.getName() + " 003 " + client.getNickname()
+    //     + " :..." + "\r\n";
+    // std::string welcome004 = ":" + server.getName() + " 004 " + client.getNickname()
+    //     + " :..." + "\r\n";
+    allMessages = welcome.str();
+
+    Utils::debug_message("Send welcome messages to: " + client.getUsername());
+    client.sendToFD(allMessages);
 }
 
 void Command::privmsgMessages(Server *server, Client *src, std::string destNickname, std::string message)
@@ -230,6 +231,6 @@ void Command::setArgs()
 }
 
 /* Getters */
-std::string Command::getMessage() { return (this->message); }
-MessageType Command::getType() { return (this->type); }
-std::vector<std::string> Command::getArgs() { return (this->args); }
+std::string Command::getMessage() const { return (this->message); }
+MessageType Command::getType() const { return (this->type); }
+std::vector<std::string> Command::getArgs() const { return (this->args); }

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 15:39:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:45:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Command
         ~Command();
 
         /* Commands */
-        static void                 welcomeMessages(Server &server, Client &client);
+        static void                 welcomeMessages(const Server &server, const Client &client);
         static void                 privmsgMessages(Server *server, Client *src, std::string destNickname, std::string message);
         static void                 privmsgMessagesChannel(Server *server, Client *src, std::string destNickname, std::string message);
         static void                 privmsgMessagesUser(Server *server, Client *src, std::string destNickname, std::string message);
@@ -56,9 +56,9 @@ class Command
         void                        setArgs();
 
         /* Getters */
-        std::string                 getMessage();
-        MessageType                 getType();
-        std::vector<std::string>    getArgs();
+        std::string                 getMessage() const;
+        MessageType                 getType() const;
+        std::vector<std::string>    getArgs() const;
         
     private:
         std::string                 message;

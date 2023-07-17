@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 22:28:40 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:46:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class Client
         ~Client();
 
 		/* function */
-		void		sendToFD(std::string str); // write a string on the client's fd
+		void		sendToFD(std::string str) const; // write a string on the client's fd
 		std::string	receiveFromFD(); // receive and return a string written by the client
 
 		/* mode function */
@@ -32,16 +32,16 @@ class Client
 		bool	hasMode(std::string mode); // search if client has mode activated with the mode's name
 		bool	hasModeLetter(char mode); // search if client has mode activated with the mode's letter
 
-		/* setters */
+		/* Setters */
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
 		void		setHostname();
 		
-		/* getters */
-		int			getFd();
-		std::string	getNickname();
-		std::string	getUsername();
-		std::string	getHostname();
+		/* Getters */
+		int			getFd() const;
+		std::string	getNickname() const;
+		std::string	getUsername() const;
+		std::string	getHostname() const;
         
     private:
         int         _fd;

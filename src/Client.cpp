@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 22:48:35 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:47:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ Client::~Client()
 }
 
 /* function */
-void Client::sendToFD(std::string str)
+void Client::sendToFD(std::string str) const
 {
 	send(_fd, str.c_str(), str.size(), 0); // write "str" on "_fd"
 }
@@ -163,7 +163,7 @@ void Client::setHostname()
 }
 
 /* getters */
-int			Client::getFd() { return (this->_fd); }
-std::string	Client::getNickname() { return (this->_nickname); }
-std::string	Client::getUsername() { return (this->_username); }
-std::string	Client::getHostname() { return (this->_hostname); } 
+int			Client::getFd() const { return (this->_fd); }
+std::string	Client::getNickname() const { return (this->_nickname); }
+std::string	Client::getUsername() const { return (this->_username); }
+std::string	Client::getHostname() const { return (this->_hostname); } 
