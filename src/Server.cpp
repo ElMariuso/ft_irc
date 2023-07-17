@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 21:11:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 21:29:41 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void Server::getMessages(const std::string &message, const int from)
         Client* client = clientIterator->second;
 
         if (command.getType() == PASS)
-            Command::welcomeMessages(*this, this->clientsList.find(from)->second);
+            Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
         if (client->getIsAuthenticated() == true)
         {
             if (command.getType() == PRIVMSG)
@@ -201,7 +201,7 @@ void Server::getMessages(const std::string &message, const int from)
             else if (command.getType() == NICK)
                 Command::nickMessages(*this, client, command.getArgs().at(0));
         }
-        else
+        else if (command.getType() != UNKNOW)
         {
             Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
         }
