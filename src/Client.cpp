@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 19:56:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 20:07:53 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Client::Client(int fd) : _fd(fd)
 	std::stringstream ss;
 	
 	ss << fd; // turn int to std::string
+	this->setIsAuthenticated(false);
 	this->_username = "User" + ss.str(); // put the file descriptor in client's default username to help identify him
 	this->_nickname = "Guest" + ss.str();
 	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode

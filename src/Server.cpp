@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 18:04:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 21:11:09 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int Server::processServer()
             }
             this->addNewClient(new_socket);
             Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
-            Command::welcomeMessages(*this, *(this->clientsList.find(new_socket))->second);
+            Command::connectionMessage(*this, *(this->clientsList.find(new_socket)->second));
         }
 
         /* Browse existing clients sockets */
@@ -192,10 +192,19 @@ void Server::getMessages(const std::string &message, const int from)
     {
         Client* client = clientIterator->second;
 
-        if (command.getType() == PRIVMSG)
-            Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
-        else if (command.getType() == NICK)
-            Command::nickMessages(*this, client, command.getArgs().at(0));
+        if (command.getType() == PASS)
+            Command::welcomeMessages(*this, this->clientsList.find(from)->second);
+        if (client->getIsAuthenticated() == true)
+        {
+            if (command.getType() == PRIVMSG)
+                Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            else if (command.getType() == NICK)
+                Command::nickMessages(*this, client, command.getArgs().at(0));
+        }
+        else
+        {
+            Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
+        }
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(from));
