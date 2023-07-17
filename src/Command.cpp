@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 17:00:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:12:06 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ bool Command::nicknameIsAlreadyInUse(const Server &server, const std::string &ne
 
 bool Command::isNotRightNickname(const Server &server, const std::string &newNickname)
 {
-    return (newNickname != server.getName());
+    return (newNickname == server.getName());
 }
 
 /* Setters */
