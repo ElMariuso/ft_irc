@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 17:12:06 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:50:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,20 +207,32 @@ void Command::setType()
 void Command::setArgs()
 {
     std::size_t pos;
+    std::string member;
 
-    pos = this->message.find(' ');
-    if (pos != std::string::npos)
+    while (!this->message.empty())
     {
-        std::string arg = this->message.substr(0, pos);
-        this->args.push_back(arg);
-        this->message.erase(0, pos + 1);
+        pos = this->message.find(' ');
+        if (pos != std::string::npos)
+        {
+            member = this->message.substr(0, pos);
+            this->args.push_back(member);
+            this->message.erase(0, pos + 1);
+        }
+        else
+        {
+            member = this->message.substr(0, this->message.find('\r'));
+            this->args.push_back(member);
+            this->message.clear();
+        }
+        if (this->message[0] == ':')
+            break ;
     }
     if (!this->message.empty())
     {
         this->message = this->message.substr(0, this->message.find('\r'));
         pos = this->message.find(':');
         if (pos != std::string::npos)
-            this->message.erase(0, pos + 1);
+            this->message.erase(0, pos);
         this->args.push_back(this->message);
     }
 }
