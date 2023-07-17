@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 15:31:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 16:14:35 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int Server::processServer()
             }
             this->addNewClient(new_socket);
             Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
-            this->handleNewConnection(*(this->clientsList.find(new_socket))->second);
+            Command::welcomeMessages(*this, *(this->clientsList.find(new_socket))->second);
         }
 
         /* Browse existing clients sockets */
@@ -150,11 +150,6 @@ void Server::addNewClient(int client_socket)
     clientPfd.fd = client_socket;
     clientPfd.events = POLLIN;
     this->fds.push_back(clientPfd);
-}
-
-void Server::handleNewConnection(Client &client)
-{
-    Command::welcomeMessages(*this, client);
 }
 
 /* Messages */

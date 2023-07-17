@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 15:31:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 16:14:40 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ class Server
         /* New connection */
         int                             acceptNewConnection();
         void                            addNewClient(int client_socket);
-        void                            handleNewConnection(Client &client);
 
         /* Messages */
         int                             handleEvent(int client_socket);
