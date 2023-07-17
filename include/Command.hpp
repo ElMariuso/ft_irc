@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 15:58:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 16:24:25 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ class Command
 
         /* Commands */
         static void                 welcomeMessages(const Server &server, const Client &client);
-        static void                 privmsgMessages(Server *server, Client *src, std::string destNickname, std::string message);
-        static void                 privmsgMessagesChannel(Server *server, Client *src, std::string destNickname, std::string message);
-        static void                 privmsgMessagesUser(Server *server, Client *src, std::string destNickname, std::string message);
+        static void                 privmsgMessages(const Server &server, const Client &src, const std::string destNickname, const std::string message);
+        static void                 privmsgMessagesChannel(const Server &server, const Client &src, const std::string destNickname, const std::string message);
+        static void                 privmsgMessagesUser(const Server &server, const Client &src, const std::string destNickname, const std::string message);
         static void                 nickMessages(const Server &server, Client *client, const std::string newNickname);
 
         /* Messages Utils */

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 16:09:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 16:53:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void Command::welcomeMessages(const Server &server, const Client &client)
     client.sendToFD(allMessages);
 }
 
-void Command::privmsgMessages(Server *server, Client *src, std::string destNickname, std::string message)
+void Command::privmsgMessages(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
     if (destNickname[0] == '#')
         Command::privmsgMessagesChannel(server, src, destNickname, message);
@@ -48,60 +48,55 @@ void Command::privmsgMessages(Server *server, Client *src, std::string destNickn
         Command::privmsgMessagesUser(server, src, destNickname, message);
 }
 
-void Command::privmsgMessagesChannel(Server *server, Client *src, std::string destNickname, std::string message)
+void Command::privmsgMessagesChannel(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
-    Channel *dest = Command::checkForChannel(*server, destNickname);
+    std::stringstream   privmsg;
+    std::string         messageToSend;
+    Channel             *dest;
     
-    if (dest == NULL) // ERR_CANNOTSENDTOCHAN (404)
+    dest = Command::checkForChannel(server, destNickname);
+    if (dest == NULL) /* ERR_CANNOTSENDTOCHAN (404) */
     {
-        std::string msg404 = ":" + server->getName() + " 404 " + destNickname \
-            + " :Cannot send to channel" + "\r\n";
-
-        Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing channel.");
-        src->sendToFD(msg404);
+        privmsg << ":" << server.getName() << " 404 " << destNickname \
+            << " :Cannot send to channel" << "\r\n";
+        messageToSend = privmsg.str();
+        src.sendToFD(messageToSend);
     }
-    else // Sending to channels
+    else /* PRIVMSG */
     {
-        std::string msg001 = ":" + src->getNickname() + " PRIVMSG " \
-            + destNickname + " :" + message + "\r\n";
-        for (std::map<int, Client*>::iterator it = dest->getConnected().begin(); it != dest->getConnected().end(); ++it)
+        const std::map<int, Client*>    &connectedClients = dest->getConnected();
+        privmsg << ":" << src.getNickname() << " PRIVMSG " \
+            << destNickname << " :" << message << "\r\n";
+        messageToSend = privmsg.str();
+        for (std::map<int, Client*>::const_iterator it = connectedClients.begin(); it != connectedClients.end(); ++it)
         {
-            Client  *client = it->second;
-
-            Utils::debug_message(src->getNickname() + " send a message to " + client->getNickname());
-            client->sendToFD(msg001);
+            Client  &client = *it->second;
+            client.sendToFD(messageToSend);
         }
     }
 }
 
-void Command::privmsgMessagesUser(Server *server, Client *src, std::string destNickname, std::string message)
+void Command::privmsgMessagesUser(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
-    Client  *dest = Command::checkForUser(*server, destNickname);
-
-    if (dest == NULL) // ERR_NOSUCHNICK (401)
+    std::stringstream   privmsg;
+    std::string         messageToSend;
+    Client              *dest;
+    
+    dest = Command::checkForUser(server, destNickname);
+    if (dest == NULL) /* ERR_NOSUCHNICK (401) */
     {
-        std::string msg401 = ":" + server->getName() + " 401 " + destNickname \
-            + " :No such nick/channel" + "\r\n";
-        
-        Utils::debug_message(src->getNickname() + " tried to send a message to a non-existing user.");
-        src->sendToFD(msg401);
+        privmsg << ":" << server.getName() << " 401 " << destNickname \
+            << " :No such nick/channel" << "\r\n";
+        messageToSend = privmsg.str();
+        src.sendToFD(messageToSend);
     }
-    else // Sending to users
+    else /* PRIVMSG */
     {
-        std::string msg001 = ":" + src->getNickname() + " PRIVMSG " \
-            + dest->getNickname() + " :" + message + "\r\n";
-
-        Utils::debug_message(src->getNickname() + " send a message to " + dest->getNickname());
-        dest->sendToFD(msg001);
+        privmsg << ":" << src.getNickname() << " PRIVMSG " \
+            << dest->getNickname() << " :" << message << "\r\n";
+        messageToSend = privmsg.str();
+        dest->sendToFD(messageToSend);
     }
-    //402
-
-    //407
-    //411
-    //412
-    //413
-    //414
-    //301
 }
 
 void Command::nickMessages(const Server &server, Client *client, const std::string newNickname)

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 16:14:35 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 16:24:45 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@ void Server::getMessages(const std::string &message, int from)
         Client* client = clientIterator->second;
 
         if (command.getType() == PRIVMSG)
-            Command::privmsgMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
+            Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
         else if (command.getType() == NICK)
             Command::nickMessages(*this, client, command.getArgs().at(0));
     }
