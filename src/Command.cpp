@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 01:20:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 01:26:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,10 @@ void Command::setArgs()
         while (std::getline(iss, member))
         {
             if (!member.empty())
+            {
                 rest << ' ' << member;
+                break ;
+            }
         }
         member = rest.str();
         if (!member.empty() && member.length() >= 2)
