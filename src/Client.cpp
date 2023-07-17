@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 15:47:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 16:06:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ Client::~Client()
 void Client::sendToFD(std::string str) const
 {
 	send(_fd, str.c_str(), str.size(), 0); // write "str" on "_fd"
+	Utils::debug_message(this->getFd() + " get a message: " + str);
 }
 
 std::string	Client::receiveFromFD()

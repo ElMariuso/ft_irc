@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 15:53:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 16:09:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,37 +104,42 @@ void Command::privmsgMessagesUser(Server *server, Client *src, std::string destN
     //301
 }
 
-void Command::nickMessages(Server &server, Client *client, std::string newNickname)
+void Command::nickMessages(const Server &server, Client *client, const std::string newNickname)
 {
-    std::string nick001 = ":" + server.getName() + " 001 " + newNickname \
-        + " :You're now known as " + newNickname + "\r\n";
-    std::string nick431 = ":" + server.getName() + " 431 *" \
-        + " :No nickname given" + "\r\n";
-    std::string nick432 = ":" + server.getName() + " 432 * " + newNickname \
-        + " :Erroneous nickname" + "\r\n";
-    std::string nick433 = ":" + server.getName() + " 433 * " + newNickname \
-        + " :Nickname is already in use" + "\r\n";
-    
+    std::stringstream   nick001;
+    std::stringstream   nick431;
+    std::stringstream   nick432;
+    std::stringstream   nick433;
+    std::string         message;
+
+    nick001 << ":" << server.getName() << " 001 " << newNickname \
+        << " :You're now known as " << newNickname << "\r\n";
+    nick431 << ":" << server.getName() << " 431 *" \
+        << " :No nickname given" << "\r\n";
+    nick432 << ":" << server.getName() << " 432 * " << newNickname \
+        << " :Erroneous nickname" << "\r\n";
+    nick433 << ":" << server.getName() << " 433 * " << newNickname \
+        << " :Nickname is already in use" << "\r\n";;
     if (newNickname.empty())
     {
-        Utils::debug_message("Not enough arguments on NICK from: " + client->getUsername());
-        client->sendToFD(nick431);
+        message = nick431.str();
+        client->sendToFD(message);
     }
     else if (Command::isNotRightNickname(server, newNickname))
     {
-        Utils::debug_message(client->getUsername() + " tried to change his nickname to an invalid nickname.");
-        client->sendToFD(nick432);
+        message = nick432.str();
+        client->sendToFD(message);
     } 
     else if (Command::nicknameIsAlreadyInUse(server, newNickname))
     {
-        Utils::debug_message(client->getUsername() + " tried to change his nickname to something that already exists.");
-        client->sendToFD(nick433);
+        message = nick433.str();
+        client->sendToFD(message);
     }
     else
     {
-        Utils::debug_message("Change " + client->getUsername() + " nickname to: " + newNickname);
+        message = nick001.str();
+        client->sendToFD(message);
         client->setNickname(newNickname);
-        client->sendToFD(nick001);
     }   
 }
 
