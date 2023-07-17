@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 16:24:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:15:47 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ int Server::processServer()
             Utils::error_message("Error in poll()!");
             return (-1);
         }
-        Utils::debug_message("Number of events detected: " + Utils::intToString(ready));
         
         /* Check if a new connection is in waiting */
         if (this->fds[0].revents & POLLIN)
