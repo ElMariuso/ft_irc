@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 22:08:20 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:10:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,12 @@ class Channel
 		~Channel();
 
 		/* mode function */
-		int						addMode(char mode); // add an channel mode, return 0 if it went well
-		int						rmMode(char mode); // remove an channel mode, return 0 if it went well
-		bool					hasMode(char mode); // search if channel has mode activated
-		int						addOp(Client client); // add a channel operator, return 0 if it went well
-		int						rmOp(Client client); // remove a channel operator, return 0 if it went well
-		bool					isOp(Client client); // search if client is a channel operator
+		int						addMode(const char &mode); // add an channel mode, return 0 if it went well
+		int						rmMode(const char &mode); // remove an channel mode, return 0 if it went well
+		bool					hasMode(const char &mode) const; // search if channel has mode activated
+		int						addOp(const Client &client); // add a channel operator, return 0 if it went well
+		int						rmOp(const Client &client); // remove a channel operator, return 0 if it went well
+		bool					isOp(const Client &client) const; // search if client is a channel operator
 
 		/* Setters */
 		void 					setName(const std::string &name);

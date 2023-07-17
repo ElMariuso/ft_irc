@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/17 22:08:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:10:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Channel::Channel(const std::string &name)
 Channel::~Channel() {}
 
 /* mode function */
-int	Channel::addMode(char mode)
+int	Channel::addMode(const char &mode)
 {
 	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l') // list of existing modes
 	{
@@ -34,7 +34,7 @@ int	Channel::addMode(char mode)
 	return (0);
 }
 	
-int	Channel::rmMode(char mode)
+int	Channel::rmMode(const char &mode)
 {
 	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l') // list of existing modes
 	{
@@ -48,14 +48,14 @@ int	Channel::rmMode(char mode)
 	return (0);
 }
 
-bool Channel::hasMode(char mode)
+bool Channel::hasMode(const char &mode) const
 {
 	if (_modesList.find(mode) == std::string::npos)
 		return (false);
 	return (true);
 }
 
-int	Channel::addOp(Client client)
+int	Channel::addOp(const Client &client)
 {
 	if (isOp(client) == true)
 		return (-1); // Error, client is already an operator in this channel
@@ -63,7 +63,7 @@ int	Channel::addOp(Client client)
 	return (0);
 }
 
-int	Channel::rmOp(Client client)
+int	Channel::rmOp(const Client &client)
 {
 	std::vector<int>::iterator it;
 
@@ -80,9 +80,9 @@ int	Channel::rmOp(Client client)
 	return (0);
 }
 
-bool Channel::isOp(Client client)
+bool Channel::isOp(const Client &client) const
 {
-	std::vector<int>::iterator it;
+	std::vector<int>::const_iterator	it;
 
 	it = this->_operators.begin();
 	while (it != this->_operators.end())
