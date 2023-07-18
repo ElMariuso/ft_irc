@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 14:36:52 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 14:37:36 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,9 +220,9 @@ void Command::setType()
 
     type = this->message.substr(0, this->message.find(' '));
     this->message.erase(0, this->message.find(' ') + 1);
-    if (type == "PASS")
+    if (type == "PASS") /* Authentification */
         this->type = PASS;
-    else if (type == "NICK")
+    else if (type == "NICK") /* Change your nickname */
         this->type = NICK;
     else if (type == "USER")
         this->type = USER;
@@ -230,7 +230,7 @@ void Command::setType()
         this->type = JOIN;
     else if (type == "PART")
         this->type = PART;
-    else if (type == "PRIVMSG")
+    else if (type == "PRIVMSG") /* Send a message */
         this->type = PRIVMSG;
     else if (type == "NOTICE")
         this->type = NOTICE;
