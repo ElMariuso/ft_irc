@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 21:28:42 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:31:16 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,12 @@ void Command::partMessages(Server *server, const Client &client, Channel *channe
 
     if (channel->getConnected().find(client.getFd()) == channel->getConnected().end()) /* ERR_NOTONCHANNEL (442) */
     {
-
+        part << ":" << server->getName() << " 442 " << client.getNickname() << " " << channel->getName() \
+            << " :You're not on that channel" << "\r\n";
+        
+        /* Send to the user */
+        allMessages = part.str();
+        client.sendToFD(allMessages);
     }
     else /* PART */
     {
