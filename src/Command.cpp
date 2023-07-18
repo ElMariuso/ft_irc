@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 17:52:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 17:54:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,18 +82,15 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
     channel = checkForChannel(*server, channelName);
     if (channel != NULL) /* Channel */
     {
-        if (channel->hasPassword() == true)
+        if (channel->hasPassword() == true && password != channel->getPassword())
         {
-            if (password != channel->getPassword()) /* ERR_BADCHANNELKEY (475) */
-            {
-                join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
-                    << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
-                allMessages = join.str();
+            join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
+            allMessages = join.str();
 
-                /* Send to the new user */
-                client->sendToFD(allMessages);
-                return ;
-            }
+            /* Send to the new user */
+            client->sendToFD(allMessages);
+            return ;
         }
         /* Connect the user */
         channel->setConnected(client);
