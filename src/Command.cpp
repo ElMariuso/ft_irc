@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 16:07:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 16:45:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,9 +80,34 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
     std::string         allMessages;
     (void)password;
 
-    if (false) /* Channel */
+    channel = checkForChannel(*server, channelName);
+    if (channel != NULL) /* Channel */
     {
+        /* Connect the user */
+        channel->setConnected(client);
 
+        /* Check if topic */
+        if (channel->hasTopic() == true) /* RPL_TOPIC (332) */
+        {
+            join << ":" << server->getName() << " 332 " << client->getNickname() << " " << channel->getName() \
+                << " :" << channel->getTopic() << "\r\n";
+        }
+        else /* RPL_NOTOPIC (331) */
+        {
+            join << ":" << server->getName() << " 331 " << client->getNickname() << " " << channel->getName() \
+                << " :No topic is set" << "\r\n";
+        }
+        /* Create messages */
+        /* RPL_NAMREPLY (353) */
+        join << ":" << server->getName() << " 353 " << client->getNickname() << " " << channel->getName() \
+            << " :" << userListOnChannel(channel->getConnected(), *channel) << "\r\n";
+        /* RPL_ENDOFNAMES (366) */
+        join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
+            << " :End of NAMES list" << "\r\n";
+        allMessages = join.str();
+        
+        /* Send to the new user */
+        client->sendToFD(allMessages);
     }
     else /* No channel */
     {
@@ -111,12 +136,6 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         allMessages = join.str();
         client->sendToFD(allMessages);
     }
-
-    /* RPL_NOTOPIC (331) */
-    /* RPL_TOPIC (332) */
-    /* RPL_NAMREPLY (353) */
-    /* RPL_ENDOFNAMES (366) */
-    /* JOIN */
 }
 
 /* PRIVMSG */
@@ -219,8 +238,29 @@ void Command::nickMessages(const Server &server, Client *client, const std::stri
     }   
 }
 
+/* Join utils */
+std::string Command::userListOnChannel(const std::map<int, Client*> &userList, Channel &channel)
+{
+    std::map<int, Client*>::const_iterator  it;
+    char                                    prefix;
+    const Client                            *client;
+    std::string                             ret;
+
+    if (userList.empty())
+        return (NULL);
+    for (it = userList.begin(); it != userList.end(); ++it)
+    {
+        client = it->second;
+        prefix = (channel.isOp(*client)) ? '@' : '+';
+        ret += prefix;
+        ret += client->getNickname();
+        ret += ' ';
+    }
+    return (ret);
+}
+
 /* Messages Utils */
-Channel* Command::checkForChannel(const Server &server, const std::string &nickname)
+Channel* Command::checkForChannel(const Server &server, const std::string &nickname) /* Used in JOIN too */
 {
     const std::map<std::string, Channel*>           &channels = server.getChannelsList();
     std::map<std::string, Channel*>::const_iterator it = channels.find(nickname);

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/17 22:10:31 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 16:42:44 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 Channel::Channel(const std::string &name)
 {
 	this->setName(name);
-	this->setTopic(NULL);
+	this->setTopic("");
 }
 Channel::~Channel() {}
 
@@ -94,6 +94,13 @@ bool Channel::isOp(const Client &client) const
 	if (it != _operators.end())
 		return (true);
 	return (false);
+}
+
+bool Channel::hasTopic() const
+{
+	if (this->_topic.empty())
+		return (false);
+	return (true);
 }
 
 /* Setters */

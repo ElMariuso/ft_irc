@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 15:30:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 16:40:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Channel
 		int						addOp(const Client &client); // add a channel operator, return 0 if it went well
 		int						rmOp(const Client &client); // remove a channel operator, return 0 if it went well
 		bool					isOp(const Client &client) const; // search if client is a channel operator
+		bool					hasTopic() const;
 
 		/* Setters */
 		void 					setName(const std::string &name);
