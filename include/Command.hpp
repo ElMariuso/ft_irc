@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/17 21:31:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 14:30:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,20 @@ enum MessageType
 {
     UNKNOW,
     PASS,
-    PRIVMSG,
     NICK,
     USER,
     JOIN,
-    PONG,
-    MODE
+    PART,
+    PRIVMSG,
+    NOTICE,
+    MODE,
+    QUIT,
+    TOPIC,
+    LIST,
+    NAMES,
+    KICK,
+    BAN,
+    WHOIS
 };
 
 class Command

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 14:24:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 14:36:52 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,18 +222,34 @@ void Command::setType()
     this->message.erase(0, this->message.find(' ') + 1);
     if (type == "PASS")
         this->type = PASS;
-    else if (type == "PRIVMSG")
-        this->type = PRIVMSG;
     else if (type == "NICK")
         this->type = NICK;
     else if (type == "USER")
         this->type = USER;
     else if (type == "JOIN")
         this->type = JOIN;
-    else if (type == "PONG")
-        this->type = PONG;
+    else if (type == "PART")
+        this->type = PART;
+    else if (type == "PRIVMSG")
+        this->type = PRIVMSG;
+    else if (type == "NOTICE")
+        this->type = NOTICE;
     else if (type == "MODE")
         this->type = MODE;
+    else if (type == "QUIT")
+        this->type = QUIT;
+    else if (type == "TOPIC")
+        this->type = TOPIC;
+    else if (type == "LIST")
+        this->type = LIST;
+    else if (type == "NAMES")
+        this->type = NAMES;
+    else if (type == "KICK")
+        this->type = KICK;
+    else if (type == "BAN")
+        this->type = BAN;
+    else if (type == "WHOIS")
+        this->type = WHOIS;
     else
         this->type = UNKNOW;
 }
