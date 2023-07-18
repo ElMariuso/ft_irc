@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 00:29:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:10:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,22 +19,32 @@ class Client;
 class Channel
 {
     public:
+		Channel(const std::string &name);
+		~Channel();
 
 		/* mode function */
-		int						addMode(char mode); // add an channel mode, return 0 if it went well
-		int						rmMode(char mode); // remove an channel mode, return 0 if it went well
-		bool					hasMode(char mode); // search if channel has mode activated
-		int						addOp(Client client); // add a channel operator, return 0 if it went well
-		int						rmOp(Client client); // remove a channel operator, return 0 if it went well
-		bool					isOp(Client client); // search if client is a channel operator
-		void					setTopic(std::string topic); // change the channel topic
+		int						addMode(const char &mode); // add an channel mode, return 0 if it went well
+		int						rmMode(const char &mode); // remove an channel mode, return 0 if it went well
+		bool					hasMode(const char &mode) const; // search if channel has mode activated
+		int						addOp(const Client &client); // add a channel operator, return 0 if it went well
+		int						rmOp(const Client &client); // remove a channel operator, return 0 if it went well
+		bool					isOp(const Client &client) const; // search if client is a channel operator
+
+		/* Setters */
+		void 					setName(const std::string &name);
+		void 					setConnected(Client *client);
+        void 					setConnectedList(std::map<int, Client*> connected);
+		void 					setOperator(int fd);
+		void 					setOperators(std::vector<int> operators);
+		void 					setModesList(const std::string &modesList);
+		void 					setTopic(const std::string &topic); // change the channel topic
 
 		/* Getters */
-		std::string				getName();
-        std::map<int, Client*>  getConnected();
-		std::vector<int> 		getOperators();
-		std::string				getModesList();
-		std::string				getTopic();
+		std::string				getName() const;
+        std::map<int, Client*>  getConnected() const;
+		std::vector<int> 		getOperators() const;
+		std::string				getModesList() const;
+		std::string				getTopic() const;
 		
     private:
         std::string             _name;
