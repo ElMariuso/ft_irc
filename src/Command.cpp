@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 14:37:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 15:15:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Command::Command(const std::string &message)
 }
 Command::~Command() {}
 
-/* Commands */
+/* WELCOME and PASS */
 void Command::connectionMessage(const Server &server, const Client &client)
 {
     std::stringstream   welcome;
@@ -72,6 +72,21 @@ void Command::authentificationMessages(const Server &server, const Client &clien
     client.sendToFD(message);
 }
 
+/* JOIN */
+void Command::joinMessages(Server *server, const std::string &channelName, const std::string &password)
+{
+    (void)server;
+    (void)channelName;
+    (void)password;
+
+    /* RPL_NOTOPIC (331) */
+    /* RPL_TOPIC (332) */
+    /* RPL_NAMREPLY (353) */
+    /* RPL_ENDOFNAMES (366) */
+    /* JOIN */
+}
+
+/* PRIVMSG */
 void Command::privmsgMessages(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
     if (destNickname[0] == '#')
@@ -131,6 +146,7 @@ void Command::privmsgMessagesUser(const Server &server, const Client &src, const
     }
 }
 
+/* NICK */
 void Command::nickMessages(const Server &server, Client *client, const std::string newNickname)
 {
     std::stringstream   nick001;
