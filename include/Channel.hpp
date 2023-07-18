@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 18:34:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:17:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ class Channel
 		void						setHasInvitedList(bool hasInvitedList);
 		void						setInvited(const std::string &name);
 		void						setInvitedList(std::map<std::string, bool> &invited);
+
+		/* Removers */
+		void						removeConnected(int fd);
 
 		/* Getters */
 		std::string					getName() const;

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 21:13:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:18:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ void Command::partMessages(Server *server, Client *client, Channel *channel, con
             Client  &actualClient = *it->second;
             actualClient.sendToFD(allMessages);
         }
-        // channel->getConnected().erase(client->getNickname());
+        channel->removeConnected(client->getFd());
     }
 }
 

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/18 18:34:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:17:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,9 @@ void Channel::setLimit(std::size_t limit)  { this->limit = limit; }
 void Channel::setHasInvitedList(bool hasInvitedList) { this->hasInvitedList = hasInvitedList; }
 void Channel::setInvited(const std::string &name) { this->invited.insert(std::make_pair(name, true)); }
 void Channel::setInvitedList(std::map<std::string, bool> &invited) { this->invited = invited; }
+
+/* Removers */
+void Channel::removeConnected(int fd) { this->_connected.erase(fd); }
 
 /* Getters */
 std::string Channel::getName() const { return (this->_name); }
