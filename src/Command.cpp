@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 23:22:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 00:44:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,18 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         /* Connect the user */
         channel->setConnected(client);
 
+        /* JOIN */
+        joinAll << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
+            << " JOIN " << channel->getName() << "\r\n";
+        allMessages = joinAll.str();
+
+        std::map<int, Client*> connected = channel->getConnected();
+        for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.end(); ++it)
+        {
+            Client  *client = it->second;
+            client->sendToFD(allMessages);
+        }
+
         /* Check if topic */
         if (channel->hasTopic() == true) /* RPL_TOPIC (332) */
         {
@@ -138,18 +150,6 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         
         /* Send to the new user */
         client->sendToFD(allMessages);
-
-        /* JOIN */
-        joinAll << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
-            << " JOIN " << channel->getName() << "\r\n";
-        allMessages = joinAll.str();
-
-        std::map<int, Client*> connected = channel->getConnected();
-        for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.end(); ++it)
-        {
-            Client  *client = it->second;
-            client->sendToFD(allMessages);
-        }
     }
     else /* No channel */
     {
@@ -164,6 +164,9 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         server->setChannel(channelName, channel);
 
         /* Create messages */
+        /* JOIN */
+        join << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
+            << " JOIN " << channel->getName() << "\r\n";
         /* RPL_NOTOPIC (331) */
         join << ":" << server->getName() << " 331 " << client->getNickname() << " " << channel->getName() \
             << " :No topic is set" << "\r\n";
@@ -173,9 +176,6 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         /* RPL_ENDOFNAMES (366) */
         join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
             << " :End of NAMES list" << "\r\n";
-        /* JOIN */
-        join << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
-            << " JOIN " << channel->getName() << "\r\n";
 
         /* Send to the new user */
         allMessages = join.str();
