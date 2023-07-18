@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 22:46:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 23:10:18 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,10 @@ void Command::authentificationMessages(const Server &server, const Client &clien
 /* JOIN */
 void Command::joinMessages(Server *server, Client *client, const std::string &channelName, const std::string &password)
 {
-    Channel             *channel;
-    std::stringstream   join;
-    std::string         allMessages;
+    Channel                 *channel;
+    std::stringstream       join;
+    std::stringstream       joinAll;
+    std::string             allMessages;
 
     channel = checkForChannel(*server, channelName);
     if (channel != NULL) /* Channel */
@@ -137,6 +138,18 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         
         /* Send to the new user */
         client->sendToFD(allMessages);
+
+        /* JOIN */
+        joinAll << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
+            << " JOIN " << channel->getName() << "\r\n";
+        allMessages = joinAll.str();
+
+        std::map<int, Client*> connected = channel->getConnected();
+        for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.end(); ++it)
+        {
+            Client  *client = it->second;
+            client->sendToFD(allMessages);
+        }
     }
     else /* No channel */
     {
@@ -160,6 +173,9 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         /* RPL_ENDOFNAMES (366) */
         join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
             << " :End of NAMES list" << "\r\n";
+        /* JOIN */
+        join << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
+            << " JOIN " << channel->getName() << "\r\n";
 
         /* Send to the new user */
         allMessages = join.str();
