@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 21:46:53 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 22:46:50 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,15 +234,27 @@ void Command::privmsgMessages(const Server &server, const Client &src, const std
 
 void Command::privmsgMessagesChannel(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
-    std::stringstream   privmsg;
-    std::string         messageToSend;
-    Channel             *dest;
+    std::map<int, Client*>  connectedClients;
+    std::stringstream       privmsg;
+    std::string             messageToSend;
+    Channel                 *dest;
     
     dest = Command::checkForChannel(server, destNickname);
+    if (dest != NULL)
+        connectedClients = dest->getConnected();
     if (dest == NULL) /* ERR_CANNOTSENDTOCHAN (404) */
     {
         privmsg << ":" << server.getName() << " 404 " << destNickname \
             << " :Cannot send to channel" << "\r\n";
+        messageToSend = privmsg.str();
+        src.sendToFD(messageToSend);
+    }
+    else if (connectedClients.find(src.getFd()) == connectedClients.end()) /* ERR_NOTONCHANNEL (442) */
+    {
+        privmsg << ":" << server.getName() << " 442 " << src.getNickname() << " " << dest->getName() \
+            << " :You're not on that channel" << "\r\n";
+        
+        /* Send to the user */
         messageToSend = privmsg.str();
         src.sendToFD(messageToSend);
     }
