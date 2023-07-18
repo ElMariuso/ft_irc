@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 23:14:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 23:22:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,11 +186,14 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
 /* PART */
 void Command::partMessages(Server *server, const Client &client, const std::string &name, const std::string &message)
 {
-    Channel             *channel;
-    std::stringstream   part;
-    std::string         allMessages;
+    std::map<int, Client*>  connectedClients;
+    Channel                 *channel;
+    std::stringstream       part;
+    std::string             allMessages;
 
     channel = checkForChannel(*server, name);
+    if (channel != NULL)
+        connectedClients = channel->getConnected();
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
     {
         part << ":" << server->getName() << " 403 " << client.getNickname() << " " << channel->getName() \
@@ -200,7 +203,7 @@ void Command::partMessages(Server *server, const Client &client, const std::stri
         allMessages = part.str();
         client.sendToFD(allMessages);
     }
-    else if (channel->getConnected().find(client.getFd()) == channel->getConnected().end()) /* ERR_NOTONCHANNEL (442) */
+    else if (connectedClients.find(client.getFd()) == connectedClients.end()) /* ERR_NOTONCHANNEL (442) */
     {
         part << ":" << server->getName() << " 442 " << client.getNickname() << " " << channel->getName() \
             << " :You're not on that channel" << "\r\n";
@@ -224,7 +227,6 @@ void Command::partMessages(Server *server, const Client &client, const std::stri
 
         /* Send to the all users */
         allMessages = part.str();
-        const std::map<int, Client*>    &connectedClients = channel->getConnected();
         for (std::map<int, Client*>::const_iterator it = connectedClients.begin(); it != connectedClients.end(); ++it)
         {
             Client  &actualClient = *it->second;
