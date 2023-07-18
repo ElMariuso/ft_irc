@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 18:11:11 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 18:12:52 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,10 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
             /* Send to the new user */
             client->sendToFD(allMessages);
             return ;
+        }
+        else if (false) /* ERR_INVITEONLYCHAN (473) */
+        {
+            
         }
         else if (channel->hasPassword() == true && password != channel->getPassword()) /* ERR_BADCHANNELKEY (475) */
         {
