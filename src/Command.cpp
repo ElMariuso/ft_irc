@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 18:01:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 18:11:11 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,20 +82,20 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
     channel = checkForChannel(*server, channelName);
     if (channel != NULL) /* Channel */
     {
-        if (channel->hasPassword() == true && password != channel->getPassword()) /* ERR_BADCHANNELKEY (475) */
+        if (channel->hasLimit() == true && channel->getConnected().size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
         {
-            join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
-                << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
+            join << ":" << server->getName() << " 471 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+l) - Channel user limit reached" << "\r\n";
             allMessages = join.str();
 
             /* Send to the new user */
             client->sendToFD(allMessages);
             return ;
         }
-        else if (channel->hasLimit() == true && channel->getConnected().size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
+        else if (channel->hasPassword() == true && password != channel->getPassword()) /* ERR_BADCHANNELKEY (475) */
         {
-            join << ":" << server->getName() << " 471 " << client->getNickname() << " " << channel->getName() \
-                << " :Cannot join channel(+l) - Channel user limit reached" << "\r\n";
+            join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
             allMessages = join.str();
 
             /* Send to the new user */
