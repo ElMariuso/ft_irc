@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/18 17:51:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 17:55:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,13 @@ bool Channel::hasTopic() const
 bool Channel::hasPassword() const
 {
 	if (this->password.empty())
+		return (false);
+	return (true);
+}
+
+bool Channel::hasLimit() const
+{
+	if (this->limit <= 0)
 		return (false);
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 17:51:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 17:54:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channel
 		bool					isOp(const Client &client) const; // search if client is a channel operator
 		bool					hasTopic() const;
 		bool					hasPassword() const;
+		bool					hasLimit() const;
 
 		/* Setters */
 		void 					setName(const std::string &name);
