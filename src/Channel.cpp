@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/18 17:59:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 18:34:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Channel::Channel(const std::string &name)
 	this->setTopic("");
 	this->setPassword("");
 	this->setLimit(0);
+	this->setHasInvitedList(false);
 }
 Channel::~Channel() {}
 
@@ -129,6 +130,9 @@ void Channel::setModesList(const std::string &modesList) { this->_modesList = mo
 void Channel::setTopic(const std::string &topic) { this->_topic = topic; }
 void Channel::setPassword(const std::string &password) { this->password = password; }
 void Channel::setLimit(std::size_t limit)  { this->limit = limit; }
+void Channel::setHasInvitedList(bool hasInvitedList) { this->hasInvitedList = hasInvitedList; }
+void Channel::setInvited(const std::string &name) { this->invited.insert(std::make_pair(name, true)); }
+void Channel::setInvitedList(std::map<std::string, bool> &invited) { this->invited = invited; }
 
 /* Getters */
 std::string Channel::getName() const { return (this->_name); }
@@ -138,3 +142,5 @@ std::string Channel::getModesList() const { return (this->_modesList); }
 std::string Channel::getTopic() const { return (this->_topic); }
 std::string	Channel::getPassword() const { return (this->password); }
 std::size_t Channel::getLimit() const  { return (this->limit); }
+bool Channel::getHasInvitedList() const { return (this->hasInvitedList); }
+std::map<std::string, bool>	Channel::getInvited() const { return (this->invited); }
