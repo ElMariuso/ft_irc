@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 15:30:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 16:07:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ void Command::authentificationMessages(const Server &server, const Client &clien
 /* JOIN */
 void Command::joinMessages(Server *server, Client *client, const std::string &channelName, const std::string &password)
 {
-    Channel *channel;
-    
-    (void)server;
+    Channel             *channel;
+    std::stringstream   join;
+    std::string         allMessages;
     (void)password;
 
     if (false) /* Channel */
@@ -89,7 +89,27 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         /* Create new channel and connect the user */
         channel = new Channel(channelName);
         channel->setConnected(client);
+
+        /* Set the creator of the channel as operator */
+        channel->addOp(*client);
+
+        /* Add the new channel to the channel list on server */
         server->setChannel(channelName, channel);
+
+        /* Create messages */
+        /* RPL_NOTOPIC (331) */
+        join << ":" << server->getName() << " 331 " << client->getNickname() << " " << channel->getName() \
+            << " :No topic is set" << "\r\n";
+        /* RPL_NAMREPLY (353) */
+        join << ":" << server->getName() << " 353 " << client->getNickname() << " " << channel->getName() \
+            << " :@" << client->getNickname() << "\r\n";
+        /* RPL_ENDOFNAMES (366) */
+        join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
+            << " :End of NAMES list" << "\r\n";
+
+        /* Send to the new user */
+        allMessages = join.str();
+        client->sendToFD(allMessages);
     }
 
     /* RPL_NOTOPIC (331) */
