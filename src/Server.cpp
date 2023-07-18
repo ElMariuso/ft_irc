@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 19:11:53 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:25:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,6 +304,13 @@ void Server::setClient(int fd, Client *client) { this->clientsList.insert(std::m
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
+
+/* Removers */
+void Server::removeChannel(Channel *channel)
+{
+    this->channelsList.erase(channel->getName());
+    delete channel;
+}
 
 /* Getters */
 int Server::getServerSocket() const { return (this->serverSocket); }

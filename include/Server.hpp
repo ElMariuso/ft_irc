@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 17:35:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:25:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,9 @@ class Server
         void                            setClients(std::map<int, Client*> clients);
         void                            setChannel(std::string name, Channel *channel);
         void                            setChannels(std::map<std::string, Channel*> channels);
+
+        /* Removers */
+		void                            removeChannel(Channel *channel);
 
         /* Getters */
         int                             getServerSocket() const;
