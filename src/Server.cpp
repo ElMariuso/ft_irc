@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 01:11:06 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 01:28:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ void Server::addNewClient(const int client_socket)
     struct pollfd   clientPfd;
 
     /* Add new client to the list */
-    Client *new_client = new Client(client_socket);
+    Client *new_client = new Client(client_socket, true);
     clientsList.insert(std::make_pair(client_socket, new_client));
     clientPfd.fd = client_socket;
     clientPfd.events = POLLIN;
@@ -191,8 +191,10 @@ void Server::getMessages(const std::string &message, const int from)
     if (clientIterator != this->clientsList.end())
     {
         Client* client = clientIterator->second;
-
-        if (command.getType() == PASS)
+        
+        if (command.getType() == QUIT)
+            this->handleDisconnection(from, command.getArgs().at(0));
+        else if (command.getType() == PASS)
             Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
         if (client->getIsAuthenticated() == true)
         {
@@ -215,7 +217,7 @@ void Server::getMessages(const std::string &message, const int from)
             else if (command.getType() == PRIVMSG)
                 Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
         }
-        else if (command.getType() != UNKNOW)
+        else if (client->getIsAuthenticated() == false && command.getType() != UNKNOW)
         {
             Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
             Command::authentificationMessages(*this, *client);
@@ -233,8 +235,9 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
 
     if (this->clientsList.size() == 0)
         Utils::debug_message("No clients connected to the server");
-    else
+    else if (it->second->getIsConnected() == true)
     {
+        it->second->setIsConnected(false);
         for (std::map<std::string, Channel*>::iterator itChannel = this->channelsList.begin(); itChannel != this->channelsList.end(); itChannel++)
         {
             Channel *channel = itChannel->second;

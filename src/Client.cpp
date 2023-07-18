@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 00:27:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 01:23:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 Client::Client() {}
 
-Client::Client(int fd) : _fd(fd)
+Client::Client(int fd, bool isConnected) : _fd(fd)
 {
 	std::stringstream ss;
 	
 	ss << fd; // turn int to std::string
 	this->setIsAuthenticated(false);
+	this->setIsConnected(isConnected);
 	this->_username = "User" + ss.str(); // put the file descriptor in client's default username to help identify him
 	this->_nickname = "Guest" + ss.str();
 	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
@@ -123,6 +124,7 @@ bool Client::hasModeLetter(char mode)
 
 /* setters */
 void Client::setIsAuthenticated(bool isAuthenticated) { this->isAuthenticated = isAuthenticated; }
+void Client::setIsConnected(bool isConnected) { this->isConnected = isConnected; }
 void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
 void Client::setUsername(std::string userName) { this->_username = userName; }
 void Client::setHostname()
@@ -168,6 +170,7 @@ void Client::setHostname()
 /* getters */
 int			Client::getFd() const { return (this->_fd); }
 bool		Client::getIsAuthenticated() const { return (this->isAuthenticated); }
+bool		Client::getIsConnected() const { return (this->isConnected); }
 std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
