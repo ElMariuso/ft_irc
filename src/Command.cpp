@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 19:12:41 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 19:27:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         }
         /* Create messages */
         /* RPL_NAMREPLY (353) */
-        join << ":" << server->getName() << " 353 " << client->getNickname() << " " << channel->getName() \
+        join << ":" << server->getName() << " 353 " << client->getNickname() << " = " << channel->getName() \
             << " :" << userListOnChannel(channel->getConnected(), *channel) << "\r\n";
         /* RPL_ENDOFNAMES (366) */
         join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
@@ -155,7 +155,7 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         join << ":" << server->getName() << " 331 " << client->getNickname() << " " << channel->getName() \
             << " :No topic is set" << "\r\n";
         /* RPL_NAMREPLY (353) */
-        join << ":" << server->getName() << " 353 " << client->getNickname() << " " << channel->getName() \
+        join << ":" << server->getName() << " 353 " << client->getNickname() << " = " << channel->getName() \
             << " :@" << client->getNickname() << "\r\n";
         /* RPL_ENDOFNAMES (366) */
         join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
