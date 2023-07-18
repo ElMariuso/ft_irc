@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/18 16:49:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 17:51:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ Channel::Channel(const std::string &name)
 	this->setName(name);
 	this->setTopic("");
 	this->setPassword("");
+	this->setLimit(0);
 }
 Channel::~Channel() {}
 
@@ -120,6 +121,7 @@ void Channel::setOperators(std::vector<int> operators) { this->_operators = oper
 void Channel::setModesList(const std::string &modesList) { this->_modesList = modesList; }
 void Channel::setTopic(const std::string &topic) { this->_topic = topic; }
 void Channel::setPassword(const std::string &password) { this->password = password; }
+void Channel::setLimit(int limit)  { this->limit = limit; }
 
 /* Getters */
 std::string Channel::getName() const { return (this->_name); }
@@ -128,3 +130,4 @@ std::vector<int> Channel::getOperators() const { return (this->_operators); }
 std::string Channel::getModesList() const { return (this->_modesList); }
 std::string Channel::getTopic() const { return (this->_topic); }
 std::string	Channel::getPassword() const { return (this->password); }
+int Channel::getLimit() const  { return (this->limit); }
