@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 21:47:08 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 00:21:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,6 +235,16 @@ void Server::handleDisconnection(const int client_socket)
         Utils::debug_message("No clients connected to the server");
     else
     {
+        for (std::map<std::string, Channel*>::const_iterator it = this->channelsList.begin(); it != this->channelsList.end(); ++it)
+        {
+            Channel *channel = it->second;
+
+            std::map<int, Client*>::iterator it2 = channel->getConnected().find(client_socket);
+            if (it2 != channel->getConnected().end())
+                channel->removeConnected(client_socket);
+            if (channel->getConnected().empty())
+                this->removeChannel(channel);
+        }
         /* Clean clientsList map */
         close(it->first);
         delete it->second;
