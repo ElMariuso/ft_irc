@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 23:10:18 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 23:12:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,7 +276,6 @@ void Command::privmsgMessagesChannel(const Server &server, const Client &src, co
     }
     else /* PRIVMSG */
     {
-        const std::map<int, Client*>    &connectedClients = dest->getConnected();
         privmsg << ":" << src.getNickname() << " PRIVMSG " \
             << destNickname << " " << message << "\r\n";
         messageToSend = privmsg.str();
