@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 00:42:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 01:11:06 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int Server::processServer()
                 if (this->handleEvent(client_socket) == 0)
                 {
                     Utils::debug_message("Client disconnected on event: " + Utils::intToString(client_socket));
-                    this->handleDisconnection(client_socket);
+                    this->handleDisconnection(client_socket, "leaving");
                 
                     /* Remove from fds */
                     this->fds.erase(this->fds.begin() + i);
@@ -114,7 +114,7 @@ int Server::processServer()
             {
                 client_socket = this->fds[i].fd;
                 Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
-                this->handleDisconnection(client_socket);
+                this->handleDisconnection(client_socket, "leaving");
                 
                 /* Remove from fds */
                 this->fds.erase(this->fds.begin() + i);
@@ -226,7 +226,7 @@ void Server::getMessages(const std::string &message, const int from)
 }
 
 /* Logout */
-void Server::handleDisconnection(const int client_socket)
+void Server::handleDisconnection(const int client_socket, const std::string &message)
 {
     /* Manage logout */
     std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
@@ -241,9 +241,7 @@ void Server::handleDisconnection(const int client_socket)
 
             std::map<int, Client*>::iterator it2 = channel->getConnected().find(client_socket);
             if (it2 != channel->getConnected().end())
-                channel->removeConnected(client_socket);
-            if (channel->getConnected().empty())
-                this->removeChannel(channel);
+                Command::partMessages(this, *(it->second), channel->getName(), message);
             if (this->channelsList.empty())
                 break ;
         }

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 21:25:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 01:07:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Server
         void                            getMessages(const std::string &message, const int from);
         
         /* Logout */
-        void                            handleDisconnection(const int client_socket);
+        void                            handleDisconnection(const int client_socket, const std::string &message);
         
         /* Utils */
         int                             createServerSocket(const int port);
