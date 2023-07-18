@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 18:12:52 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 18:58:08 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,17 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
             client->sendToFD(allMessages);
             return ;
         }
-        else if (false) /* ERR_INVITEONLYCHAN (473) */
+        else if (channel->getHasInvitedList() == true && channel->getInvited().find(client->getNickname()) == channel->getInvited().end()) /* ERR_INVITEONLYCHAN (473) */
         {
-            
+            join << ":" << server->getName() << " 473 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+i) - Invite only" << "\r\n";
+            allMessages = join.str();
+
+            /* Send to the new user */
+            client->sendToFD(allMessages);
+            return ;
         }
-        else if (channel->hasPassword() == true && password != channel->getPassword()) /* ERR_BADCHANNELKEY (475) */
+        if (channel->hasPassword() == true && password != channel->getPassword()) /* ERR_BADCHANNELKEY (475) */
         {
             join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
                 << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
