@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 19:40:07 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:13:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,42 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         /* Send to the new user */
         allMessages = join.str();
         client->sendToFD(allMessages);
+    }
+}
+
+/* PART */
+void Command::partMessages(Server *server, Client *client, Channel *channel, const std::string &message)
+{
+    (void)server;
+    std::stringstream   part;
+    std::string         allMessages;
+
+    if (channel->getConnected().find(client->getFd()) == channel->getConnected().end()) /* ERR_NOTONCHANNEL (442) */
+    {
+
+    }
+    else /* PART */
+    {
+        if (message.empty()) /* If there is no message */
+        {
+            part << ":" << client->getNickname() << " PART " \
+                << channel->getName() << "\r\n";
+        }
+        else /* If there is a message */
+        {
+            part << ":" << client->getNickname() << " PART " \
+                << channel->getName() << " " << message << "\r\n";
+        }
+
+        /* Send to the all users */
+        allMessages = part.str();
+        const std::map<int, Client*>    &connectedClients = channel->getConnected();
+        for (std::map<int, Client*>::const_iterator it = connectedClients.begin(); it != connectedClients.end(); ++it)
+        {
+            Client  &actualClient = *it->second;
+            actualClient.sendToFD(allMessages);
+        }
+        // channel->getConnected().erase(client->getNickname());
     }
 }
 
