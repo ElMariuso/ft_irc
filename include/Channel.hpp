@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 16:40:31 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 16:48:05 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Channel
 		int						rmOp(const Client &client); // remove a channel operator, return 0 if it went well
 		bool					isOp(const Client &client) const; // search if client is a channel operator
 		bool					hasTopic() const;
+		bool					hasPassword() const;
 
 		/* Setters */
 		void 					setName(const std::string &name);
@@ -39,6 +40,7 @@ class Channel
 		void 					setOperators(std::vector<int> operators);
 		void 					setModesList(const std::string &modesList);
 		void 					setTopic(const std::string &topic); // change the channel topic
+		void					setPassword(const std::string &password);
 
 		/* Getters */
 		std::string				getName() const;
@@ -46,6 +48,7 @@ class Channel
 		std::vector<int> 		getOperators() const;
 		std::string				getModesList() const;
 		std::string				getTopic() const;
+		std::string				getPassword() const;
 		
     private:
         std::string             _name;
@@ -53,6 +56,7 @@ class Channel
 		std::vector<int> 		_operators; // list of channel operator : user who have operator status only within this channel
 		std::string				_modesList;
 		std::string				_topic;
+		std::string				password;
 };
 
 /* all channel modes currently added : 

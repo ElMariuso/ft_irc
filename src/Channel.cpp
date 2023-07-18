@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/18 16:42:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 16:49:02 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Channel::Channel(const std::string &name)
 {
 	this->setName(name);
 	this->setTopic("");
+	this->setPassword("");
 }
 Channel::~Channel() {}
 
@@ -103,6 +104,13 @@ bool Channel::hasTopic() const
 	return (true);
 }
 
+bool Channel::hasPassword() const
+{
+	if (this->password.empty())
+		return (false);
+	return (true);
+}
+
 /* Setters */
 void Channel::setName(const std::string &name) { this->_name = name; }
 void Channel::setConnected(Client *client) { this->_connected.insert(std::make_pair(client->getFd(), client)); }
@@ -111,6 +119,7 @@ void Channel::setOperator(int fd) { this->_operators.push_back(fd); }
 void Channel::setOperators(std::vector<int> operators) { this->_operators = operators; }
 void Channel::setModesList(const std::string &modesList) { this->_modesList = modesList; }
 void Channel::setTopic(const std::string &topic) { this->_topic = topic; }
+void Channel::setPassword(const std::string &password) { this->password = password; }
 
 /* Getters */
 std::string Channel::getName() const { return (this->_name); }
@@ -118,3 +127,4 @@ std::map<int, Client*> Channel::getConnected() const { return (this->_connected)
 std::vector<int> Channel::getOperators() const { return (this->_operators); }
 std::string Channel::getModesList() const { return (this->_modesList); }
 std::string Channel::getTopic() const { return (this->_topic); }
+std::string	Channel::getPassword() const { return (this->password); }
