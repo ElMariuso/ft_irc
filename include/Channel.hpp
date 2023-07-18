@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 17:54:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 17:59:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Channel
 		void 					setModesList(const std::string &modesList);
 		void 					setTopic(const std::string &topic); // change the channel topic
 		void					setPassword(const std::string &password);
-		void					setLimit(int limit);
+		void					setLimit(std::size_t limit);
 
 		/* Getters */
 		std::string				getName() const;
@@ -51,7 +51,7 @@ class Channel
 		std::string				getModesList() const;
 		std::string				getTopic() const;
 		std::string				getPassword() const;
-		int						getLimit() const;
+		std::size_t				getLimit() const;
 		
     private:
         std::string             _name;
@@ -60,7 +60,7 @@ class Channel
 		std::string				_modesList;
 		std::string				_topic;
 		std::string				password;
-		int						limit;
+		std::size_t				limit;
 };
 
 /* all channel modes currently added : 

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 17:54:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 17:59:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,16 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
         {
             join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
                 << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
+            allMessages = join.str();
+
+            /* Send to the new user */
+            client->sendToFD(allMessages);
+            return ;
+        }
+        else if (channel->hasLimit() == true && channel->getConnected().size() >= channel->getLimit())
+        {
+            join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+l) - Channel user limit reached" << "\r\n";
             allMessages = join.str();
 
             /* Send to the new user */
