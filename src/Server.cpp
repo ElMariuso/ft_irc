@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 21:39:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 19:07:44 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,10 +196,17 @@ void Server::getMessages(const std::string &message, const int from)
             Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
         if (client->getIsAuthenticated() == true)
         {
-            if (command.getType() == PRIVMSG)
-                Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            if (command.getType() == JOIN)
+            {
+                if (command.getArgs().size() == 2)
+                    Command::joinMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
+                else
+                    Command::joinMessages(this, client, command.getArgs().at(0), NULL);
+            }
             else if (command.getType() == NICK)
                 Command::nickMessages(*this, client, command.getArgs().at(0));
+            else if (command.getType() == PRIVMSG)
+                Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
         }
         else if (command.getType() != UNKNOW)
         {
