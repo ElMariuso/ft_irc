@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 21:31:16 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:46:53 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,12 +168,23 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
 }
 
 /* PART */
-void Command::partMessages(Server *server, const Client &client, Channel *channel, const std::string &message)
+void Command::partMessages(Server *server, const Client &client, const std::string &name, const std::string &message)
 {
+    Channel             *channel;
     std::stringstream   part;
     std::string         allMessages;
 
-    if (channel->getConnected().find(client.getFd()) == channel->getConnected().end()) /* ERR_NOTONCHANNEL (442) */
+    channel = checkForChannel(*server, name);
+    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    {
+        part << ":" << server->getName() << " 403 " << client.getNickname() << " " << channel->getName() \
+            << " :No such channel" << "\r\n";
+        
+        /* Send to the user */
+        allMessages = part.str();
+        client.sendToFD(allMessages);
+    }
+    else if (channel->getConnected().find(client.getFd()) == channel->getConnected().end()) /* ERR_NOTONCHANNEL (442) */
     {
         part << ":" << server->getName() << " 442 " << client.getNickname() << " " << channel->getName() \
             << " :You're not on that channel" << "\r\n";
@@ -335,7 +346,7 @@ std::string Command::userListOnChannel(const std::map<int, Client*> &userList, C
 }
 
 /* Messages Utils */
-Channel* Command::checkForChannel(const Server &server, const std::string &nickname) /* Used in JOIN too */
+Channel* Command::checkForChannel(const Server &server, const std::string &nickname) /* Used in JOIN and PART too */
 {
     const std::map<std::string, Channel*>           &channels = server.getChannelsList();
     std::map<std::string, Channel*>::const_iterator it = channels.find(nickname);

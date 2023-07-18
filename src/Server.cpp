@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 21:25:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:47:08 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,6 +202,13 @@ void Server::getMessages(const std::string &message, const int from)
                     Command::joinMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
                 else
                     Command::joinMessages(this, client, command.getArgs().at(0), "");
+            }
+            else if (command.getType() == PART)
+            {
+                if (command.getArgs().size() == 2)
+                    Command::partMessages(this, *client, command.getArgs().at(0), command.getArgs().at(1));
+                else
+                    Command::partMessages(this, *client, command.getArgs().at(0), "");
             }
             else if (command.getType() == NICK)
                 Command::nickMessages(*this, client, command.getArgs().at(0));
