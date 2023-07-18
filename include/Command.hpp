@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 15:13:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 15:30:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Command
         static void                 authentificationMessages(const Server &server, const Client &client);
 
         /* JOIN */
-        static void                 joinMessages(Server *server, const std::string &channelName, const std::string &password);
+        static void                 joinMessages(Server *server, Client *client, const std::string &channelName, const std::string &password);
 
         /* PRIVMSG */
         static void                 privmsgMessages(const Server &server, const Client &src, const std::string destNickname, const std::string message);

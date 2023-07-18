@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 15:15:38 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 15:30:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,24 @@ void Command::authentificationMessages(const Server &server, const Client &clien
 }
 
 /* JOIN */
-void Command::joinMessages(Server *server, const std::string &channelName, const std::string &password)
+void Command::joinMessages(Server *server, Client *client, const std::string &channelName, const std::string &password)
 {
+    Channel *channel;
+    
     (void)server;
-    (void)channelName;
     (void)password;
+
+    if (false) /* Channel */
+    {
+
+    }
+    else /* No channel */
+    {
+        /* Create new channel and connect the user */
+        channel = new Channel(channelName);
+        channel->setConnected(client);
+        server->setChannel(channelName, channel);
+    }
 
     /* RPL_NOTOPIC (331) */
     /* RPL_TOPIC (332) */
