@@ -6,14 +6,21 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/12 00:31:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/17 22:10:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Channel.hpp"
 
+Channel::Channel(const std::string &name)
+{
+	this->setName(name);
+	this->setTopic(NULL);
+}
+Channel::~Channel() {}
+
 /* mode function */
-int	Channel::addMode(char mode)
+int	Channel::addMode(const char &mode)
 {
 	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l') // list of existing modes
 	{
@@ -27,7 +34,7 @@ int	Channel::addMode(char mode)
 	return (0);
 }
 	
-int	Channel::rmMode(char mode)
+int	Channel::rmMode(const char &mode)
 {
 	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l') // list of existing modes
 	{
@@ -41,14 +48,14 @@ int	Channel::rmMode(char mode)
 	return (0);
 }
 
-bool Channel::hasMode(char mode)
+bool Channel::hasMode(const char &mode) const
 {
 	if (_modesList.find(mode) == std::string::npos)
 		return (false);
 	return (true);
 }
 
-int	Channel::addOp(Client client)
+int	Channel::addOp(const Client &client)
 {
 	if (isOp(client) == true)
 		return (-1); // Error, client is already an operator in this channel
@@ -56,7 +63,7 @@ int	Channel::addOp(Client client)
 	return (0);
 }
 
-int	Channel::rmOp(Client client)
+int	Channel::rmOp(const Client &client)
 {
 	std::vector<int>::iterator it;
 
@@ -73,9 +80,9 @@ int	Channel::rmOp(Client client)
 	return (0);
 }
 
-bool Channel::isOp(Client client)
+bool Channel::isOp(const Client &client) const
 {
-	std::vector<int>::iterator it;
+	std::vector<int>::const_iterator	it;
 
 	it = this->_operators.begin();
 	while (it != this->_operators.end())
@@ -89,14 +96,18 @@ bool Channel::isOp(Client client)
 	return (false);
 }
 
-void	Channel::setTopic(std::string topic)
-{
-	_topic = topic;
-}
+/* Setters */
+void Channel::setName(const std::string &name) { this->_name = name; }
+void Channel::setConnected(Client *client) { this->_connected.insert(std::make_pair(client->getFd(), client)); }
+void Channel::setConnectedList(std::map<int, Client*> connected) { this->_connected = connected; }
+void Channel::setOperator(int fd) { this->_operators.push_back(fd); }
+void Channel::setOperators(std::vector<int> operators) { this->_operators = operators; }
+void Channel::setModesList(const std::string &modesList) { this->_modesList = modesList; }
+void Channel::setTopic(const std::string &topic) { this->_topic = topic; }
 
 /* Getters */
-std::string Channel::getName() { return (this->_name); }
-std::map<int, Client*> Channel::getConnected() { return (this->_connected); }
-std::vector<int> Channel::getOperators() { return (this->_operators); }
-std::string Channel::getModesList() { return (this->_modesList); }
-std::string Channel::getTopic() { return (this->_topic); }
+std::string Channel::getName() const { return (this->_name); }
+std::map<int, Client*> Channel::getConnected() const { return (this->_connected); }
+std::vector<int> Channel::getOperators() const { return (this->_operators); }
+std::string Channel::getModesList() const { return (this->_modesList); }
+std::string Channel::getTopic() const { return (this->_topic); }
