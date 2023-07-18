@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 21:25:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:28:42 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,13 +168,12 @@ void Command::joinMessages(Server *server, Client *client, const std::string &ch
 }
 
 /* PART */
-void Command::partMessages(Server *server, Client *client, Channel *channel, const std::string &message)
+void Command::partMessages(Server *server, const Client &client, Channel *channel, const std::string &message)
 {
-    (void)server;
     std::stringstream   part;
     std::string         allMessages;
 
-    if (channel->getConnected().find(client->getFd()) == channel->getConnected().end()) /* ERR_NOTONCHANNEL (442) */
+    if (channel->getConnected().find(client.getFd()) == channel->getConnected().end()) /* ERR_NOTONCHANNEL (442) */
     {
 
     }
@@ -182,12 +181,12 @@ void Command::partMessages(Server *server, Client *client, Channel *channel, con
     {
         if (message.empty()) /* If there is no message */
         {
-            part << ":" << client->getNickname() << " PART " \
+            part << ":" << client.getNickname() << " PART " \
                 << channel->getName() << "\r\n";
         }
         else /* If there is a message */
         {
-            part << ":" << client->getNickname() << " PART " \
+            part << ":" << client.getNickname() << " PART " \
                 << channel->getName() << " " << message << "\r\n";
         }
 
@@ -200,7 +199,7 @@ void Command::partMessages(Server *server, Client *client, Channel *channel, con
             actualClient.sendToFD(allMessages);
         }
         /* Remove the user from the connected list */
-        channel->removeConnected(client->getFd());
+        channel->removeConnected(client.getFd());
 
         /* Delete the channel if there is no user left */
         if (channel->getConnected().empty())
