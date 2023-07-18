@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 14:23:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 14:24:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ void Command::connectionMessage(const Server &server, const Client &client)
     welcome << ":" << server.getName() << " 001 " << client.getNickname() << " :Please authenticate to get the rest of the server" << "\r\n";
     message = welcome.str();
 
-    Utils::debug_message("Send welcome messages to: " + client.getUsername());
     client.sendToFD(message);
 }
 
@@ -50,7 +49,6 @@ void Command::welcomeMessages(const Server &server, Client *client, const std::s
         //     + " :..." + "\r\n";
         allMessages = welcome.str();
 
-        Utils::debug_message("Send welcome messages to: " + client->getUsername());
         client->sendToFD(allMessages);
         client->setIsAuthenticated(true);
     }
@@ -58,8 +56,7 @@ void Command::welcomeMessages(const Server &server, Client *client, const std::s
     {
         welcome << ":" << server.getName() << " 464 " << client->getNickname() << " :Password incorrect" << "\r\n";
         allMessages = welcome.str();
-
-        Utils::debug_message("Send authentification error to: " + client->getUsername());
+        
         client->sendToFD(allMessages);
     }
 }
