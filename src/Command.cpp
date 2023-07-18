@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 23:12:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 23:14:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,13 +213,13 @@ void Command::partMessages(Server *server, const Client &client, const std::stri
     {
         if (message.empty()) /* If there is no message */
         {
-            part << ":" << client.getNickname() << " PART " \
-                << channel->getName() << "\r\n";
+            part << ":" << client.getNickname() << "!" << client.getUsername() << "@" << client.getHostname() \
+                << " PART " << channel->getName() << "\r\n";
         }
         else /* If there is a message */
         {
-            part << ":" << client.getNickname() << " PART " \
-                << channel->getName() << " " << message << "\r\n";
+            part << ":" << client.getNickname() << "!" << client.getUsername() << "@" << client.getHostname() \
+                << " PART " << channel->getName() << " " << message << "\r\n";
         }
 
         /* Send to the all users */
