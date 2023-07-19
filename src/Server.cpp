@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 02:08:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 19:54:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ void Server::getMessages(const std::string &message, const int from)
 void Server::sendPingMessage(const int client_socket)
 {
 	std::map<int, Client*>::iterator	it = this->clientsList.find(client_socket);
-	std::string				identifier:
+	std::string				identifier;
 	std::string				pingMessage;
 
 	std::srand(std::time(0));
@@ -246,7 +246,7 @@ void Server::sendPingMessage(const int client_socket)
 	pingMessage = "PING " + identifier;
 	if (it->second->getTimeSinceLastPing() >= 300) //time between 2 ping msg in seconds
 	{
-		it->second->sendToFd(pingMessage);
+		it->second->sendToFD(pingMessage);
 		it->second->setTimeSinceLastPing();
 		it->second->setLastPingIdentifier(identifier);
 	}
