@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 00:41:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 01:19:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 class Client;
 class Channel;
+class Command;
 
 class Server
 {
@@ -30,9 +31,11 @@ class Server
         int                                             acceptNewConnection();
         void                                            addNewClient(const int client_socket);
 
-        /* Messages */
+        /* Commands */
         int                                             handleEvent(const int client_socket);
         void                                            getMessages(const std::string &message, const int client_socket);
+        void                                            withoutAuthentification(const Command &command, Client *client);
+        void                                            withAuthentification(const Command &command, Client *client);
        
 	    /* Ping message */
 	    void				                            sendPingMessage(const int client_socket);

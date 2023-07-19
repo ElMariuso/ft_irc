@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 01:13:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 01:19:50 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ void Server::addNewClient(const int client_socket)
     this->fds.push_back(clientPfd);
 }
 
-/* Messages */
+/* Commands */
 int Server::handleEvent(const int client_socket)
 {
     ssize_t		                ret;
@@ -200,74 +200,52 @@ void Server::getMessages(const std::string &message, const int client_socket)
         Client  *client = it->second;
         
         /* No need to authenticate */
-        if (command.getType() == QUIT) /* Bye :( */
-            this->handleDisconnection(client_socket, command.getArgs().at(0));
-        else if ((command.getType() == PASS) && client->getIsAuthenticated()) /* Already registered */
-            client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
-        else if (command.getType() == PASS) /* Authentification */
-        {
-            if (this->password == command.getArgs().at(0)) /* Ok */
-            {
-                client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname()));
-                client->setIsAuthenticated(true);
-            }
-            else /* No */
-                client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
-        }
+        this->withoutAuthentification(command, client);
+
         /* Need to authenticate */
         if (client->getIsConnected() && client->getIsAuthenticated())
-        {
-            switch (command.getType())
-            {
-                case NICK:
-                    break ;
-                case JOIN:
-                    break ;
-                case PART:
-                    break ;
-                case PRIVMSG:
-                    break ;
-                default:
-                    break ;
-            }
-        }
+            this->withAuthentification(command, client);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
             client->sendToFD(Message::err_notregistered_451(this->getName(), client->getNickname()));
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
+}
 
-        // if (client->getIsAuthenticated() == true  && client->getIsConnected() == true)
-        // {
-        //     if (command.getType() == JOIN)
-        //     {
-        //         if (command.getArgs().size() == 2)
-        //             Command::joinMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
-        //         else
-        //             Command::joinMessages(this, client, command.getArgs().at(0), "");
-        //     }
-        //     else if (command.getType() == PART)
-        //     {
-        //         if (command.getArgs().size() == 2)
-        //             Command::partMessages(this, *client, command.getArgs().at(0), command.getArgs().at(1));
-        //         else
-        //             Command::partMessages(this, *client, command.getArgs().at(0), "");
-        //     }
-        //     else if (command.getType() == NICK)
-        //         Command::nickMessages(*this, client, command.getArgs().at(0));
-        //     else if (command.getType() == PRIVMSG)
-        //         Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
-        //     else if (command.getType() == PING)
-        //         Command::pingMessages(*client, command.getArgs().at(0));
-        //     else if (command.getType() == PONG)
-        //         Command::pongMessages(*client, command.getArgs().at(0));
-        // }
-        // else if (client->getIsAuthenticated() == false && command.getType() != UNKNOW)
-        // {
-        //     Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
-        //     Command::authentificationMessages(*this, *client);
-        // }
-    // }
+void Server::withoutAuthentification(const Command &command, Client *client)
+{
+    if (command.getType() == QUIT) /* Bye :( */
+        this->handleDisconnection(client->getFd(), command.getArgs().at(0));
+    else if ((command.getType() == PASS) && client->getIsAuthenticated()) /* Already registered */
+        client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
+    else if (command.getType() == PASS) /* Authentification */
+    {
+        if (this->password == command.getArgs().at(0)) /* Ok */
+        {
+            client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname()));
+            client->setIsAuthenticated(true);
+        }
+        else /* No */
+            client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
+    }
+}
+
+void Server::withAuthentification(const Command &command, Client *client)
+{
+    (void)client;
+    switch (command.getType())
+    {
+        case NICK:
+            break ;
+        case JOIN:
+            break ;
+        case PART:
+            break ;
+        case PRIVMSG:
+            break ;
+        default:
+            break ;
+    }
 }
 
 /* Ping message */
