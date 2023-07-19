@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 21:39:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 02:08:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int Server::processServer()
                 if (this->handleEvent(client_socket) == 0)
                 {
                     Utils::debug_message("Client disconnected on event: " + Utils::intToString(client_socket));
-                    this->handleDisconnection(client_socket);
+                    this->handleDisconnection(client_socket, "leaving");
                 
                     /* Remove from fds */
                     this->fds.erase(this->fds.begin() + i);
@@ -114,7 +114,7 @@ int Server::processServer()
             {
                 client_socket = this->fds[i].fd;
                 Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
-                this->handleDisconnection(client_socket);
+                this->handleDisconnection(client_socket, "leaving");
                 
                 /* Remove from fds */
                 this->fds.erase(this->fds.begin() + i);
@@ -145,7 +145,7 @@ void Server::addNewClient(const int client_socket)
     struct pollfd   clientPfd;
 
     /* Add new client to the list */
-    Client *new_client = new Client(client_socket);
+    Client *new_client = new Client(client_socket, true);
     clientsList.insert(std::make_pair(client_socket, new_client));
     clientPfd.fd = client_socket;
     clientPfd.events = POLLIN;
@@ -191,17 +191,33 @@ void Server::getMessages(const std::string &message, const int from)
     if (clientIterator != this->clientsList.end())
     {
         Client* client = clientIterator->second;
-
-        if (command.getType() == PASS)
+        
+        if (command.getType() == QUIT)
+            this->handleDisconnection(from, command.getArgs().at(0));
+        else if (command.getType() == PASS)
             Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
-        if (client->getIsAuthenticated() == true)
+        if (client->getIsAuthenticated() == true  && client->getIsConnected() == true)
         {
-            if (command.getType() == PRIVMSG)
-                Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            if (command.getType() == JOIN)
+            {
+                if (command.getArgs().size() == 2)
+                    Command::joinMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
+                else
+                    Command::joinMessages(this, client, command.getArgs().at(0), "");
+            }
+            else if (command.getType() == PART)
+            {
+                if (command.getArgs().size() == 2)
+                    Command::partMessages(this, *client, command.getArgs().at(0), command.getArgs().at(1));
+                else
+                    Command::partMessages(this, *client, command.getArgs().at(0), "");
+            }
             else if (command.getType() == NICK)
                 Command::nickMessages(*this, client, command.getArgs().at(0));
+            else if (command.getType() == PRIVMSG)
+                Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
         }
-        else if (command.getType() != UNKNOW)
+        else if (client->getIsAuthenticated() == false && command.getType() != UNKNOW)
         {
             Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
             Command::authentificationMessages(*this, *client);
@@ -212,15 +228,29 @@ void Server::getMessages(const std::string &message, const int from)
 }
 
 /* Logout */
-void Server::handleDisconnection(const int client_socket)
+void Server::handleDisconnection(const int client_socket, const std::string &message)
 {
     /* Manage logout */
     std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
 
     if (this->clientsList.size() == 0)
         Utils::debug_message("No clients connected to the server");
-    else
+    else if (it->second->getIsConnected() == true)
     {
+        it->second->setIsConnected(false);
+        for (std::map<std::string, Channel*>::iterator itChannel = this->channelsList.begin(); itChannel != this->channelsList.end(); itChannel++)
+        {
+            Channel *channel = itChannel->second;
+
+            std::map<int, Client*>::iterator it2 = channel->getConnected().find(client_socket);
+            if (it2 != channel->getConnected().end())
+            {
+                Command::partMessages(this, *(it->second), channel->getName(), message);
+                channel->rmOp(*it->second);   
+            }
+            if (this->channelsList.empty())
+                break ;
+        }
         /* Clean clientsList map */
         close(it->first);
         delete it->second;
@@ -297,6 +327,13 @@ void Server::setClient(int fd, Client *client) { this->clientsList.insert(std::m
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
+
+/* Removers */
+void Server::removeChannel(Channel *channel)
+{
+    this->channelsList.erase(channel->getName());
+    delete channel;
+}
 
 /* Getters */
 int Server::getServerSocket() const { return (this->serverSocket); }

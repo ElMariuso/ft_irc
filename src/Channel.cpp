@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/17 22:10:31 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/18 21:17:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 Channel::Channel(const std::string &name)
 {
 	this->setName(name);
-	this->setTopic(NULL);
+	this->setTopic("");
+	this->setPassword("");
+	this->setLimit(0);
+	this->setHasInvitedList(false);
 }
 Channel::~Channel() {}
 
@@ -96,6 +99,27 @@ bool Channel::isOp(const Client &client) const
 	return (false);
 }
 
+bool Channel::hasTopic() const
+{
+	if (this->_topic.empty())
+		return (false);
+	return (true);
+}
+
+bool Channel::hasPassword() const
+{
+	if (this->password.empty())
+		return (false);
+	return (true);
+}
+
+bool Channel::hasLimit() const
+{
+	if (this->limit <= 0)
+		return (false);
+	return (true);
+}
+
 /* Setters */
 void Channel::setName(const std::string &name) { this->_name = name; }
 void Channel::setConnected(Client *client) { this->_connected.insert(std::make_pair(client->getFd(), client)); }
@@ -104,6 +128,14 @@ void Channel::setOperator(int fd) { this->_operators.push_back(fd); }
 void Channel::setOperators(std::vector<int> operators) { this->_operators = operators; }
 void Channel::setModesList(const std::string &modesList) { this->_modesList = modesList; }
 void Channel::setTopic(const std::string &topic) { this->_topic = topic; }
+void Channel::setPassword(const std::string &password) { this->password = password; }
+void Channel::setLimit(std::size_t limit)  { this->limit = limit; }
+void Channel::setHasInvitedList(bool hasInvitedList) { this->hasInvitedList = hasInvitedList; }
+void Channel::setInvited(const std::string &name) { this->invited.insert(std::make_pair(name, true)); }
+void Channel::setInvitedList(std::map<std::string, bool> &invited) { this->invited = invited; }
+
+/* Removers */
+void Channel::removeConnected(int fd) { this->_connected.erase(fd); }
 
 /* Getters */
 std::string Channel::getName() const { return (this->_name); }
@@ -111,3 +143,7 @@ std::map<int, Client*> Channel::getConnected() const { return (this->_connected)
 std::vector<int> Channel::getOperators() const { return (this->_operators); }
 std::string Channel::getModesList() const { return (this->_modesList); }
 std::string Channel::getTopic() const { return (this->_topic); }
+std::string	Channel::getPassword() const { return (this->password); }
+std::size_t Channel::getLimit() const  { return (this->limit); }
+bool Channel::getHasInvitedList() const { return (this->hasInvitedList); }
+std::map<std::string, bool>	Channel::getInvited() const { return (this->invited); }

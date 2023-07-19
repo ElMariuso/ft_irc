@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 14:37:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 00:44:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Command::Command(const std::string &message)
 }
 Command::~Command() {}
 
-/* Commands */
+/* WELCOME and PASS */
 void Command::connectionMessage(const Server &server, const Client &client)
 {
     std::stringstream   welcome;
@@ -72,6 +72,176 @@ void Command::authentificationMessages(const Server &server, const Client &clien
     client.sendToFD(message);
 }
 
+/* JOIN */
+void Command::joinMessages(Server *server, Client *client, const std::string &channelName, const std::string &password)
+{
+    Channel                 *channel;
+    std::stringstream       join;
+    std::stringstream       joinAll;
+    std::string             allMessages;
+
+    channel = checkForChannel(*server, channelName);
+    if (channel != NULL) /* Channel */
+    {
+        if (channel->hasLimit() == true && channel->getConnected().size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
+        {
+            join << ":" << server->getName() << " 471 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+l) - Channel user limit reached" << "\r\n";
+            allMessages = join.str();
+
+            /* Send to the new user */
+            client->sendToFD(allMessages);
+            return ;
+        }
+        else if (channel->getHasInvitedList() == true && channel->getInvited().find(client->getNickname()) == channel->getInvited().end()) /* ERR_INVITEONLYCHAN (473) */
+        {
+            join << ":" << server->getName() << " 473 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+i) - Invite only" << "\r\n";
+            allMessages = join.str();
+
+            /* Send to the new user */
+            client->sendToFD(allMessages);
+            return ;
+        }
+        else if (channel->hasPassword() == true && password != channel->getPassword()) /* ERR_BADCHANNELKEY (475) */
+        {
+            join << ":" << server->getName() << " 475 " << client->getNickname() << " " << channel->getName() \
+                << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
+            allMessages = join.str();
+
+            /* Send to the new user */
+            client->sendToFD(allMessages);
+            return ;
+        }
+        /* Connect the user */
+        channel->setConnected(client);
+
+        /* JOIN */
+        joinAll << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
+            << " JOIN " << channel->getName() << "\r\n";
+        allMessages = joinAll.str();
+
+        std::map<int, Client*> connected = channel->getConnected();
+        for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.end(); ++it)
+        {
+            Client  *client = it->second;
+            client->sendToFD(allMessages);
+        }
+
+        /* Check if topic */
+        if (channel->hasTopic() == true) /* RPL_TOPIC (332) */
+        {
+            join << ":" << server->getName() << " 332 " << client->getNickname() << " " << channel->getName() \
+                << " :" << channel->getTopic() << "\r\n";
+        }
+        else /* RPL_NOTOPIC (331) */
+        {
+            join << ":" << server->getName() << " 331 " << client->getNickname() << " " << channel->getName() \
+                << " :No topic is set" << "\r\n";
+        }
+        /* Create messages */
+        /* RPL_NAMREPLY (353) */
+        join << ":" << server->getName() << " 353 " << client->getNickname() << " = " << channel->getName() \
+            << " :" << userListOnChannel(channel->getConnected(), *channel) << "\r\n";
+        /* RPL_ENDOFNAMES (366) */
+        join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
+            << " :End of NAMES list" << "\r\n";
+        allMessages = join.str();
+        
+        /* Send to the new user */
+        client->sendToFD(allMessages);
+    }
+    else /* No channel */
+    {
+        /* Create new channel and connect the user */
+        channel = new Channel(channelName);
+        channel->setConnected(client);
+
+        /* Set the creator of the channel as operator */
+        channel->addOp(*client);
+
+        /* Add the new channel to the channel list on server */
+        server->setChannel(channelName, channel);
+
+        /* Create messages */
+        /* JOIN */
+        join << ":" << client->getNickname() << "!" << client->getUsername() << "@" << client->getHostname() \
+            << " JOIN " << channel->getName() << "\r\n";
+        /* RPL_NOTOPIC (331) */
+        join << ":" << server->getName() << " 331 " << client->getNickname() << " " << channel->getName() \
+            << " :No topic is set" << "\r\n";
+        /* RPL_NAMREPLY (353) */
+        join << ":" << server->getName() << " 353 " << client->getNickname() << " = " << channel->getName() \
+            << " :@" << client->getNickname() << "\r\n";
+        /* RPL_ENDOFNAMES (366) */
+        join << ":" << server->getName() << " 366 " << client->getNickname() << " " << channel->getName() \
+            << " :End of NAMES list" << "\r\n";
+
+        /* Send to the new user */
+        allMessages = join.str();
+        client->sendToFD(allMessages);
+    }
+}
+
+/* PART */
+void Command::partMessages(Server *server, const Client &client, const std::string &name, const std::string &message)
+{
+    std::map<int, Client*>  connectedClients;
+    Channel                 *channel;
+    std::stringstream       part;
+    std::string             allMessages;
+
+    channel = checkForChannel(*server, name);
+    if (channel != NULL)
+        connectedClients = channel->getConnected();
+    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    {
+        part << ":" << server->getName() << " 403 " << client.getNickname() << " " << channel->getName() \
+            << " :No such channel" << "\r\n";
+        
+        /* Send to the user */
+        allMessages = part.str();
+        client.sendToFD(allMessages);
+    }
+    else if (connectedClients.find(client.getFd()) == connectedClients.end()) /* ERR_NOTONCHANNEL (442) */
+    {
+        part << ":" << server->getName() << " 442 " << client.getNickname() << " " << channel->getName() \
+            << " :You're not on that channel" << "\r\n";
+        
+        /* Send to the user */
+        allMessages = part.str();
+        client.sendToFD(allMessages);
+    }
+    else /* PART */
+    {
+        if (message.empty()) /* If there is no message */
+        {
+            part << ":" << client.getNickname() << "!" << client.getUsername() << "@" << client.getHostname() \
+                << " PART " << channel->getName() << "\r\n";
+        }
+        else /* If there is a message */
+        {
+            part << ":" << client.getNickname() << "!" << client.getUsername() << "@" << client.getHostname() \
+                << " PART " << channel->getName() << " " << message << "\r\n";
+        }
+
+        /* Send to the all users */
+        allMessages = part.str();
+        for (std::map<int, Client*>::const_iterator it = connectedClients.begin(); it != connectedClients.end(); ++it)
+        {
+            Client  &actualClient = *it->second;
+            actualClient.sendToFD(allMessages);
+        }
+        /* Remove the user from the connected list */
+        channel->removeConnected(client.getFd());
+
+        /* Delete the channel if there is no user left */
+        if (channel->getConnected().empty())
+            server->removeChannel(channel);
+    }
+}
+
+/* PRIVMSG */
 void Command::privmsgMessages(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
     if (destNickname[0] == '#')
@@ -82,11 +252,14 @@ void Command::privmsgMessages(const Server &server, const Client &src, const std
 
 void Command::privmsgMessagesChannel(const Server &server, const Client &src, const std::string destNickname, const std::string message)
 {
-    std::stringstream   privmsg;
-    std::string         messageToSend;
-    Channel             *dest;
+    std::map<int, Client*>  connectedClients;
+    std::stringstream       privmsg;
+    std::string             messageToSend;
+    Channel                 *dest;
     
     dest = Command::checkForChannel(server, destNickname);
+    if (dest != NULL)
+        connectedClients = dest->getConnected();
     if (dest == NULL) /* ERR_CANNOTSENDTOCHAN (404) */
     {
         privmsg << ":" << server.getName() << " 404 " << destNickname \
@@ -94,16 +267,25 @@ void Command::privmsgMessagesChannel(const Server &server, const Client &src, co
         messageToSend = privmsg.str();
         src.sendToFD(messageToSend);
     }
+    else if (connectedClients.find(src.getFd()) == connectedClients.end()) /* ERR_NOTONCHANNEL (442) */
+    {
+        privmsg << ":" << server.getName() << " 442 " << src.getNickname() << " " << dest->getName() \
+            << " :You're not on that channel" << "\r\n";
+        
+        /* Send to the user */
+        messageToSend = privmsg.str();
+        src.sendToFD(messageToSend);
+    }
     else /* PRIVMSG */
     {
-        const std::map<int, Client*>    &connectedClients = dest->getConnected();
         privmsg << ":" << src.getNickname() << " PRIVMSG " \
-            << destNickname << " :" << message << "\r\n";
+            << destNickname << " " << message << "\r\n";
         messageToSend = privmsg.str();
         for (std::map<int, Client*>::const_iterator it = connectedClients.begin(); it != connectedClients.end(); ++it)
         {
             Client  &client = *it->second;
-            client.sendToFD(messageToSend);
+            if (client.getNickname() != src.getNickname())
+                client.sendToFD(messageToSend);
         }
     }
 }
@@ -125,12 +307,13 @@ void Command::privmsgMessagesUser(const Server &server, const Client &src, const
     else /* PRIVMSG */
     {
         privmsg << ":" << src.getNickname() << " PRIVMSG " \
-            << dest->getNickname() << " :" << message << "\r\n";
+            << dest->getNickname() << " " << message << "\r\n";
         messageToSend = privmsg.str();
         dest->sendToFD(messageToSend);
     }
 }
 
+/* NICK */
 void Command::nickMessages(const Server &server, Client *client, const std::string newNickname)
 {
     std::stringstream   nick001;
@@ -170,8 +353,29 @@ void Command::nickMessages(const Server &server, Client *client, const std::stri
     }   
 }
 
+/* Join utils */
+std::string Command::userListOnChannel(const std::map<int, Client*> &userList, Channel &channel)
+{
+    std::map<int, Client*>::const_iterator  it;
+    char                                    prefix;
+    const Client                            *client;
+    std::string                             ret;
+
+    if (userList.empty())
+        return (NULL);
+    for (it = userList.begin(); it != userList.end(); ++it)
+    {
+        client = it->second;
+        prefix = (channel.isOp(*client)) ? '@' : '+';
+        ret += prefix;
+        ret += client->getNickname();
+        ret += ' ';
+    }
+    return (ret);
+}
+
 /* Messages Utils */
-Channel* Command::checkForChannel(const Server &server, const std::string &nickname)
+Channel* Command::checkForChannel(const Server &server, const std::string &nickname) /* Used in JOIN and PART too */
 {
     const std::map<std::string, Channel*>           &channels = server.getChannelsList();
     std::map<std::string, Channel*>::const_iterator it = channels.find(nickname);
