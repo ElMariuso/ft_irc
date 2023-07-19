@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 01:28:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 02:00:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ void Server::getMessages(const std::string &message, const int from)
             this->handleDisconnection(from, command.getArgs().at(0));
         else if (command.getType() == PASS)
             Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
-        if (client->getIsAuthenticated() == true)
+        if (client->getIsAuthenticated() == true  && client->getIsConnected() == true)
         {
             if (command.getType() == JOIN)
             {
