@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 01:07:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:30:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,10 @@ class Server
         std::vector<struct pollfd>      getFds() const;
         std::map<int, Client*>          getClientsList() const;
         std::map<std::string, Channel*> getChannelsList() const;
+
+        /* Finders */
+        Client*                         findClient(const std::string &name) const;
+        Channel*                        findChannel(const std::string &name) const;
 
     private:
         int                             serverSocket;

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 23:15:53 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:33:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -376,3 +376,26 @@ std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
+
+/* Finders */
+Client* Server::findClient(const std::string &name) const
+{
+    const std::map<int, Client*>  &clients = this->getClientsList();
+    
+    for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        if (it->second && it->second->getNickname() == name)
+            return (it->second);
+    }
+    return (NULL);
+}
+
+Channel* Server::findChannel(const std::string &name) const
+{
+    const std::map<std::string, Channel*>           &channels = this->getChannelsList();
+    std::map<std::string, Channel*>::const_iterator it = channels.find(name);
+    
+    if (it != channels.end())
+        return (it->second);
+    return (NULL);
+}
