@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/19 00:44:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 20:12:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,6 +353,20 @@ void Command::nickMessages(const Server &server, Client *client, const std::stri
     }   
 }
 
+/* PING PONG */
+void Command::pingMessages(const Client &src, const std::string message)
+{
+	std::string pongMessage;
+
+	pongMessage = "PONG " + message;
+	src.sendToFD(pongMessage);
+}
+void Command::pongMessages(Client &src, const std::string message)
+{
+	if (src.getLastPingIdentifier() == message)
+		src.setLastPingIdentifier("-1");
+}
+
 /* Join utils */
 std::string Command::userListOnChannel(const std::map<int, Client*> &userList, Channel &channel)
 {
@@ -454,6 +468,10 @@ void Command::setType()
         this->type = BAN;
     else if (type == "WHOIS")
         this->type = WHOIS;
+    else if (type == "PING")
+	this->type = PING;
+    else if (type == "PONG")
+	this->type = PONG;
     else
         this->type = UNKNOW;
 }

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/18 21:37:38 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 20:12:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,9 @@ enum MessageType
     NAMES,
     KICK,
     BAN,
-    WHOIS
+    WHOIS,
+    PING,
+    PONG
 };
 
 class Command
@@ -62,6 +64,10 @@ class Command
 
         /* NICK */
         static void                 nickMessages(const Server &server, Client *client, const std::string newNickname);
+
+	/* PING PONG */
+	static void		pingMessages(const Client &src, const std::string message);
+	static void             pongMessages(Client &src, const std::string message);
 
         /* Join utils */
         static std::string          userListOnChannel(const std::map<int, Client*> &userList, Channel &channel);

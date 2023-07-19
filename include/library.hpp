@@ -49,6 +49,7 @@
 # include <csignal>
 # include <cstring>
 # include <netdb.h>
+# include <ctime>
 
 # include <vector>
 # include <map>

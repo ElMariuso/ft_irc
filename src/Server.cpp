@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 02:08:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 19:54:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,9 @@ int Server::processServer()
         /* Browse existing clients sockets */
         for (std::size_t i = 1; i < this->fds.size(); ++i)
         {
+            client_socket = this->fds[i].fd;
             if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
             {
-                client_socket = this->fds[i].fd;
                 Utils::debug_message("Incoming event on client socket: " + Utils::intToString(client_socket));
                 if (this->handleEvent(client_socket) == 0)
                 {
@@ -110,9 +110,8 @@ int Server::processServer()
                     i--; /* Client disconnected */
                 }
             }
-            else if (this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) /* Check for logout */
+	    if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) || this->pingTimeOut(client_socket) == true ) /* Check for logout */
             {
-                client_socket = this->fds[i].fd;
                 Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
                 this->handleDisconnection(client_socket, "leaving");
                 
@@ -121,6 +120,10 @@ int Server::processServer()
 
                 i--; /* Client disconnected */
             }
+	    else
+	    {
+		this->sendPingMessage(client_socket);
+	    }
         }
     } while (!Utils::stop(1));
     return (0);
@@ -216,6 +219,10 @@ void Server::getMessages(const std::string &message, const int from)
                 Command::nickMessages(*this, client, command.getArgs().at(0));
             else if (command.getType() == PRIVMSG)
                 Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            else if (command.getType() == PING)
+                Command::pingMessages(*client, command.getArgs().at(0));
+            else if (command.getType() == PONG)
+                Command::pongMessages(*client, command.getArgs().at(0));
         }
         else if (client->getIsAuthenticated() == false && command.getType() != UNKNOW)
         {
@@ -225,6 +232,33 @@ void Server::getMessages(const std::string &message, const int from)
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(from));
+}
+
+/* Ping message */
+void Server::sendPingMessage(const int client_socket)
+{
+	std::map<int, Client*>::iterator	it = this->clientsList.find(client_socket);
+	std::string				identifier;
+	std::string				pingMessage;
+
+	std::srand(std::time(0));
+	identifier = Utils::intToString(std::rand()); //random identifier
+	pingMessage = "PING " + identifier;
+	if (it->second->getTimeSinceLastPing() >= 300) //time between 2 ping msg in seconds
+	{
+		it->second->sendToFD(pingMessage);
+		it->second->setTimeSinceLastPing();
+		it->second->setLastPingIdentifier(identifier);
+	}
+}
+
+bool Server::pingTimeOut(const int client_socket)
+{
+	std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
+
+	if (it->second->getTimeSinceLastPing() >= 600 && it->second->getLastPingIdentifier() != "-1" )
+		return (true);
+	return (false);
 }
 
 /* Logout */
