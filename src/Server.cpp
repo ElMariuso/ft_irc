@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 23:12:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:15:53 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,9 +121,7 @@ int Server::processServer()
                 i--; /* Client disconnected */
             }
 	    else
-	    {
-		this->sendPingMessage(client_socket);
-	    }
+            this->sendPingMessage(client_socket);
         }
     } while (!Utils::stop(1));
     return (0);

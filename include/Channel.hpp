@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/18 21:17:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:19:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ class Channel
 		std::size_t					getLimit() const;
 		bool						getHasInvitedList() const;
 		std::map<std::string, bool>	getInvited() const;
+
+		/* Finders */
+		Client*						findConnected(const std::string &name);
 		
     private:
         std::string             	_name;

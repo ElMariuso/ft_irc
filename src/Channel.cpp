@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/18 21:17:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:21:11 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,3 +147,16 @@ std::string	Channel::getPassword() const { return (this->password); }
 std::size_t Channel::getLimit() const  { return (this->limit); }
 bool Channel::getHasInvitedList() const { return (this->hasInvitedList); }
 std::map<std::string, bool>	Channel::getInvited() const { return (this->invited); }
+
+/* Finders */
+Client* Channel::findConnected(const std::string &name)
+{
+	std::map<int, Client*>	&connected = this->_connected;
+
+	for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.begin(); ++it)
+	{
+		if (it->second->getNickname() == name)
+			return (it->second);
+	}
+	return (NULL);
+}
