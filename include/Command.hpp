@@ -35,7 +35,9 @@ enum MessageType
     NAMES,
     KICK,
     BAN,
-    WHOIS
+    WHOIS,
+    PING,
+    PONG
 };
 
 class Command
@@ -62,6 +64,10 @@ class Command
 
         /* NICK */
         static void                 nickMessages(const Server &server, Client *client, const std::string newNickname);
+
+	/* PING PONG */
+	static void		pingMessages(const Client &src, const std::string message);
+	static void             pongMessages(const Client &src, const std::string message);
 
         /* Join utils */
         static std::string          userListOnChannel(const std::map<int, Client*> &userList, Channel &channel);

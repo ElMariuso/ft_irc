@@ -15,6 +15,7 @@
 # include "library.hpp"
 
 class Client
+
 {
     private:
 		Client(); // default constructor should never be called
@@ -38,6 +39,8 @@ class Client
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
 		void		setHostname();
+		void		setTimeSinceLastPing();
+		void		setLastPingIdentifier(std::string identifier);
 		
 		/* Getters */
 		int			getFd() const;
@@ -46,6 +49,8 @@ class Client
 		std::string	getNickname() const;
 		std::string	getUsername() const;
 		std::string	getHostname() const;
+		float		getTimeSinceLastPing() const;
+		std::string	getLastPingIdentifier() const;
         
     private:
         int         _fd;
@@ -55,6 +60,8 @@ class Client
         std::string _username;
 		std::string	_hostname;
 		std::string _modesList;
+		clock_t		_timeSinceLastPing;
+		std::string	_LastPingIdentifier;
 };
 
 /* all user modes currently added : 

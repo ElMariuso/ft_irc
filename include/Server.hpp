@@ -33,7 +33,11 @@ class Server
         /* Messages */
         int                             handleEvent(const int client_socket);
         void                            getMessages(const std::string &message, const int from);
-        
+       
+	/* Ping message */
+	void				sendPingMessage(const int client_socket);
+	bool				pingTimeOut(const int client_socket);
+
         /* Logout */
         void                            handleDisconnection(const int client_socket, const std::string &message);
         
