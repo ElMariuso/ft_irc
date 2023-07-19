@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/19 23:11:08 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:14:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ std::string Message::join(const std::string &clientNickname, const std::string &
 
     stream << ":" << clientNickname << "!" << clientUsername << "@" << clientHostname \
         << " JOIN " << channelName << "\r\n";
-    return (ret);
+    return (stream.str());
 }
 
 std::string Message::part(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName, const std::string &message)
@@ -110,7 +110,6 @@ std::string Message::rpl_namreplay_353(const std::string &serverName, const std:
     /* Get all connected users */
     const std::map<int, Client*>            &userList = channel.getConnected();
     std::map<int, Client*>::const_iterator  it;
-    const Client                            &client;
 
     if (userList.empty())
         userListStr = "";
@@ -118,11 +117,11 @@ std::string Message::rpl_namreplay_353(const std::string &serverName, const std:
     {
         for (it = userList.begin(); it != userList.end(); ++it)
         {
-            client = *(it->second);
-            prefix = (channel.isOp(*client)) ? '@' : '+';
-            userList += prefix;
-            userList += client.getNickname();
-            userList += ' ';
+            const Client &client = *(it->second);
+            prefix = (channel.isOp(client)) ? '@' : '+';
+            userListStr += prefix;
+            userListStr += client.getNickname();
+            userListStr += ' ';
         }
     }
     stream << ":" << serverName << " 353 " << clientNickname << " = " << channelName \
@@ -171,7 +170,7 @@ std::string Message::err_nonicknamegiven_431(const std::string &serverName)
 {
     std::stringstream   stream;
 
-    nick431 << ":" << serverName << " 431 *" \
+    stream << ":" << serverName << " 431 *" \
         << " :No nickname given" << "\r\n";
     return (stream.str());
 }
@@ -232,7 +231,7 @@ std::string Message::err_inviteonlychan_473(const std::string &serverName, const
 {
     std::stringstream   stream;
 
-    join << ":" << serverName << " 473 " << clientNickname << " " << channelName \
+    stream << ":" << serverName << " 473 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+i) - Invite only" << "\r\n";
     return (stream.str());
 }
@@ -241,7 +240,7 @@ std::string Message::err_badchannelkey_475(const std::string &serverName, const 
 {
     std::stringstream   stream;
 
-    join << ":" << serverName << " 475 " << clientNickname << " " << channelName \
+    stream << ":" << serverName << " 475 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
     return (stream.str());
 }

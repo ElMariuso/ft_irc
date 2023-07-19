@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 22:11:18 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:12:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,8 @@ void Server::getMessages(const std::string &message, const int from)
     if (clientIterator != this->clientsList.end())
     {
         Client* client = clientIterator->second;
+
+        (void)client;
         
         if (command.getType() == QUIT)
             this->handleDisconnection(from, command.getArgs().at(0));
