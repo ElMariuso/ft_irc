@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 19:54:20 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 22:11:18 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,36 +199,36 @@ void Server::getMessages(const std::string &message, const int from)
             this->handleDisconnection(from, command.getArgs().at(0));
         else if (command.getType() == PASS)
             Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
-        if (client->getIsAuthenticated() == true  && client->getIsConnected() == true)
-        {
-            if (command.getType() == JOIN)
-            {
-                if (command.getArgs().size() == 2)
-                    Command::joinMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
-                else
-                    Command::joinMessages(this, client, command.getArgs().at(0), "");
-            }
-            else if (command.getType() == PART)
-            {
-                if (command.getArgs().size() == 2)
-                    Command::partMessages(this, *client, command.getArgs().at(0), command.getArgs().at(1));
-                else
-                    Command::partMessages(this, *client, command.getArgs().at(0), "");
-            }
-            else if (command.getType() == NICK)
-                Command::nickMessages(*this, client, command.getArgs().at(0));
-            else if (command.getType() == PRIVMSG)
-                Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
-            else if (command.getType() == PING)
-                Command::pingMessages(*client, command.getArgs().at(0));
-            else if (command.getType() == PONG)
-                Command::pongMessages(*client, command.getArgs().at(0));
-        }
-        else if (client->getIsAuthenticated() == false && command.getType() != UNKNOW)
-        {
-            Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
-            Command::authentificationMessages(*this, *client);
-        }
+        // if (client->getIsAuthenticated() == true  && client->getIsConnected() == true)
+        // {
+        //     if (command.getType() == JOIN)
+        //     {
+        //         if (command.getArgs().size() == 2)
+        //             Command::joinMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
+        //         else
+        //             Command::joinMessages(this, client, command.getArgs().at(0), "");
+        //     }
+        //     else if (command.getType() == PART)
+        //     {
+        //         if (command.getArgs().size() == 2)
+        //             Command::partMessages(this, *client, command.getArgs().at(0), command.getArgs().at(1));
+        //         else
+        //             Command::partMessages(this, *client, command.getArgs().at(0), "");
+        //     }
+        //     else if (command.getType() == NICK)
+        //         Command::nickMessages(*this, client, command.getArgs().at(0));
+        //     else if (command.getType() == PRIVMSG)
+        //         Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+        //     else if (command.getType() == PING)
+        //         Command::pingMessages(*client, command.getArgs().at(0));
+        //     else if (command.getType() == PONG)
+        //         Command::pongMessages(*client, command.getArgs().at(0));
+        // }
+        // else if (client->getIsAuthenticated() == false && command.getType() != UNKNOW)
+        // {
+        //     Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
+        //     Command::authentificationMessages(*this, *client);
+        // }
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(from));

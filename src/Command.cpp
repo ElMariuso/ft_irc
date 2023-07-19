@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/19 20:12:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:03:41 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,7 +329,7 @@ void Command::nickMessages(const Server &server, Client *client, const std::stri
     nick432 << ":" << server.getName() << " 432 * " << newNickname \
         << " :Erroneous nickname" << "\r\n";
     nick433 << ":" << server.getName() << " 433 * " << newNickname \
-        << " :Nickname is already in use" << "\r\n";;
+        << " :Nickname is already in use" << "\r\n";
     if (newNickname.empty())
     {
         message = nick431.str();
