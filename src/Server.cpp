@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 00:45:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 01:13:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,9 @@ int Server::processServer()
             this->addNewClient(new_socket);
             Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
 
-            // TODO
-            // Command::connectionMessage(*this, *(this->clientsList.find(new_socket)->second));
-
-
+            /* Ask for authentification */
+            Client *client = this->findClientByFD(new_socket)->second;
+            client->sendToFD(Message::connection(this->getName(), client->getNickname()));
         }
 
         /* Browse existing clients sockets */
@@ -193,26 +192,51 @@ int Server::handleEvent(const int client_socket)
 
 void Server::getMessages(const std::string &message, const int client_socket)
 {
-    (void)message;
-    // Command command(message);
+    Command command(message);
 
     std::map<std::string, Client*>::const_iterator it = this->findClientByFD(client_socket);
     if (it != this->clientsList.end())
     {
-        std::cout <<  "SALUT" << std::endl;
+        Client  *client = it->second;
+        
+        /* No need to authenticate */
+        if (command.getType() == QUIT) /* Bye :( */
+            this->handleDisconnection(client_socket, command.getArgs().at(0));
+        else if ((command.getType() == PASS) && client->getIsAuthenticated()) /* Already registered */
+            client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
+        else if (command.getType() == PASS) /* Authentification */
+        {
+            if (this->password == command.getArgs().at(0)) /* Ok */
+            {
+                client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname()));
+                client->setIsAuthenticated(true);
+            }
+            else /* No */
+                client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
+        }
+        /* Need to authenticate */
+        if (client->getIsConnected() && client->getIsAuthenticated())
+        {
+            switch (command.getType())
+            {
+                case NICK:
+                    break ;
+                case JOIN:
+                    break ;
+                case PART:
+                    break ;
+                case PRIVMSG:
+                    break ;
+                default:
+                    break ;
+            }
+        }
+        else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
+            client->sendToFD(Message::err_notregistered_451(this->getName(), client->getNickname()));
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
 
-    // {
-    //     Client* client = clientIterator->second;
-
-    //     (void)client;
-        
-    //     if (command.getType() == QUIT)
-    //         this->handleDisconnection(from, command.getArgs().at(0));
-    //     else if (command.getType() == PASS)
-    //         Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
         // if (client->getIsAuthenticated() == true  && client->getIsConnected() == true)
         // {
         //     if (command.getType() == JOIN)

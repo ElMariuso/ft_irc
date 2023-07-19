@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 00:44:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 00:57:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,14 @@ std::string Message::err_alreadyregistered_462(const std::string &serverName, co
     std::stringstream   stream;
 
     stream << ":" << serverName << " 462 " << nickname << " :Unauthorized command (already registered)" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::err_passwdmismatch_464(const std::string &serverName, const std::string &nickname)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 464 " << nickname << " :Password incorrect" << "\r\n";
     return (stream.str());
 }
 
