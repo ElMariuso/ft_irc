@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/19 23:25:26 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 00:35:35 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,8 +122,8 @@ bool Channel::hasLimit() const
 
 /* Setters */
 void Channel::setName(const std::string &name) { this->_name = name; }
-void Channel::setConnected(Client *client) { this->_connected.insert(std::make_pair(client->getFd(), client)); }
-void Channel::setConnectedList(std::map<int, Client*> connected) { this->_connected = connected; }
+void Channel::setConnected(Client *client) { this->_connected.insert(std::make_pair(client->getNickname(), client)); }
+void Channel::setConnectedList(std::map<std::string, Client*> connected) { this->_connected = connected; }
 void Channel::setOperator(int fd) { this->_operators.push_back(fd); }
 void Channel::setOperators(std::vector<int> operators) { this->_operators = operators; }
 void Channel::setModesList(const std::string &modesList) { this->_modesList = modesList; }
@@ -135,11 +135,11 @@ void Channel::setInvited(const std::string &name) { this->invited.insert(std::ma
 void Channel::setInvitedList(std::map<std::string, bool> &invited) { this->invited = invited; }
 
 /* Removers */
-void Channel::removeConnected(int fd) { this->_connected.erase(fd); }
+void Channel::removeConnected(const std::string &name) { this->_connected.erase(name); }
 
 /* Getters */
 std::string Channel::getName() const { return (this->_name); }
-std::map<int, Client*> Channel::getConnected() const { return (this->_connected); }
+std::map<std::string, Client*> Channel::getConnected() const { return (this->_connected); }
 std::vector<int> Channel::getOperators() const { return (this->_operators); }
 std::string Channel::getModesList() const { return (this->_modesList); }
 std::string Channel::getTopic() const { return (this->_topic); }
@@ -151,31 +151,50 @@ std::map<std::string, bool>	Channel::getInvited() const { return (this->invited)
 /* Finders */
 Client* Channel::findConnected(const std::string &name)
 {
-	std::map<int, Client*>	&connected = this->_connected;
+	std::map<std::string, Client*>::const_iterator it = this->_connected.find(name);
+	
+	if (it != this->_connected.end())
+        return (it->second);
+    return (NULL);
+}
 
-	for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.begin(); ++it)
-	{
-		if (it->second->getNickname() == name)
-			return (it->second);
-	}
-	return (NULL);
+std::map<std::string, Client*>::const_iterator Channel::findConnectedByFD(const int fd, bool isConst) const
+{
+	(void)isConst;
+    const std::map<std::string, Client*>	&clients = this->_connected;
+    
+    for (std::map<std::string, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        if (it->second->getFd() == fd)
+            return (it);
+    }
+    return (clients.end());
+}
+
+std::map<std::string, Client*>::iterator Channel::findConnectedByFD(const int fd)
+{
+	std::map<std::string, Client*>	&clients = this->_connected;
+    
+    for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        if (it->second->getFd() == fd)
+            return (it);
+    }
+    return (clients.end());
 }
 
 /* Senders */
 void Channel::sendToAll(const std::string &message, const std::string &srcName, bool sendToSRC)
 {
-	std::map<int, Client*>	&connected = this->_connected;
+	const std::map<std::string, Client*>	&connected = this->_connected;
 
-	for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.begin(); ++it)
+	for (std::map<std::string, Client*>::const_iterator it = connected.begin(); it != connected.end(); ++it)
 	{
 		const Client &client = *(it->second);
 
-		if (client.getNickname() == srcName)
-		{
-			if (sendToSRC == true)
-				client.sendToFD(message);
-		}
-		else
+		if (client.getNickname() == srcName && sendToSRC == true)
+			client.sendToFD(message);
+		else if (client.getNickname() != srcName)
 			client.sendToFD(message);
 	}
 }

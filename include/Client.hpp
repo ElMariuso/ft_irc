@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 01:24:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 00:21:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Client
     private:
 		Client(); // default constructor should never be called
     public:
-		Client(int fd, bool isConnected);
+		Client(const std::string &nickname, const std::string &username, int fd, bool isConnected);
         ~Client();
 
 		/* function */
@@ -34,6 +34,7 @@ class Client
 		bool	hasModeLetter(char mode); // search if client has mode activated with the mode's letter
 
 		/* Setters */
+		void		setFd(const int fd);
 		void		setIsAuthenticated(bool isAuthenticated);
 		void		setIsConnected(bool isConnected);
 		void		setNickname(std::string nickName);

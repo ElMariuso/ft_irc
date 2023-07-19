@@ -6,7 +6,7 @@
 #    By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/29 20:14:13 by root              #+#    #+#              #
-#    Updated: 2023/07/19 21:47:55 by mthiry           ###   ########.fr        #
+#    Updated: 2023/07/20 00:41:57 by mthiry           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,6 @@ SRCS = $(wildcard  $(SRC_DIR)/main.cpp) \
 		$(wildcard  $(SRC_DIR)/Client.cpp) \
 		$(wildcard  $(SRC_DIR)/Server.cpp) \
 		$(wildcard  $(SRC_DIR)/Utils.cpp) \
-		$(wildcard  $(SRC_DIR)/Command.cpp) \
 		$(wildcard  $(SRC_DIR)/Message.cpp)
 
 OBJ_DIR	= objs
