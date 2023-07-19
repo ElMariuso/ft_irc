@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 00:41:35 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 00:45:12 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,8 @@ int Server::handleEvent(const int client_socket)
 
 void Server::getMessages(const std::string &message, const int client_socket)
 {
-    Command command(message);
+    (void)message;
+    // Command command(message);
 
     std::map<std::string, Client*>::const_iterator it = this->findClientByFD(client_socket);
     if (it != this->clientsList.end())
