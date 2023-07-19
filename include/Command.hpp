@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 01:12:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 01:27:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,10 @@ class Command
         ~Command();
 
         /* NICK */
+        void                        nick(const Server &server, Client *client, const std::string &name) const;
         
         /* Nick Utils */
-        bool                        isNotRightNickname(const Server &server, const std::string &newNickname);
+        bool                        isNotRightNickname(const Server &server, const std::string &newNickname) const;
 
         /* Setters */
         void                        setMessage(const std::string &message);

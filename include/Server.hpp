@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 01:19:15 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 01:30:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ class Server
         /* Finders */
         template <typename List>
         typename List::mapped_type*                     findElem(const List &list, const std::string &name) const;
+        
         std::map<std::string, Client*>::const_iterator  findClientByFD(const int fd, bool isConst) const;
         std::map<std::string, Client*>::iterator        findClientByFD(const int fd);
 
