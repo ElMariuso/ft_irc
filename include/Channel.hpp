@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 23:19:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:23:34 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,9 @@ class Channel
 
 		/* Finders */
 		Client*						findConnected(const std::string &name);
+
+		/* Senders */
+		void						sendToAll(const std::string &message, const std::string &srcName, bool sendToSRC);
 		
     private:
         std::string             	_name;

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/19 23:21:11 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:25:26 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,4 +159,23 @@ Client* Channel::findConnected(const std::string &name)
 			return (it->second);
 	}
 	return (NULL);
+}
+
+/* Senders */
+void Channel::sendToAll(const std::string &message, const std::string &srcName, bool sendToSRC)
+{
+	std::map<int, Client*>	&connected = this->_connected;
+
+	for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.begin(); ++it)
+	{
+		const Client &client = *(it->second);
+
+		if (client.getNickname() == srcName)
+		{
+			if (sendToSRC == true)
+				client.sendToFD(message);
+		}
+		else
+			client.sendToFD(message);
+	}
 }
