@@ -6,13 +6,15 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/19 23:10:40 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 23:11:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MESSAGE_HPP
 # define MESSAGE_HPP
 # include "library.hpp"
+
+class Channel;
 
 class Message
 {
