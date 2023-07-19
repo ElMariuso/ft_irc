@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 02:00:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 02:08:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,10 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
 
             std::map<int, Client*>::iterator it2 = channel->getConnected().find(client_socket);
             if (it2 != channel->getConnected().end())
+            {
                 Command::partMessages(this, *(it->second), channel->getName(), message);
+                channel->rmOp(*it->second);   
+            }
             if (this->channelsList.empty())
                 break ;
         }
