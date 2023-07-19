@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/19 19:55:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/19 20:12:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -361,7 +361,7 @@ void Command::pingMessages(const Client &src, const std::string message)
 	pongMessage = "PONG " + message;
 	src.sendToFD(pongMessage);
 }
-void Command::pongMessages(const Client &src, const std::string message)
+void Command::pongMessages(Client &src, const std::string message)
 {
 	if (src.getLastPingIdentifier() == message)
 		src.setLastPingIdentifier("-1");
