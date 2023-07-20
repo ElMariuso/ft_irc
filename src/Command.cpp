@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 00:01:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 00:42:33 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,8 +205,7 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
                 src->sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
                 return ;
             }
-
-            if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+            else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
                 src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
 
             /* Send mode list to the user */
@@ -232,6 +231,13 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
             {
                 src->sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
                 return ;
+            }
+            else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+                src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+            else if (!channel->isOp(*src)) /* ERR_CHANOPRIVSNEEDED (482) */
+                src->sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, destName));
+            else /* MODES */
+            {
             }
         }
         else /* Client */

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 23:50:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 00:41:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class Message
         static std::string  err_channelisfull_471(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_inviteonlychan_473(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_badchannelkey_475(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
-        static std::string  err_chanoprivsneeded_482(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);;
+        static std::string  err_chanoprivsneeded_482(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
 };
 
 #endif
