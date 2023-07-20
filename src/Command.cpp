@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 02:27:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 02:33:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,25 @@ Command::~Command() {}
 /* NICK */
 void Command::nick(const Server &server, Client *client, const std::string &name) const
 {
+    const std::string &serverName = server.getName();
+    
     if (name.empty()) /* ERR_NONICKNAMEGIVEN (431) */
-        client->sendToFD(Message::err_nonicknamegiven_431(server.getName()));
-    else if (this->isNotRightNickname(server, name)) /* ERR_ERRONEUSNICKNAME (432) */
-        client->sendToFD(Message::err_erroneusnickname_432(server.getName(), name));
+        client->sendToFD(Message::err_nonicknamegiven_431(serverName));
+    else if (this->isNotRightNickname(serverName, name)) /* ERR_ERRONEUSNICKNAME (432) */
+        client->sendToFD(Message::err_erroneusnickname_432(serverName, name));
     else if (server.findClient(server.getClientsList(), name) != NULL) /* ERR_NICKNAMEINUSE (433) */
-    {
-
-    }
+        client->sendToFD(Message::err_nicknameinuse_433(serverName, name));
     else /* NICK */
     {
-        
+        client->sendToFD(Message::nick(serverName, name));
+        client->setNickname(name);
     }
 }
 
 /* Nick Utils */
-bool Command::isNotRightNickname(const Server &server, const std::string &newNickname) const
+bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
 {
-    return (newNickname == server.getName());
+    return (newNickname == serverName);
 }
 
 /* Setters */
