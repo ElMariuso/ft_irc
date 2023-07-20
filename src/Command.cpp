@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 03:54:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 04:03:12 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,32 +76,47 @@ void Command::part(Server *server, const Client &client, const std::string &name
     }
 }
 
-// /* PRIVMSG */
-// void Command::privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message)
-// [
-//     if (destName[0] == '#')
-//     {
-//         Channel *dest;
+/* PRIVMSG */
+void Command::privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message)
+[
+    if (destName[0] == '#')
+    {
+        Channel *dest;
 
-//         dest = server.findChannel(destName);
-//     }
-//     else
-//     {
-//         Client  *dest;
+        dest = server.findChannel(destName);
+    }
+    else
+    {
+        Client  *dest;
 
-//         dest = server.findClient(destName);
-//     }
-// ]
+        dest = server.findClient(destName);
+    }
+]
 
-// void Command::privmsgChannel()
-// {
-//     const std::map<std::string, Client*>    &connected;
-// }
+void Command::privmsgChannel(const std::string &serverName, const Client &src, const std::string &destName, const std::string &message, Channel *channel)
+{
+    /* Used for messages */
+    const std::string                       &srcName = client.getNickname();
+    
+    if (channel ==  NULL) /* ERR_CANNOTSENDTOCHAN (404) */
+    {
+        src.sendToFD(Message::err_cannotsendtochan_404(serverName, srcName));
+        return ;
+    }
 
-// void Command::privmsgClient()
-// {
+    /* Get the connected list */
+    const std::map<std::string, Client*>    &connected = channel->getConnected();
 
-// }
+    if (!(channel->findConnected(srcName))) /* ERR_NOTONCHANNEL (442) */
+        src.sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+    else /* PRIVMSG */
+        channel->sendToAll(Message::privmsg(srcName, destName, message));
+}
+
+void Command::privmsgClient()
+{
+
+}
 
 /* Nick Utils */
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
