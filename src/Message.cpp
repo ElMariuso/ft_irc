@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:06:38 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:08:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,15 @@ std::string Message::kick(const std::string &srcName, const std::string &destNam
 {
     std::stringstream   stream;
 
-    stream << ":" << srcName <<  " KICK " << channelName << " " << destName << " " \
-        << message << "\r\n";
+    if (message.empty()) /* If there is no message */
+    {
+       stream << ":" << srcName <<  " KICK " << channelName << " " << destName << "\r\n";
+    }
+    else /* If there is a message */
+    {
+        stream << ":" << srcName <<  " KICK " << channelName << " " << destName << " " \
+            << message << "\r\n";
+    }
     return (stream.str());
 }
 
