@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 17:11:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 21:10:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
             client->sendToFD(Message::err_inviteonlychan_473(serverName, clientName, name));
         else if (channel->hasPassword() && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
             client->sendToFD(Message::err_badchannelkey_475(serverName, clientName, name));
+        else if (channel->findConnectedByName(clientName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
+            client->sendToFD(Message::err_useronchannel_443(serverName, clientName, name));
         else /* JOIN */
         {
             /* Connect the new user */

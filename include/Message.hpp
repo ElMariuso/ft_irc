@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:35:10 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 21:10:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ class Message
         static std::string  err_nicknameinuse_433(const std::string &serverName, const std::string &nickname);
         static std::string  err_usernotinchannel_441(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_notonchannel_442(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
+
+        static std::string  err_useronchannel_443(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
+
         static std::string  err_notregistered_451(const std::string &serverName, const std::string &nickname);
         static std::string  err_alreadyregistered_462(const std::string &serverName, const std::string &nickname);
         static std::string  err_passwdmismatch_464(const std::string &serverName, const std::string &nickname);

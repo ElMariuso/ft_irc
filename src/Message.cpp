@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:35:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 21:10:50 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,15 @@ std::string Message::err_notonchannel_442(const std::string &serverName, const s
 
     stream << ":" << serverName << " 442 " << clientNickname << " " << channelName \
         << " :You're not on that channel" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::err_useronchannel_443(const std::string &serverName, const std::string &clientNickname, const std::string &channelName)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 443 " << clientNickname << " " << channelName \
+        << " :is already on channel" << "\r\n";
     return (stream.str());
 }
 
