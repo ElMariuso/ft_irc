@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:36:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:44:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,13 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
         /* Add the new channel to the channel list on server */
         server->setChannel(name, channel);
 
+        /* Send a message for the new user */
+        const std::string   &msg331 = Message::rpl_notopic_331(serverName, clientName, name);
+        const std::string   &msg353 = Message::rpl_namreplay_353(serverName, clientName, name, *channel);
+        const std::string   &msg366 = Message::rpl_endofnames_366(serverName, clientName, name);
+
         /* Send confirmation message */
-        client->sendToFD(Message::join(clientName, clientUser, clientHost, name));
+        client->sendToFD(Message::join(clientName, clientUser, clientHost, name) + msg331 + msg353 + msg366);
     }
 }
 

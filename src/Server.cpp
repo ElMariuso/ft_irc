@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 07:15:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:43:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,10 +238,16 @@ void Server::withAuthentification(const Command &command, Client *client)
             command.nick(*this, client, command.getArgs().at(0));
             break ;
         case JOIN:
-            command.join(this, client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            if (command.getArgs().size() == 1)
+                command.join(this, client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
+            else
+                command.join(this, client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
             break ;
         case PART:
-            command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            if (command.getArgs().size() == 1)
+                command.part(this, *client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
+            else
+                command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
             break ;
         case PRIVMSG:
             command.privmsg(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
