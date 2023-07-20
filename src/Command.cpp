@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 00:47:05 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 00:56:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,6 +235,10 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
                 src->sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, destName));
             else /* MODES */
             {
+                /* Adding all the modes */
+                this->setModes(channel, modes);
+
+                /* Confirmation to the client */
                 src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
             }
         }
@@ -288,6 +292,24 @@ void Command::kick(const Server &server, const Client &src, Client *dest, const 
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
 {
     return (newNickname == serverName);
+}
+
+/* MODE Utils */
+void Command::setModes(Channel *channel, const std::string &modes) const
+{
+    std::string modes2 = "";
+
+    /* Parsing modes */
+    for (std::size_t i = 1; i < modes.length(); ++i)
+    {
+        char    letter = modes[i];
+        if (modes2.find(letter) == std::string::npos)
+            modes2 += letter;
+    }
+
+    /* Setting modes */
+    for (std::size_t i = 0; i < modes2.length(); ++i)
+        channel->addMode(modes2[i]);
 }
 
 /* Setters */

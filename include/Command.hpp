@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 23:02:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 00:53:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,9 @@ class Command
 
         /* Nick Utils */
         bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;
+
+        /* MODE Utils */
+        void                        setModes(Channel *channel, const std::string &modes) const;
 
         /* Setters */
         void                        setMessage(const std::string &message);
