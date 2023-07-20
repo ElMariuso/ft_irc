@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 04:16:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 04:50:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Command::Command(const std::string &message)
 }
 Command::~Command() {}
 
-/* NICK */
+/* Commands */
 void Command::nick(const Server &server, Client *client, const std::string &name) const
 {
     const std::string &serverName = server.getName();
@@ -40,9 +40,69 @@ void Command::nick(const Server &server, Client *client, const std::string &name
     }
 }
 
-/* JOIN */
+void Command::join(Server *server, Client *client, const std::string &name, const std::string &password, Channel *channel) const
+{
+    /* Used for messages */
+    const std::string                           &serverName = server->getName();
+    const std::string                           &clientName = client->getNickname();
+    const std::string                           &clientUser = client->getUsername();
+    const std::string                           &clientHost = client->getHostname();
 
-/* PART */
+    if (channel != NULL) /* JOIN with channel */
+    {
+        /* Get some lists */
+        const std::map<std::string, Client*>    &connected = channel->getConnected();
+        const std::map<std::string, bool>       &invited = channel->getInvited();
+        const std::string                       &passwordChannel = channel->getPassword();
+
+        if (channel->hasLimit() && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
+            client->sendToFD(Message::err_channelisfull_471(serverName, clientName, name));
+        else if (channel->getHasInvitedList() && invited.find(clientName) == invited.end()) /* ERR_INVITEONLYCHAN (473) */
+            client->sendToFD(Message::err_inviteonlychan_473(serverName, clientName, name));
+        else if (channel->hasPassword() && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
+            client->sendToFD(Message::err_badchannelkey_475(serverName, clientName, name));
+        else /* JOIN */
+        {
+            /* Connect the new user */
+            channel->setConnected(client);
+            
+            /* Send JOIN notification to all */
+            channel->sendToAll(Message::join(clientName, clientUser, clientHost, name), clientName, true);
+
+            /* Check for a topic */
+            /* Send a message for the new user */
+            const std::string   &msg331 = Message::rpl_notopic_331(serverName, clientName, name);
+            const std::string   &msg332 = Message::rpl_topic_332(serverName, clientName, name, channel->getTopic());
+            const std::string   &msg353 = Message::rpl_namreplay_353(serverName, clientName, name, *channel);
+            const std::string   &msg366 = Message::rpl_endofnames_366(serverName, clientName, name);
+            std::string         toSend;
+            
+            if (!channel->hasTopic()) /* RPL_NOTOPIC (331) */
+                toSend += msg331;
+            else /* RPL_TOPIC (332) */
+                toSend += msg332;
+            toSend += msg353;
+            toSend += msg366;
+            client->sendToFD(toSend);
+        }
+    }
+    else /* JOIN without channel */
+    {
+        /* Create new channel and connect the user */
+        channel = new Channel(name);
+        channel->setConnected(client);
+
+        /* Set the creator of the channel as operator */
+        channel->addOp(*client);
+
+        /* Add the new channel to the channel list on server */
+        server->setChannel(name, channel);
+
+        /* Send confirmation message */
+        client->sendToFD(Message::join(clientName, clientUser, clientHost, name));
+    }
+}
+
 void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message, Channel *channel) const
 {
     /* Used for messages */
@@ -76,7 +136,6 @@ void Command::part(Server *server, const Client &client, const std::string &name
     }
 }
 
-/* PRIVMSG */
 void Command::privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message) const
 {
     /* Used for messages */
