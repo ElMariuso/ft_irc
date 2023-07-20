@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 03:36:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 03:54:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,28 +43,24 @@ void Command::nick(const Server &server, Client *client, const std::string &name
 /* JOIN */
 
 /* PART */
-void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message) const
+void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message, Channel *channel) const
 {
-    (void)message;
-
-    Channel                         *channel;
-    std::map<std::string, Client*>  connected;
-
-
-    /* Check if the channel exists */
-    channel = server->findChannel(name);
-    if (channel != NULL)
-        connected = channel->getConnected();
-
-    /* Used of messages */
-    const std::string               &serverName = server->getName();
-    const std::string               &clientName = client.getNickname();
-    const std::string               &clientUser = client.getUsername();
-    const std::string               &clientHost = client.getHostname();
-
+    /* Used for messages */
+    const std::string                       &serverName = server->getName();
+    const std::string                       &clientName = client.getNickname();
+    const std::string                       &clientUser = client.getUsername();
+    const std::string                       &clientHost = client.getHostname();
+    
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    {
         client.sendToFD(Message::err_nosuchchannel_403(serverName, clientName, name));
-    else if (!(channel->findConnected(client.getNickname()))) /* ERR_NOTONCHANNEL (442) */
+        return ;
+    }
+
+    /* Get the connected list */
+    const std::map<std::string, Client*>    &connected = channel->getConnected();
+
+    if (!(channel->findConnected(client.getNickname()))) /* ERR_NOTONCHANNEL (442) */
         client.sendToFD(Message::err_notonchannel_442(serverName, clientName, name));
     else /* PART */
     {
@@ -75,13 +71,37 @@ void Command::part(Server *server, const Client &client, const std::string &name
         channel->removeConnected(clientName);
 
         /* Delete the channel if there is no user left */
-        connected = channel->getConnected();
         if (connected.empty())
             server->removeChannel(channel);
     }
 }
 
-/* PRIVMSG */
+// /* PRIVMSG */
+// void Command::privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message)
+// [
+//     if (destName[0] == '#')
+//     {
+//         Channel *dest;
+
+//         dest = server.findChannel(destName);
+//     }
+//     else
+//     {
+//         Client  *dest;
+
+//         dest = server.findClient(destName);
+//     }
+// ]
+
+// void Command::privmsgChannel()
+// {
+//     const std::map<std::string, Client*>    &connected;
+// }
+
+// void Command::privmsgClient()
+// {
+
+// }
 
 /* Nick Utils */
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
