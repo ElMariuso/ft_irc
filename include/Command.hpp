@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 02:33:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 02:58:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,13 @@ class Command
         /* NICK */
         void                        nick(const Server &server, Client *client, const std::string &name) const;
         
+        /* JOIN */
+
+        /* PART */
+        void                        part(Server *server, const Client &client, const std::string &name, const std::string &message);
+
+        /* PRIVMSG */
+
         /* Nick Utils */
         bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;
 

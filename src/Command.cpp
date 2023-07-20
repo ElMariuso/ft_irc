@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 02:45:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 03:04:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void Command::nick(const Server &server, Client *client, const std::string &name
         client->sendToFD(Message::err_nonicknamegiven_431(serverName));
     else if (this->isNotRightNickname(serverName, name)) /* ERR_ERRONEUSNICKNAME (432) */
         client->sendToFD(Message::err_erroneusnickname_432(serverName, name));
-    else if (!(server.findClient(server.getClientsList(), name))) /* ERR_NICKNAMEINUSE (433) */
+    else if (!(server.findClient(name))) /* ERR_NICKNAMEINUSE (433) */
         client->sendToFD(Message::err_nicknameinuse_433(serverName, name));
     else /* NICK */
     {
@@ -37,6 +37,40 @@ void Command::nick(const Server &server, Client *client, const std::string &name
         client->setNickname(name);
     }
 }
+
+/* JOIN */
+
+/* PART */
+void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message)
+{
+    (void)message;
+
+    Channel                         *channel;
+    std::map<std::string, Client*>  connected;
+
+
+    /* Check if the channel exists */
+    channel = server->findChannel(name);
+    if (channel != NULL)
+        connected = channel->getConnected();
+
+    /* Used of messages */
+    const std::string               &serverName = server->getName();
+    const std::string               &clientName = client.getNickname();
+
+    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+        client.sendToFD(Message::err_nosuchchannel_403(serverName, clientName, name));
+    else if (!(channel->findConnected(client.getNickname()))) /* ERR_NOTONCHANNEL (442) */
+    {
+
+    }
+    else
+    {
+
+    }
+}
+
+/* PRIVMSG */
 
 /* Nick Utils */
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
