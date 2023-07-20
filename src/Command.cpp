@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 23:55:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 00:01:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,8 +209,11 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
             if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
                 src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
 
-            /* Send modes list to the user */
-            src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
+            /* Send mode list to the user */
+            if (channel->getModesList().empty()) /* Send there is no modes */
+                src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, ""));
+            else /* Send mode list */
+                src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
         }
         else /* Client */
         {
