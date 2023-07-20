@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 02:58:20 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 03:36:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ enum MessageType
 class Command
 {
     public:
+        Command();
         Command(const std::string &message);
         ~Command();
 
@@ -52,7 +53,7 @@ class Command
         /* JOIN */
 
         /* PART */
-        void                        part(Server *server, const Client &client, const std::string &name, const std::string &message);
+        void                        part(Server *server, const Client &client, const std::string &name, const std::string &message) const;
 
         /* PRIVMSG */
 

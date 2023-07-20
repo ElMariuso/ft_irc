@@ -6,11 +6,13 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 03:10:53 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 03:36:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Command.hpp"
+
+Command::Command() {}
 
 Command::Command(const std::string &message)
 {
@@ -41,7 +43,7 @@ void Command::nick(const Server &server, Client *client, const std::string &name
 /* JOIN */
 
 /* PART */
-void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message)
+void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message) const
 {
     (void)message;
 

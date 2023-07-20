@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 03:00:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 03:36:16 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,7 +232,6 @@ void Server::withoutAuthentification(const Command &command, Client *client)
 
 void Server::withAuthentification(const Command &command, Client *client)
 {
-    (void)client;
     switch (command.getType())
     {
         case NICK:
@@ -241,6 +240,7 @@ void Server::withAuthentification(const Command &command, Client *client)
         case JOIN:
             break ;
         case PART:
+            command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1));
             break ;
         case PRIVMSG:
             break ;
@@ -282,8 +282,6 @@ bool Server::pingTimeOut(const int client_socket)
 /* Logout */
 void Server::handleDisconnection(const int client_socket, const std::string &message)
 {
-    (void)message;
-
     if (this->clientsList.size() == 0)
         Utils::debug_message("No clients connected to the server");
     
@@ -309,11 +307,9 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
             std::map<std::string, Client*>::iterator it2 = channel->findConnectedByFD(client_socket);
             if (it2 != channel->getConnected().end())
             {
-                // TODO
-
-                // Command::partMessages(this, *(it->second), channel->getName(), message);
-
-
+                Command command;
+                
+                command.part(this, *(it->second), channel->getName(), message);
                 channel->rmOp(*it->second);   
             }
             if (this->channelsList.empty())
