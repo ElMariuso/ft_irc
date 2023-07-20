@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:06:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:36:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,13 +180,44 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
     }
 }
 
-// void Command::kick() const
-// {
-//     /* Channel don't exist */
-//     /* User not on the channel */
-//     /* Pas operateur */
-//     /* Pas operateur2 */
-// }
+void Command::kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const
+{
+    /* Used for messages */
+    const std::string               &serverName = server.getName();
+    const std::string               &srcName = src.getNickname();
+    const std::string               &destName = dest->getNickname();
+    const std::string               &channelName = channel->getName();
+
+    /* Check if the channel and the user exists */
+    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    {
+        src.sendToFD(Message::err_nosuchchannel_403(serverName, srcName, channelName));
+        return ;
+    }
+    else if (dest == NULL) /* ERR_NOSUCHNICK (401) */
+    {
+        src.sendToFD(Message::err_nosuchnick_401(serverName, destName));
+        return ;
+    }
+
+    /* Get the connected list */
+    const std::map<int, Client*>    &connected = channel->getConnected();
+
+    if (channel->findConnectedByName(destName) != connected.end()) /* ERR_USERNOTINCHANNEL (441) */
+        src.sendToFD(Message::err_usernotinchannel_441(serverName, destName, channelName));
+    else if (channel->findConnectedByName(srcName) == connected.end()) /* ERR_NOTONCHANNEL (442) */
+        src.sendToFD(Message::err_notonchannel_442(serverName, srcName, channelName));
+    else if (!channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+        src.sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, channelName));
+    else /* KICK */
+    {
+        /* Send to all users */
+        channel->sendToAll(Message::kick(srcName, destName, channelName, message), srcName, true);
+
+        /* Remove the user from the connected list */
+        channel->removeConnected(dest->getFd());
+    }
+}
 
 /* Nick Utils */
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const

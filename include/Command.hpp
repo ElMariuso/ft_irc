@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 04:50:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:16:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class Command
         void                        join(Server *server, Client *client, const std::string &name, const std::string &password, Channel *channel) const;
         void                        part(Server *server, const Client &client, const std::string &name, const std::string &message, Channel *channel) const;
         void                        privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message) const;
+        void                        kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const;
 
         /* Nick Utils */
         bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;

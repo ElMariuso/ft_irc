@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:08:10 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:35:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,15 @@ std::string Message::err_nicknameinuse_433(const std::string &serverName, const 
     return (stream.str());
 }
 
+std::string Message::err_usernotinchannel_441(const std::string &serverName, const std::string &clientNickname, const std::string &channelName)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 441 " << clientNickname << " " << channelName \
+        << " :They aren't on that channel" << "\r\n";
+    return (stream.str());
+}
+
 std::string Message::err_notonchannel_442(const std::string &serverName, const std::string &clientNickname, const std::string &channelName)
 {
     std::stringstream   stream;
@@ -266,4 +275,13 @@ std::string Message::err_badchannelkey_475(const std::string &serverName, const 
     stream << ":" << serverName << " 475 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
     return (stream.str());
+}
+
+std::string Message::err_chanoprivsneeded_482(const std::string &serverName, const std::string &clientNickname, const std::string &channelName)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 482 " << clientNickname << " " << channelName \
+        << " :You're not channel operator" << "\r\n";
+    return (stream.str()); 
 }
