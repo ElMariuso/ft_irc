@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 00:03:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 00:47:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ std::string Message::rpl_channelmodesis_324(const std::string &serverName, const
     else
     {
         stream << ":" << serverName << " 324 " << clientNickname << " " \
-            << channelName << " +" << modes << "\r\n";
+            << channelName << " " << modes << "\r\n";
     }
     return (stream.str());
 }
