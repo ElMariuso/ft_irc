@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 00:21:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 02:39:09 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ class Client
         ~Client();
 
 		/* function */
-		void		sendToFD(std::string str) const; // write a string on the client's fd
+		void		sendToFD(const std::string &str) const; // write a string on the client's fd
 		std::string	receiveFromFD(); // receive and return a string written by the client
 
 		/* mode function */
-		int		addMode(char mode); // add an user mode, return 0 if it went well
-		int		rmMode(char mode); // remove an user mode, return 0 if it went well
-		bool	hasMode(std::string mode); // search if client has mode activated with the mode's name
-		bool	hasModeLetter(char mode); // search if client has mode activated with the mode's letter
+		int			addMode(char mode); // add an user mode, return 0 if it went well
+		int			rmMode(char mode); // remove an user mode, return 0 if it went well
+		bool		hasMode(std::string mode); // search if client has mode activated with the mode's name
+		bool		hasModeLetter(char mode); // search if client has mode activated with the mode's letter
 
 		/* Setters */
 		void		setFd(const int fd);
