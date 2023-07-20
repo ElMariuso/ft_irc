@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 04:03:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 04:16:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,45 +77,45 @@ void Command::part(Server *server, const Client &client, const std::string &name
 }
 
 /* PRIVMSG */
-void Command::privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message)
-[
+void Command::privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message) const
+{
+    /* Used for messages */
+    const std::string   &serverName = server.getName();
+    const std::string   &srcName = src.getNickname();
+    
     if (destName[0] == '#')
     {
-        Channel *dest;
+        Channel *channel;
 
-        dest = server.findChannel(destName);
+        /* Check if the channel exists */
+        channel = server.findChannel(destName);
+        if (channel ==  NULL) /* ERR_CANNOTSENDTOCHAN (404) */
+        {
+            src.sendToFD(Message::err_cannotsendtochan_404(serverName, srcName));
+            return ;
+        }
+
+        /* Get the connected list */
+        const std::map<std::string, Client*>    &connected = channel->getConnected();
+        
+        if (!(channel->findConnected(srcName))) /* ERR_NOTONCHANNEL (442) */
+            src.sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+        else /* PRIVMSG */
+            channel->sendToAll(Message::privmsg(srcName, destName, message), srcName, false);
     }
     else
     {
-        Client  *dest;
+        Client  *client;
 
-        dest = server.findClient(destName);
+        /* Check if the user exists */
+        client = server.findClient(destName);
+        if (client == NULL) /* ERR_NOSUCHNICK (401) */
+        {
+            src.sendToFD(Message::err_nosuchnick_401(serverName, destName));
+            return ;
+        }
+        client->sendToFD(Message::privmsg(srcName, destName, message));
     }
-]
-
-void Command::privmsgChannel(const std::string &serverName, const Client &src, const std::string &destName, const std::string &message, Channel *channel)
-{
-    /* Used for messages */
-    const std::string                       &srcName = client.getNickname();
-    
-    if (channel ==  NULL) /* ERR_CANNOTSENDTOCHAN (404) */
-    {
-        src.sendToFD(Message::err_cannotsendtochan_404(serverName, srcName));
-        return ;
-    }
-
-    /* Get the connected list */
-    const std::map<std::string, Client*>    &connected = channel->getConnected();
-
-    if (!(channel->findConnected(srcName))) /* ERR_NOTONCHANNEL (442) */
-        src.sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
-    else /* PRIVMSG */
-        channel->sendToAll(Message::privmsg(srcName, destName, message));
-}
-
-void Command::privmsgClient()
-{
-
 }
 
 /* Nick Utils */

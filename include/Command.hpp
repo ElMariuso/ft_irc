@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 03:48:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 04:16:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class Command
         void                        part(Server *server, const Client &client, const std::string &name, const std::string &message, Channel *channel) const;
 
         /* PRIVMSG */
+        void                        privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message) const;
 
         /* Nick Utils */
         bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;
