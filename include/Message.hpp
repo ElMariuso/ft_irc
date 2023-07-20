@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 00:57:05 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:05:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class Message
         static std::string  part(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName, const std::string &message);
         static std::string  privmsg(const std::string &srcName, const std::string &destName, const std::string &message);
         static std::string  nick(const std::string &serverName, const std::string &newNickname);
+        static std::string  kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message);
 
         /* RPL */
         static std::string  rpl_notopic_331(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);

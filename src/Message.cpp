@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 05:48:35 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:06:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,15 @@ std::string Message::nick(const std::string &serverName, const std::string &newN
 
     stream << ":" << serverName << " 001 " << newNickname \
         << " :You're now known as " << newNickname << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message)
+{
+    std::stringstream   stream;
+
+    stream << ":" << srcName <<  " KICK " << channelName << " " << destName << " " \
+        << message << "\r\n";
     return (stream.str());
 }
 

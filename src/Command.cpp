@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 06:48:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 07:06:44 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,14 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
         client->sendToFD(Message::privmsg(srcName, destName, message));
     }
 }
+
+// void Command::kick() const
+// {
+//     /* Channel don't exist */
+//     /* User not on the channel */
+//     /* Pas operateur */
+//     /* Pas operateur2 */
+// }
 
 /* Nick Utils */
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
