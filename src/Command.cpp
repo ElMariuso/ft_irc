@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 21:10:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 23:55:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,9 +155,9 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
 
         /* Check if the channel exists */
         channel = server.findChannel(destName);
-        if (channel ==  NULL) /* ERR_CANNOTSENDTOCHAN (404) */
+        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
         {
-            src.sendToFD(Message::err_cannotsendtochan_404(serverName, srcName));
+            src.sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
             return ;
         }
 
@@ -183,6 +183,58 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
         }
         client = it->second;
         client->sendToFD(Message::privmsg(srcName, destName, message));
+    }
+}
+
+void Command::mode(const Server &server, Client *src, const std::string &destName, const std::string &modes) const
+{
+    /* Used for messages */
+    const std::string   &serverName = server.getName();
+    const std::string   &srcName = src->getNickname();
+    
+    if (modes.empty()) /* Check modes */
+    {
+        if (destName[0] == '#') /* Channel */
+        {
+            Channel *channel;
+
+            /* Check if the channel exists */
+            channel = server.findChannel(destName);
+            if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+            {
+                src->sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
+                return ;
+            }
+
+            if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+                src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+
+            /* Send modes list to the user */
+            src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
+        }
+        else /* Client */
+        {
+            
+        }
+    }
+    else /* Add modes */
+    {
+        if (destName[0] == '#') /* Channel */
+        {
+            Channel *channel;
+
+            /* Check if the channel exists */
+            channel = server.findChannel(destName);
+            if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+            {
+                src->sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
+                return ;
+            }
+        }
+        else /* Client */
+        {
+
+        }
     }
 }
 

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 21:10:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 23:50:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Message
         static std::string  kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message);
 
         /* RPL */
+        static std::string  rpl_channelmodesis_324(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &modes);
         static std::string  rpl_notopic_331(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  rpl_topic_332(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &topic);
         static std::string  rpl_namreplay_353(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const Channel &channel);
@@ -47,9 +48,7 @@ class Message
         static std::string  err_nicknameinuse_433(const std::string &serverName, const std::string &nickname);
         static std::string  err_usernotinchannel_441(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_notonchannel_442(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
-
         static std::string  err_useronchannel_443(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
-
         static std::string  err_notregistered_451(const std::string &serverName, const std::string &nickname);
         static std::string  err_alreadyregistered_462(const std::string &serverName, const std::string &nickname);
         static std::string  err_passwdmismatch_464(const std::string &serverName, const std::string &nickname);

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 21:10:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 23:54:40 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,15 @@ std::string Message::kick(const std::string &srcName, const std::string &destNam
 }
 
 /* RPL */
+std::string Message::rpl_channelmodesis_324(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &modes)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 324 " << clientNickname << " " \
+        << channelName << " " << modes << "\r\n";
+    return (stream.str());
+}
+
 std::string Message::rpl_notopic_331(const std::string &serverName, const std::string &clientNickname, const std::string &channelName)
 {
     std::stringstream   stream;
