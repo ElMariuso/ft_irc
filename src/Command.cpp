@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 03:04:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 03:10:53 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,16 +57,25 @@ void Command::part(Server *server, const Client &client, const std::string &name
     /* Used of messages */
     const std::string               &serverName = server->getName();
     const std::string               &clientName = client.getNickname();
+    const std::string               &clientUser = client.getUsername();
+    const std::string               &clientHost = client.getHostname();
 
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
         client.sendToFD(Message::err_nosuchchannel_403(serverName, clientName, name));
     else if (!(channel->findConnected(client.getNickname()))) /* ERR_NOTONCHANNEL (442) */
+        client.sendToFD(Message::err_notonchannel_442(serverName, clientName, name));
+    else /* PART */
     {
+        /* Send to all users */
+        channel->sendToAll(Message::part(clientName, clientUser, clientHost, name, message), clientName, true);
 
-    }
-    else
-    {
+        /* Remove the user from the connected list */
+        channel->removeConnected(clientName);
 
+        /* Delete the channel if there is no user left */
+        connected = channel->getConnected();
+        if (connected.empty())
+            server->removeChannel(channel);
     }
 }
 
