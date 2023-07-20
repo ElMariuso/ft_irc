@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 04:51:26 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 05:00:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,8 +149,8 @@ void Server::addNewClient(const int client_socket)
     struct pollfd   clientPfd;
 
     /* Add new client to the list */
-    std::string nickname = "Guest" + client_socket;
-    std::string username = "User" + client_socket;
+    std::string nickname = "Guest" + Utils::intToString(client_socket);
+    std::string username = "User" + Utils::intToString(client_socket);
 
     Client *new_client = new Client(nickname, username, client_socket, true);
     clientsList.insert(std::make_pair(nickname, new_client));

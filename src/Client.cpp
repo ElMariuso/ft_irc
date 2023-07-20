@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 02:38:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 05:00:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,13 @@
 Client::Client() {}
 
 Client::Client(const std::string &nickname, const std::string &username, int fd, bool isConnected)
-{
-	std::stringstream ss;
-	
-	ss << fd; // turn int to std::string
-	
+{	
 	/* Arguments */
 	this->setNickname(nickname);
 	this->setUsername(username);
 	this->setFd(fd);
 	this->setIsConnected(isConnected);
-
 	this->setIsAuthenticated(false);
-	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
 	this->_hostname = "127.0.0.1";
 	this->setHostname();
 	this->setTimeSinceLastPing();
