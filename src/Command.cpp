@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:47:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 17:00:36 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,12 @@ Command::~Command() {}
 void Command::nick(const Server &server, Client *client, const std::string &name) const
 {
     const std::string               &serverName = server.getName();
-    const std::map<int, Client*>    &clients = server.getClientsList();
     
     if (name.empty()) /* ERR_NONICKNAMEGIVEN (431) */
         client->sendToFD(Message::err_nonicknamegiven_431(serverName));
     else if (this->isNotRightNickname(serverName, name)) /* ERR_ERRONEUSNICKNAME (432) */
         client->sendToFD(Message::err_erroneusnickname_432(serverName, name));
-    else if ((clients.size() > 1) && (server.findClientByName(name) != clients.end())) /* ERR_NICKNAMEINUSE (433) */
+    else if (server.findClientByName(name) != server.getClientsListEnd()) /* ERR_NICKNAMEINUSE (433) */
         client->sendToFD(Message::err_nicknameinuse_433(serverName, name));
     else /* NICK */
     {

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 07:43:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 17:01:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -417,6 +417,9 @@ std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
+
+std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
+std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }
 
 /* Finders */
 Client* Server::findClient(const int &fd) const
