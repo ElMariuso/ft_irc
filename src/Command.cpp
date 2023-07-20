@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 04:57:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 06:25:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,18 @@ Command::~Command() {}
 /* Commands */
 void Command::nick(const Server &server, Client *client, const std::string &name) const
 {
-    const std::string &serverName = server.getName();
+    const std::string               &serverName = server.getName();
+    const std::map<int, Client*>    &clients = server.getClientsList();
     
     if (name.empty()) /* ERR_NONICKNAMEGIVEN (431) */
         client->sendToFD(Message::err_nonicknamegiven_431(serverName));
     else if (this->isNotRightNickname(serverName, name)) /* ERR_ERRONEUSNICKNAME (432) */
         client->sendToFD(Message::err_erroneusnickname_432(serverName, name));
-    else if (server.findClient(name)) /* ERR_NICKNAMEINUSE (433) */
+    else if (server.findClientByName(name) != clients.end()) /* ERR_NICKNAMEINUSE (433) */
+    {
+        std::cout << "MMH" << std::endl;
         client->sendToFD(Message::err_nicknameinuse_433(serverName, name));
+    }
     else /* NICK */
     {
         client->sendToFD(Message::nick(serverName, name));
@@ -43,17 +47,17 @@ void Command::nick(const Server &server, Client *client, const std::string &name
 void Command::join(Server *server, Client *client, const std::string &name, const std::string &password, Channel *channel) const
 {
     /* Used for messages */
-    const std::string                           &serverName = server->getName();
-    const std::string                           &clientName = client->getNickname();
-    const std::string                           &clientUser = client->getUsername();
-    const std::string                           &clientHost = client->getHostname();
+    const std::string                       &serverName = server->getName();
+    const std::string                       &clientName = client->getNickname();
+    const std::string                       &clientUser = client->getUsername();
+    const std::string                       &clientHost = client->getHostname();
 
     if (channel != NULL) /* JOIN with channel */
     {
         /* Get some lists */
-        const std::map<std::string, Client*>    &connected = channel->getConnected();
-        const std::map<std::string, bool>       &invited = channel->getInvited();
-        const std::string                       &passwordChannel = channel->getPassword();
+        const std::map<int, Client*>        &connected = channel->getConnected();
+        const std::map<std::string, bool>   &invited = channel->getInvited();
+        const std::string                   &passwordChannel = channel->getPassword();
 
         if (channel->hasLimit() && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
             client->sendToFD(Message::err_channelisfull_471(serverName, clientName, name));
@@ -106,10 +110,10 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
 void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message, Channel *channel) const
 {
     /* Used for messages */
-    const std::string                       &serverName = server->getName();
-    const std::string                       &clientName = client.getNickname();
-    const std::string                       &clientUser = client.getUsername();
-    const std::string                       &clientHost = client.getHostname();
+    const std::string               &serverName = server->getName();
+    const std::string               &clientName = client.getNickname();
+    const std::string               &clientUser = client.getUsername();
+    const std::string               &clientHost = client.getHostname();
     
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
     {
@@ -118,9 +122,9 @@ void Command::part(Server *server, const Client &client, const std::string &name
     }
 
     /* Get the connected list */
-    const std::map<std::string, Client*>    &connected = channel->getConnected();
+    const std::map<int, Client*>    &connected = channel->getConnected();
 
-    if (!(channel->findConnected(client.getNickname()))) /* ERR_NOTONCHANNEL (442) */
+    if (channel->findConnectedByName(client.getNickname()) == connected.end()) /* ERR_NOTONCHANNEL (442) */
         client.sendToFD(Message::err_notonchannel_442(serverName, clientName, name));
     else /* PART */
     {
@@ -128,7 +132,7 @@ void Command::part(Server *server, const Client &client, const std::string &name
         channel->sendToAll(Message::part(clientName, clientUser, clientHost, name, message), clientName, true);
 
         /* Remove the user from the connected list */
-        channel->removeConnected(clientName);
+        channel->removeConnected(client.getFd());
 
         /* Delete the channel if there is no user left */
         if (connected.empty())
@@ -155,24 +159,26 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
         }
 
         /* Get the connected list */
-        const std::map<std::string, Client*>    &connected = channel->getConnected();
+        const std::map<int, Client*>    &connected = channel->getConnected();
         
-        if (!(channel->findConnected(srcName))) /* ERR_NOTONCHANNEL (442) */
+        if (channel->findConnectedByName(srcName) == connected.end()) /* ERR_NOTONCHANNEL (442) */
             src.sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
         else /* PRIVMSG */
             channel->sendToAll(Message::privmsg(srcName, destName, message), srcName, false);
     }
     else
     {
-        Client  *client;
+        const std::map<int, Client*>            &clients = server.getClientsList();
+        std::map<int, Client*>::const_iterator  it = server.findClientByName(destName);
+        Client                                  *client;
 
         /* Check if the user exists */
-        client = server.findClient(destName);
-        if (client == NULL) /* ERR_NOSUCHNICK (401) */
+        if (it == clients.end()) /* ERR_NOSUCHNICK (401) */
         {
             src.sendToFD(Message::err_nosuchnick_401(serverName, destName));
             return ;
         }
+        client = it->second;
         client->sendToFD(Message::privmsg(srcName, destName, message));
     }
 }

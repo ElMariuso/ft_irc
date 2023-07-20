@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 00:57:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 05:48:35 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,18 +103,18 @@ std::string Message::rpl_topic_332(const std::string &serverName, const std::str
 
 std::string Message::rpl_namreplay_353(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const Channel &channel)
 {
-    std::stringstream                       stream;
-    char                                    prefix;
-    std::string                             userListStr;
+    std::stringstream               stream;
+    char                            prefix;
+    std::string                     userListStr;
 
     /* Get all connected users */
-    const std::map<std::string, Client*>    &userList = channel.getConnected();
+    const std::map<int, Client*>    &userList = channel.getConnected();
 
     if (userList.empty())
         userListStr = "";
     else
     {
-        for (std::map<std::string, Client*>::const_iterator it = userList.begin(); it != userList.end(); ++it)
+        for (std::map<int, Client*>::const_iterator it = userList.begin(); it != userList.end(); ++it)
         {
             const Client &client = *(it->second);
             prefix = (channel.isOp(client)) ? '@' : '+';

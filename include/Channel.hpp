@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 00:34:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 06:24:11 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,62 +23,61 @@ class Channel
 		~Channel();
 
 		/* mode function */
-		int												addMode(const char &mode); // add an channel mode, return 0 if it went well
-		int												rmMode(const char &mode); // remove an channel mode, return 0 if it went well
-		bool											hasMode(const char &mode) const; // search if channel has mode activated
-		int												addOp(const Client &client); // add a channel operator, return 0 if it went well
-		int												rmOp(const Client &client); // remove a channel operator, return 0 if it went well
-		bool											isOp(const Client &client) const; // search if client is a channel operator
-		bool											hasTopic() const;
-		bool											hasPassword() const;
-		bool											hasLimit() const;
+		int							addMode(const char &mode); // add an channel mode, return 0 if it went well
+		int							rmMode(const char &mode); // remove an channel mode, return 0 if it went well
+		bool						hasMode(const char &mode) const; // search if channel has mode activated
+		int							addOp(const Client &client); // add a channel operator, return 0 if it went well
+		int							rmOp(const Client &client); // remove a channel operator, return 0 if it went well
+		bool						isOp(const Client &client) const; // search if client is a channel operator
+		bool						hasTopic() const;
+		bool						hasPassword() const;
+		bool						hasLimit() const;
 
 		/* Setters */
-		void 											setName(const std::string &name);
-		void 											setConnected(Client *client);
-        void 											setConnectedList(std::map<std::string, Client*> connected);
-		void 											setOperator(int fd);
-		void 											setOperators(std::vector<int> operators);
-		void 											setModesList(const std::string &modesList);
-		void 											setTopic(const std::string &topic); // change the channel topic
-		void											setPassword(const std::string &password);
-		void											setLimit(std::size_t limit);
-		void											setHasInvitedList(bool hasInvitedList);
-		void											setInvited(const std::string &name);
-		void											setInvitedList(std::map<std::string, bool> &invited);
+		void						setName(const std::string &name);
+		void						setConnected(Client *client);
+        void						setConnectedList(std::map<int, Client*> connected);
+		void						setOperator(int fd);
+		void						setOperators(std::vector<int> operators);
+		void 						setModesList(const std::string &modesList);
+		void						setTopic(const std::string &topic); // change the channel topic
+		void						setPassword(const std::string &password);
+		void						setLimit(std::size_t limit);
+		void						setHasInvitedList(bool hasInvitedList);
+		void						setInvited(const std::string &name);
+		void						setInvitedList(std::map<std::string, bool> &invited);
 
 		/* Removers */
-		void											removeConnected(const std::string &name);
+		void						removeConnected(const int &fd);
 
 		/* Getters */
-		std::string										getName() const;
-        std::map<std::string, Client*>  				getConnected() const;
-		std::vector<int> 								getOperators() const;
-		std::string										getModesList() const;
-		std::string										getTopic() const;
-		std::string										getPassword() const;
-		std::size_t										getLimit() const;
-		bool											getHasInvitedList() const;
-		std::map<std::string, bool>						getInvited() const;
+		std::string					getName() const;
+        std::map<int, Client*>		getConnected() const;
+		std::vector<int>			getOperators() const;
+		std::string					getModesList() const;
+		std::string					getTopic() const;
+		std::string					getPassword() const;
+		std::size_t					getLimit() const;
+		bool						getHasInvitedList() const;
+		std::map<std::string, bool>				getInvited() const;
 
 		/* Finders */
-		Client*											findConnected(const std::string &name);
-		std::map<std::string, Client*>::const_iterator	findConnectedByFD(const int fd, bool isConst = false) const;
-		std::map<std::string, Client*>::iterator		findConnectedByFD(const int fd);
+		Client*									findConnected(const int &fd);
+		std::map<int, Client*>::const_iterator	findConnectedByName(const std::string &name) const;
 
 		/* Senders */
-		void											sendToAll(const std::string &message, const std::string &srcName, bool sendToSRC);
+		void						sendToAll(const std::string &message, const std::string &srcName, bool sendToSRC);
 		
     private:
-        std::string             		_name;
-        std::map<std::string, Client*>	_connected;
-		std::vector<int> 				_operators; // list of channel operator : user who have operator status only within this channel
-		std::string						_modesList;
-		std::string						_topic;
-		std::string						password;
-		std::size_t						limit;
-		bool							hasInvitedList;
-		std::map<std::string, bool>		invited;
+        std::string             	_name;
+        std::map<int, Client*>		_connected;
+		std::vector<int> 			_operators; // list of channel operator : user who have operator status only within this channel
+		std::string					_modesList;
+		std::string					_topic;
+		std::string					password;
+		std::size_t					limit;
+		bool						hasInvitedList;
+		std::map<std::string, bool>	invited;
 };
 
 /* all channel modes currently added : 

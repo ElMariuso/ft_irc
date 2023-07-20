@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 05:00:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 06:24:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Server::~Server()
 {
     Utils::debug_message("Closing " + this->name + "...");
     /* Remove clients list */
-    for (std::map<std::string, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
+    for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
     {
         close(it->second->getFd());
         delete it->second;
@@ -91,7 +91,7 @@ int Server::processServer()
             Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
 
             /* Ask for authentification */
-            Client *client = this->findClientByFD(new_socket)->second;
+            Client *client = this->findClient(new_socket);
             client->sendToFD(Message::connection(this->getName(), client->getNickname()));
         }
 
@@ -153,7 +153,7 @@ void Server::addNewClient(const int client_socket)
     std::string username = "User" + Utils::intToString(client_socket);
 
     Client *new_client = new Client(nickname, username, client_socket, true);
-    clientsList.insert(std::make_pair(nickname, new_client));
+    clientsList.insert(std::make_pair(client_socket, new_client));
     clientPfd.fd = client_socket;
     clientPfd.events = POLLIN;
     this->fds.push_back(clientPfd);
@@ -194,7 +194,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
 {
     Command command(message);
 
-    std::map<std::string, Client*>::const_iterator it = this->findClientByFD(client_socket);
+    std::map<int, Client*>::const_iterator it = this->clientsList.find(client_socket);
     if (it != this->clientsList.end())
     {
         Client  *client = it->second;
@@ -288,14 +288,10 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
         Utils::debug_message("No clients connected to the server");
     
     /* Manage logout */
-    std::map<std::string, Client*>::iterator        it = this->findClientByFD(client_socket);
-    Client                                          *client;
-    int                                             fd;
+    std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
+    Client                              *client = this->findClient(client_socket);
+    int                                 fd;
 
-    if (it != this->clientsList.end())
-        client = it->second;
-    else
-        client = NULL;
     if (client != NULL && client->getIsConnected() == true)
     {
         fd = client->getFd();
@@ -306,14 +302,16 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
         {
             Channel *channel = it1->second;
 
-            std::map<std::string, Client*>::iterator it2 = channel->findConnectedByFD(client_socket);
-            if (it2 != channel->getConnected().end())
+            const std::map<int, Client*>            &connected = channel->getConnected();
+
+            std::map<int, Client*>::const_iterator  it2 = connected.find(client_socket);
+            if (it2 != connected.end())
             {
                 Command command;
                 const std::string   &channelName = channel->getName();
                 
                 command.part(this, *(it->second), channelName, message, this->findChannel(channelName));
-                channel->rmOp(*it->second);   
+                channel->rmOp(*it->second);
             }
             if (this->channelsList.empty())
                 break ;
@@ -391,8 +389,8 @@ void Server::setName(std::string name) { this->name = name; }
 void Server::setPassword(std::string password) { this->password = password; }
 void Server::setFd(struct pollfd fd) { this->fds.push_back(fd); }
 void Server::setFds(std::vector<struct pollfd> fds) { this->fds = fds; }
-void Server::setClient(const std::string &name, Client *client) { this->clientsList.insert(std::make_pair(name, client)); }
-void Server::setClients(std::map<std::string, Client*> clients) { this->clientsList = clients; }
+void Server::setClient(const int &fd, Client *client) { this->clientsList.insert(std::make_pair(fd, client)); }
+void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
 
@@ -408,14 +406,14 @@ int Server::getServerSocket() const { return (this->serverSocket); }
 std::string Server::getName() const { return (this->name); }
 std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
-std::map<std::string, Client*> Server::getClientsList() const { return (this->clientsList); }
+std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
 
 /* Finders */
-Client* Server::findClient(const std::string &name) const
+Client* Server::findClient(const int &fd) const
 {
-    const std::map<std::string, Client*>            &map = this->clientsList;
-    std::map<std::string, Client*>::const_iterator  it = map.find(name);
+    std::map<int, Client*>              map = this->clientsList;
+    std::map<int, Client*>::iterator    it = map.find(fd);
     
     if (it != map.end())
         return (it->second);
@@ -432,27 +430,12 @@ Channel* Server::findChannel(const std::string &name) const
     return (NULL);
 }
 
-std::map<std::string, Client*>::const_iterator Server::findClientByFD(const int fd, bool isConst) const
+std::map<int, Client*>::const_iterator Server::findClientByName(const std::string &name) const
 {
-    (void)isConst;
-    const std::map<std::string, Client*>  &clients = this->clientsList;
-    
-    for (std::map<std::string, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+    for (std::map<int, Client*>::const_iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
     {
-        if (it->second->getFd() == fd)
+        if (it->second->getNickname() == name)
             return (it);
     }
-    return (clients.end());
-}
-
-std::map<std::string, Client*>::iterator Server::findClientByFD(const int fd)
-{
-    std::map<std::string, Client*>  &clients = this->clientsList;
-    
-    for (std::map<std::string, Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
-    {
-        if (it->second->getFd() == fd)
-            return (it);
-    }
-    return (clients.end());
+    return (this->clientsList.end());
 }
