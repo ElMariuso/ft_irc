@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 01:30:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 02:27:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,8 @@ class Server
         std::map<std::string, Channel*>                 getChannelsList() const;
 
         /* Finders */
-        template <typename List>
-        typename List::mapped_type*                     findElem(const List &list, const std::string &name) const;
-        
+        Client*                                         findClient(const std::map<std::string, Client*> &map, const std::string &name) const;
+        Channel*                                        findChannel(const std::map<std::string, Channel*> &map, const std::string &name) const;
         std::map<std::string, Client*>::const_iterator  findClientByFD(const int fd, bool isConst) const;
         std::map<std::string, Client*>::iterator        findClientByFD(const int fd);
 

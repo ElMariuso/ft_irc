@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 01:22:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 02:27:25 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,12 +413,20 @@ std::map<std::string, Client*> Server::getClientsList() const { return (this->cl
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
 
 /* Finders */
-template <typename List>
-typename List::mapped_type* Server::findElem(const List &list, const std::string &name) const
+Client* Server::findClient(const std::map<std::string, Client*> &map, const std::string &name) const
 {
-    typename List::const_iterator it = list.find(name);
+    typename std::map<std::string, Client*>::const_iterator it = map.find(name);
     
-    if (it != list.end())
+    if (it != map.end())
+        return (it->second);
+    return (NULL);
+}
+
+Channel* Server::findChannel(const std::map<std::string, Channel*> &map, const std::string &name) const
+{
+    typename std::map<std::string, Channel*>::const_iterator it = map.find(name);
+    
+    if (it != map.end())
         return (it->second);
     return (NULL);
 }
