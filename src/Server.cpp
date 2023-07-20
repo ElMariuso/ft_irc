@@ -6,13 +6,13 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 19:54:20 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 06:24:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
-Server::Server(const std::string port_str, const std::string password, const std::string name)
+Server::Server(const std::string &port_str, const std::string &password, const std::string &name)
 {
     int ret;
 
@@ -35,7 +35,7 @@ Server::~Server()
     /* Remove clients list */
     for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
     {
-        close(it->first);
+        close(it->second->getFd());
         delete it->second;
     }
     this->clientsList.clear();
@@ -89,7 +89,10 @@ int Server::processServer()
             }
             this->addNewClient(new_socket);
             Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
-            Command::connectionMessage(*this, *(this->clientsList.find(new_socket)->second));
+
+            /* Ask for authentification */
+            Client *client = this->findClient(new_socket);
+            client->sendToFD(Message::connection(this->getName(), client->getNickname()));
         }
 
         /* Browse existing clients sockets */
@@ -121,9 +124,7 @@ int Server::processServer()
                 i--; /* Client disconnected */
             }
 	    else
-	    {
-		this->sendPingMessage(client_socket);
-	    }
+            this->sendPingMessage(client_socket);
         }
     } while (!Utils::stop(1));
     return (0);
@@ -148,14 +149,17 @@ void Server::addNewClient(const int client_socket)
     struct pollfd   clientPfd;
 
     /* Add new client to the list */
-    Client *new_client = new Client(client_socket, true);
+    std::string nickname = "Guest" + Utils::intToString(client_socket);
+    std::string username = "User" + Utils::intToString(client_socket);
+
+    Client *new_client = new Client(nickname, username, client_socket, true);
     clientsList.insert(std::make_pair(client_socket, new_client));
     clientPfd.fd = client_socket;
     clientPfd.events = POLLIN;
     this->fds.push_back(clientPfd);
 }
 
-/* Messages */
+/* Commands */
 int Server::handleEvent(const int client_socket)
 {
     ssize_t		                ret;
@@ -186,108 +190,136 @@ int Server::handleEvent(const int client_socket)
     return (ret);
 }
 
-void Server::getMessages(const std::string &message, const int from)
+void Server::getMessages(const std::string &message, const int client_socket)
 {
     Command command(message);
 
-    std::map<int, Client*>::iterator clientIterator = this->clientsList.find(from);
-    if (clientIterator != this->clientsList.end())
+    std::map<int, Client*>::const_iterator it = this->clientsList.find(client_socket);
+    if (it != this->clientsList.end())
     {
-        Client* client = clientIterator->second;
+        Client  *client = it->second;
         
-        if (command.getType() == QUIT)
-            this->handleDisconnection(from, command.getArgs().at(0));
-        else if (command.getType() == PASS)
-            Command::welcomeMessages(*this, this->clientsList.find(from)->second, command.getArgs().at(0));
-        if (client->getIsAuthenticated() == true  && client->getIsConnected() == true)
-        {
-            if (command.getType() == JOIN)
-            {
-                if (command.getArgs().size() == 2)
-                    Command::joinMessages(this, client, command.getArgs().at(0), command.getArgs().at(1));
-                else
-                    Command::joinMessages(this, client, command.getArgs().at(0), "");
-            }
-            else if (command.getType() == PART)
-            {
-                if (command.getArgs().size() == 2)
-                    Command::partMessages(this, *client, command.getArgs().at(0), command.getArgs().at(1));
-                else
-                    Command::partMessages(this, *client, command.getArgs().at(0), "");
-            }
-            else if (command.getType() == NICK)
-                Command::nickMessages(*this, client, command.getArgs().at(0));
-            else if (command.getType() == PRIVMSG)
-                Command::privmsgMessages(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
-            else if (command.getType() == PING)
-                Command::pingMessages(*client, command.getArgs().at(0));
-            else if (command.getType() == PONG)
-                Command::pongMessages(*client, command.getArgs().at(0));
-        }
-        else if (client->getIsAuthenticated() == false && command.getType() != UNKNOW)
-        {
-            Utils::debug_message(Utils::intToString(from) + " tried to make a command without being authenticated.");
-            Command::authentificationMessages(*this, *client);
-        }
+        /* No need to authenticate */
+        this->withoutAuthentification(command, client);
+
+        /* Need to authenticate */
+        if (client->getIsConnected() && client->getIsAuthenticated())
+            this->withAuthentification(command, client);
+        else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
+            client->sendToFD(Message::err_notregistered_451(this->getName(), client->getNickname()));
     }
     else
-        Utils::error_message("Client not found from socket: " + Utils::intToString(from));
+        Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
+}
+
+void Server::withoutAuthentification(const Command &command, Client *client)
+{
+    if (command.getType() == QUIT) /* Bye :( */
+        this->handleDisconnection(client->getFd(), command.getArgs().at(0));
+    else if ((command.getType() == PASS) && client->getIsAuthenticated()) /* Already registered */
+        client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
+    else if (command.getType() == PASS) /* Authentification */
+    {
+        if (this->password == command.getArgs().at(0)) /* Ok */
+        {
+            client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname()));
+            client->setIsAuthenticated(true);
+        }
+        else /* No */
+            client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
+    }
+}
+
+void Server::withAuthentification(const Command &command, Client *client)
+{
+    switch (command.getType())
+    {
+        case NICK:
+            command.nick(*this, client, command.getArgs().at(0));
+            break ;
+        case JOIN:
+            command.join(this, client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            break ;
+        case PART:
+            command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            break ;
+        case PRIVMSG:
+            command.privmsg(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            break ;
+        default:
+            break ;
+    }
 }
 
 /* Ping message */
 void Server::sendPingMessage(const int client_socket)
 {
-	std::map<int, Client*>::iterator	it = this->clientsList.find(client_socket);
-	std::string				identifier;
-	std::string				pingMessage;
+    (void)client_socket;
+	// std::map<int, Client*>::iterator	it = this->clientsList.find(client_socket);
+	// std::string				identifier;
+	// std::string				pingMessage;
 
-	std::srand(std::time(0));
-	identifier = Utils::intToString(std::rand()); //random identifier
-	pingMessage = "PING " + identifier;
-	if (it->second->getTimeSinceLastPing() >= 300) //time between 2 ping msg in seconds
-	{
-		it->second->sendToFD(pingMessage);
-		it->second->setTimeSinceLastPing();
-		it->second->setLastPingIdentifier(identifier);
-	}
+	// std::srand(std::time(0));
+	// identifier = Utils::intToString(std::rand()); //random identifier
+	// pingMessage = "PING " + identifier;
+	// if (it->second->getTimeSinceLastPing() >= 300) //time between 2 ping msg in seconds
+	// {
+	// 	it->second->sendToFD(pingMessage);
+	// 	it->second->setTimeSinceLastPing();
+	// 	it->second->setLastPingIdentifier(identifier);
+	// }
 }
 
 bool Server::pingTimeOut(const int client_socket)
 {
-	std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
+    (void)client_socket;
+	// std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
 
-	if (it->second->getTimeSinceLastPing() >= 600 && it->second->getLastPingIdentifier() != "-1" )
-		return (true);
-	return (false);
+	// if (it->second->getTimeSinceLastPing() >= 600 && it->second->getLastPingIdentifier() != "-1" )
+	// 	return (true);
+	// return (false);
+    return (false);
 }
 
 /* Logout */
 void Server::handleDisconnection(const int client_socket, const std::string &message)
 {
-    /* Manage logout */
-    std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
-
     if (this->clientsList.size() == 0)
         Utils::debug_message("No clients connected to the server");
-    else if (it->second->getIsConnected() == true)
-    {
-        it->second->setIsConnected(false);
-        for (std::map<std::string, Channel*>::iterator itChannel = this->channelsList.begin(); itChannel != this->channelsList.end(); itChannel++)
-        {
-            Channel *channel = itChannel->second;
+    
+    /* Manage logout */
+    std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
+    Client                              *client = this->findClient(client_socket);
+    int                                 fd;
 
-            std::map<int, Client*>::iterator it2 = channel->getConnected().find(client_socket);
-            if (it2 != channel->getConnected().end())
+    if (client != NULL && client->getIsConnected() == true)
+    {
+        fd = client->getFd();
+        client->setIsConnected(false);
+        
+        /* Clean channels */
+        for (std::map<std::string, Channel*>::iterator it1 = this->channelsList.begin(); it1 != this->channelsList.end(); ++it1)
+        {
+            Channel *channel = it1->second;
+
+            const std::map<int, Client*>            &connected = channel->getConnected();
+
+            std::map<int, Client*>::const_iterator  it2 = connected.find(client_socket);
+            if (it2 != connected.end())
             {
-                Command::partMessages(this, *(it->second), channel->getName(), message);
-                channel->rmOp(*it->second);   
+                Command command;
+                const std::string   &channelName = channel->getName();
+                
+                command.part(this, *(it->second), channelName, message, this->findChannel(channelName));
+                channel->rmOp(*it->second);
             }
             if (this->channelsList.empty())
                 break ;
         }
+
         /* Clean clientsList map */
-        close(it->first);
-        delete it->second;
+        close(fd);
+        delete client;
         this->clientsList.erase(it);
         
         Utils::debug_message("Logout done");
@@ -357,7 +389,7 @@ void Server::setName(std::string name) { this->name = name; }
 void Server::setPassword(std::string password) { this->password = password; }
 void Server::setFd(struct pollfd fd) { this->fds.push_back(fd); }
 void Server::setFds(std::vector<struct pollfd> fds) { this->fds = fds; }
-void Server::setClient(int fd, Client *client) { this->clientsList.insert(std::make_pair(fd, client)); }
+void Server::setClient(const int &fd, Client *client) { this->clientsList.insert(std::make_pair(fd, client)); }
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
@@ -376,3 +408,34 @@ std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
+
+/* Finders */
+Client* Server::findClient(const int &fd) const
+{
+    std::map<int, Client*>              map = this->clientsList;
+    std::map<int, Client*>::iterator    it = map.find(fd);
+    
+    if (it != map.end())
+        return (it->second);
+    return (NULL);
+}
+
+Channel* Server::findChannel(const std::string &name) const
+{
+    const std::map<std::string, Channel*>           &map = this->channelsList;
+    std::map<std::string, Channel*>::const_iterator it = map.find(name);
+    
+    if (it != map.end())
+        return (it->second);
+    return (NULL);
+}
+
+std::map<int, Client*>::const_iterator Server::findClientByName(const std::string &name) const
+{
+    for (std::map<int, Client*>::const_iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
+    {
+        if (it->second->getNickname() == name)
+            return (it);
+    }
+    return (this->clientsList.end());
+}

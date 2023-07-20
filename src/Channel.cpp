@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/18 21:17:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 06:24:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ void Channel::setInvited(const std::string &name) { this->invited.insert(std::ma
 void Channel::setInvitedList(std::map<std::string, bool> &invited) { this->invited = invited; }
 
 /* Removers */
-void Channel::removeConnected(int fd) { this->_connected.erase(fd); }
+void Channel::removeConnected(const int &fd) { this->_connected.erase(fd); }
 
 /* Getters */
 std::string Channel::getName() const { return (this->_name); }
@@ -147,3 +147,39 @@ std::string	Channel::getPassword() const { return (this->password); }
 std::size_t Channel::getLimit() const  { return (this->limit); }
 bool Channel::getHasInvitedList() const { return (this->hasInvitedList); }
 std::map<std::string, bool>	Channel::getInvited() const { return (this->invited); }
+
+/* Finders */
+Client* Channel::findConnected(const int &fd)
+{
+	std::map<int, Client*>::const_iterator it = this->_connected.find(fd);
+	
+	if (it != this->_connected.end())
+        return (it->second);
+    return (NULL);
+}
+
+std::map<int, Client*>::const_iterator Channel::findConnectedByName(const std::string &name) const
+{
+    for (std::map<int, Client*>::const_iterator it = this->_connected.begin(); it != this->_connected.end(); ++it)
+    {
+        if (it->second->getNickname() == name)
+            return (it);
+    }
+    return (this->_connected.end());
+}
+
+/* Senders */
+void Channel::sendToAll(const std::string &message, const std::string &srcName, bool sendToSRC)
+{
+	const std::map<int, Client*>	&connected = this->_connected;
+
+	for (std::map<int, Client*>::const_iterator it = connected.begin(); it != connected.end(); ++it)
+	{
+		const Client &client = *(it->second);
+
+		if (client.getNickname() == srcName && sendToSRC == true)
+			client.sendToFD(message);
+		else if (client.getNickname() != srcName)
+			client.sendToFD(message);
+	}
+}

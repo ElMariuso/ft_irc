@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/19 20:19:20 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 05:00:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,14 @@
 
 Client::Client() {}
 
-Client::Client(int fd, bool isConnected) : _fd(fd)
-{
-	std::stringstream ss;
-	
-	ss << fd; // turn int to std::string
-	this->setIsAuthenticated(false);
+Client::Client(const std::string &nickname, const std::string &username, int fd, bool isConnected)
+{	
+	/* Arguments */
+	this->setNickname(nickname);
+	this->setUsername(username);
+	this->setFd(fd);
 	this->setIsConnected(isConnected);
-	this->_username = "User" + ss.str(); // put the file descriptor in client's default username to help identify him
-	this->_nickname = "Guest" + ss.str();
-	fcntl(fd, F_SETFL, O_NONBLOCK); // set the fd to non-blocking mode
+	this->setIsAuthenticated(false);
 	this->_hostname = "127.0.0.1";
 	this->setHostname();
 	this->setTimeSinceLastPing();
@@ -36,7 +34,7 @@ Client::~Client()
 }
 
 /* function */
-void Client::sendToFD(std::string str) const
+void Client::sendToFD(const std::string &str) const
 {
 	send(_fd, str.c_str(), str.size(), 0); // write "str" on "_fd"
 	Utils::debug_message(Utils::intToString(this->getFd()) + " get a message " + str);
@@ -124,7 +122,8 @@ bool Client::hasModeLetter(char mode)
 	return (true);
 }
 
-/* setters */
+/* Setters */
+void Client::setFd(const int fd) { this->_fd = fd; }
 void Client::setIsAuthenticated(bool isAuthenticated) { this->isAuthenticated = isAuthenticated; }
 void Client::setIsConnected(bool isConnected) { this->isConnected = isConnected; }
 void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
@@ -172,13 +171,13 @@ void	Client::setTimeSinceLastPing() { this->_timeSinceLastPing = clock(); }
 void	Client::setLastPingIdentifier(std::string identifier) { this->_LastPingIdentifier = identifier; }
 
 /* getters */
-int			Client::getFd() const { return (this->_fd); }
-bool		Client::getIsAuthenticated() const { return (this->isAuthenticated); }
-bool		Client::getIsConnected() const { return (this->isConnected); }
+int Client::getFd() const { return (this->_fd); }
+bool Client::getIsAuthenticated() const { return (this->isAuthenticated); }
+bool Client::getIsConnected() const { return (this->isConnected); }
 std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
-float			Client::getTimeSinceLastPing() const
+float Client::getTimeSinceLastPing() const
 {
 	clock_t	t;
 
