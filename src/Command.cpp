@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 21:58:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 22:11:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,15 +386,18 @@ void Command::rmMode(Channel *channel, const char &mode) const
     {
         case 'i':
             channel->setHasInvitedList(false);
+            channel->clearInvited();
             break ;
         case 't':
             channel->setHasTopicProtection(false);
             break ;
         case 'k':
             channel->setHasPassword(false);
+            channel->setPassword("");
             break ;
         case 'l':
             channel->setHasLimit(false);
+            channel->setLimit(0);
             break ;
         default:
             break ;

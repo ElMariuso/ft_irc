@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/21 22:02:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 22:11:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,5 +187,15 @@ void Channel::sendToAll(const std::string &message, const std::string &srcName, 
 			client.sendToFD(message);
 		else if (client.getNickname() != srcName)
 			client.sendToFD(message);
+	}
+}
+
+/* Clearers */
+void Channel::clearInvited()
+{
+	while (!this->invited.empty())
+	{
+		std::map<std::string, bool>::iterator it = this->invited.begin();
+        this->invited.erase(it);
 	}
 }

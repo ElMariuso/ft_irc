@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/21 21:53:52 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 22:10:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,9 @@ class Channel
 
 		/* Senders */
 		void										sendToAll(const std::string &message, const std::string &srcName, bool sendToSRC);
+
+		/* Clearers */
+		void										clearInvited();
 		
     private:
         std::string             	_name;
