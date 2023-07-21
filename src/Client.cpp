@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 00:26:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:40:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,13 @@ bool Client::hasModeLetter(char mode)
 	if (_modesList.find(mode) == std::string::npos)
 		return (false);
 	return (true);
+}
+
+bool Client::isMode(const char &mode) const
+{
+	if (mode == 'i' || mode == 'w' || mode == 'o' || mode == 's' || mode == 'x' || mode == 'a' || mode == 'r' || mode == 'q' || mode == 'b' || mode == 'D' || mode == 'G')
+		return (true);
+	return (false);
 }
 
 /* Setters */

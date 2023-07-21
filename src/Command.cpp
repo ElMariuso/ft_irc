@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:34:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:40:09 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,7 +268,20 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
     else /* Client */
     {
         if (srcName != destName) /* ERR_USERSDONTMATCH (502) */
+        {
             src->sendToFD(Message::err_usersdontmatch_502(serverName, srcName));
+            return ;
+        }
+
+        /* Check if modes exists */
+        for (std::size_t i = 1; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
+        {
+            if (!src->isMode(modes[i]))
+            {
+                src->sendToFD(Message::err_umodeunknowflag_501(serverName, srcName));
+                return ;
+            }
+        }
     }
 }
 
