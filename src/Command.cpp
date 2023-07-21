@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:40:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:45:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,6 +282,8 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
                 return ;
             }
         }
+
+        /* Change modes of the user */
     }
 }
 
@@ -377,6 +379,44 @@ void Command::setModes(const std::string &serverName, const std::string &srcName
         }
         else /* Change restrictions */
             this->changeRestriction(serverName, channel, src, modes2[0], args);
+    }
+}
+
+void Command::setModesClient(const std::string &serverName, const std::string &srcName, Client *src, const std::string &modes) const
+{
+    std::string modes2 = "";
+
+    bool    removing = true;
+    /* Checking if you need to remove or not */
+    for (std::size_t i = 1; i < modes.length(); ++i)
+    {
+        if (!src->hasModeLetter(modes[i]))
+        {
+            removing = false;
+            break ;
+        }
+    }
+
+    /* Parsing modes */
+    for (std::size_t i = 1; i < modes.length(); ++i)
+    {
+        char    letter = modes[i];
+        if (modes2.find(letter) == std::string::npos)
+            modes2 += letter;
+    }
+    if (removing) /* Removing */
+    {
+        /* Removing all modes */
+        for (std::size_t i = 0; i < modes2.length(); ++i)
+            src->rmMode(modes2[i]);
+        src->sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
+    }
+    else /* Adding */
+    {
+        /* Setting modes */
+        for (std::size_t i = 0; i < modes2.length(); ++i)
+            src->addMode(modes2[i]);
+        src->sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
     }
 }
 
