@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 00:40:03 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:53:06 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,8 @@ bool Client::hasModeLetter(char mode)
 
 bool Client::isMode(const char &mode) const
 {
+	if (mode == '+') /* Prefix */
+		return (true);
 	if (mode == 'i' || mode == 'w' || mode == 'o' || mode == 's' || mode == 'x' || mode == 'a' || mode == 'r' || mode == 'q' || mode == 'b' || mode == 'D' || mode == 'G')
 		return (true);
 	return (false);

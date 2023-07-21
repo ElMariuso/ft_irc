@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:45:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:55:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,9 +274,9 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
         }
 
         /* Check if modes exists */
-        for (std::size_t i = 1; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
+        for (std::size_t i = 0; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
         {
-            if (!src->isMode(modes[i]))
+            if (!src->isMode(modes[i]) && modes[i] != '+')
             {
                 src->sendToFD(Message::err_umodeunknowflag_501(serverName, srcName));
                 return ;
@@ -284,6 +284,7 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
         }
 
         /* Change modes of the user */
+        this->setModesClient(serverName, srcName, src, modes);
     }
 }
 
@@ -386,25 +387,15 @@ void Command::setModesClient(const std::string &serverName, const std::string &s
 {
     std::string modes2 = "";
 
-    bool    removing = true;
-    /* Checking if you need to remove or not */
-    for (std::size_t i = 1; i < modes.length(); ++i)
-    {
-        if (!src->hasModeLetter(modes[i]))
-        {
-            removing = false;
-            break ;
-        }
-    }
-
     /* Parsing modes */
-    for (std::size_t i = 1; i < modes.length(); ++i)
+    for (std::size_t i = 0; i < modes.length(); ++i)
     {
         char    letter = modes[i];
         if (modes2.find(letter) == std::string::npos)
             modes2 += letter;
     }
-    if (removing) /* Removing */
+
+    if (modes2[0] != '+') /* Removing */
     {
         /* Removing all modes */
         for (std::size_t i = 0; i < modes2.length(); ++i)
@@ -414,7 +405,7 @@ void Command::setModesClient(const std::string &serverName, const std::string &s
     else /* Adding */
     {
         /* Setting modes */
-        for (std::size_t i = 0; i < modes2.length(); ++i)
+        for (std::size_t i = 1; i < modes2.length(); ++i)
             src->addMode(modes2[i]);
         src->sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
     }
