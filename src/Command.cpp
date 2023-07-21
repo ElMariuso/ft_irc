@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 22:11:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 22:43:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
     }
 }
 
-void Command::mode(const Server &server, Client *src, const std::string &destName, const std::string &modes) const
+void Command::mode(const Server &server, Client *src, const std::string &destName, const std::string &modes, const std::string &args) const
 {
     /* Used for messages */
     const std::string   &serverName = server.getName();
@@ -195,7 +195,7 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
     if (modes.empty()) /* Check modes */
         this->modeCheck(serverName, srcName, destName, *src, server);
     else /* Add modes */
-        this->modeAdd(serverName, srcName, destName, src, server, modes);
+        this->modeAdd(serverName, srcName, destName, src, server, modes, args);
 }
 
 void Command::modeCheck(const std::string &serverName, const std::string &srcName, const std::string &destName, const Client &client, const Server &server) const
@@ -228,7 +228,7 @@ void Command::modeCheck(const std::string &serverName, const std::string &srcNam
     }
 }
 
-void Command::modeAdd(const std::string &serverName, const std::string &srcName, const std::string &destName, Client *src, const Server &server, const std::string &modes) const
+void Command::modeAdd(const std::string &serverName, const std::string &srcName, const std::string &destName, Client *src, const Server &server, const std::string &modes, const std::string &args) const
 {
     if (destName[0] == '#') /* Channel */
     {
@@ -259,7 +259,7 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
         else /* MODES */
         {
             /* Adding all the modes */
-            this->setModes(channel, modes);
+            this->setModes(serverName, channel, *src, modes, args);
 
             /* Confirmation to the client */
             src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
@@ -317,7 +317,7 @@ bool Command::isNotRightNickname(const std::string &serverName, const std::strin
 }
 
 /* MODE Utils */
-void Command::setModes(Channel *channel, const std::string &modes) const
+void Command::setModes(const std::string &serverName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const
 {
     std::string modes2 = "";
 
@@ -349,13 +349,18 @@ void Command::setModes(Channel *channel, const std::string &modes) const
         }
     }
     else /* Adding */
-    {   
-        /* Setting modes */
-        for (std::size_t i = 0; i < modes2.length(); ++i)
+    {
+        if (args.empty() || modes2.length() > 1)
         {
-            channel->addMode(modes2[i]);
-            this->addMode(channel, modes2[i]);
+            /* Setting modes */
+            for (std::size_t i = 0; i < modes2.length(); ++i)
+            {
+                channel->addMode(modes2[i]);
+                this->addMode(channel, modes2[i]);
+            }
         }
+        else /* Change restrictions */
+            this->changeRestriction(serverName, channel, src, modes2[0], args);
     }
 }
 
@@ -402,6 +407,38 @@ void Command::rmMode(Channel *channel, const char &mode) const
         default:
             break ;
     }   
+}
+
+void Command::changeRestriction(const std::string &serverName, Channel *channel, const Client &src, const char &mode, const std::string &args) const
+{
+    switch (mode)
+    {
+        case 'k':
+            channel->setPassword(args);
+            break ;
+        case 'l':
+            if (this->isInteger(args))
+                channel->setLimit(std::atoi(args.c_str()));
+            else
+                src.sendToFD(Message::err_umodeunknowflag_501(serverName, src.getNickname()));
+            break ;
+        default:
+            break ;
+    }
+}
+
+bool Command::isInteger(const std::string &str) const
+{
+    if (str.empty())
+        return (false);
+    if (str.length() != 1 && str[0] == '0')
+        return (false);
+    for (std::size_t i = 0; i != str.length(); ++i)
+    {
+        if (!std::isdigit(str[i]))
+            return (false);
+    }
+    return (true);
 }
 
 /* Setters */
