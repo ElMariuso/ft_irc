@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:21:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:32:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ class Message
         static std::string  err_badchannelkey_475(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_chanoprivsneeded_482(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_umodeunknowflag_501(const std::string &serverName, const std::string &nickname);
+        static std::string  err_usersdontmatch_502(const std::string &serverName, const std::string &nickname);
 };
 
 #endif

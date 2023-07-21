@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:23:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:32:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,5 +319,14 @@ std::string Message::err_umodeunknowflag_501(const std::string &serverName, cons
 
     stream << ":" << serverName << " 501 " << nickname \
         << " :Unknown MODE flag" << "\r\n";
+    return (stream.str());    
+}
+
+std::string Message::err_usersdontmatch_502(const std::string &serverName, const std::string &nickname)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 502 " << nickname \
+        << " :Cannot change mode for other users" << "\r\n";
     return (stream.str());    
 }
