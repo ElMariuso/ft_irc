@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:29:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:34:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,8 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
     }
     else /* Client */
     {
-
+        if (srcName != destName) /* ERR_USERSDONTMATCH (502) */
+            src->sendToFD(Message::err_usersdontmatch_502(serverName, srcName));
     }
 }
 
