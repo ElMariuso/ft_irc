@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 06:24:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/20 17:01:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,13 +238,22 @@ void Server::withAuthentification(const Command &command, Client *client)
             command.nick(*this, client, command.getArgs().at(0));
             break ;
         case JOIN:
-            command.join(this, client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            if (command.getArgs().size() == 1)
+                command.join(this, client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
+            else
+                command.join(this, client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
             break ;
         case PART:
-            command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            if (command.getArgs().size() == 1)
+                command.part(this, *client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
+            else
+                command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
             break ;
         case PRIVMSG:
             command.privmsg(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            break ;
+        case KICK:
+            command.kick(*this, *client, this->findClientByName(command.getArgs().at(1))->second, command.getArgs().at(2), this->findChannel(command.getArgs().at(0)));
             break ;
         default:
             break ;
@@ -408,6 +417,9 @@ std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
+
+std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
+std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }
 
 /* Finders */
 Client* Server::findClient(const int &fd) const
