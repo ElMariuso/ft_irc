@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 01:41:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 01:47:09 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,7 +319,6 @@ void Command::topic(const Server &server, const Client &src, const std::string &
     {
         if (topic.empty()) /* Send the topic */
         {
-            std::cout << "SENDING" << std::endl;
             if (channel->hasTopic()) /* Send the topic */
                 src.sendToFD(Message::rpl_topic_332(serverName, srcName, channelName, topic));
             else /* There is no topic */
@@ -336,8 +335,10 @@ void Command::topic(const Server &server, const Client &src, const std::string &
             }
             else /* Change the topic */
             {
-                channel->setTopic(topic);
-                src.sendToFD(Message::rpl_topic_332(serverName, srcName, channelName, topic));
+                std::string newTopic = topic.substr(1);
+
+                channel->setTopic(newTopic);
+                src.sendToFD(Message::rpl_topic_332(serverName, srcName, channelName, newTopic));
             }
         }
     }
