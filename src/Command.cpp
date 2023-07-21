@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 22:43:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 22:44:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,8 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
             this->setModes(serverName, channel, *src, modes, args);
 
             /* Confirmation to the client */
-            src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
+            if (args.empty())
+                src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
         }
     }
     else /* Client */
