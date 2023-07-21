@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 20:46:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 20:59:25 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,47 +195,7 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
     if (modes.empty()) /* Check modes */
         this->modeCheck(serverName, srcName, destName, *src, server);
     else /* Add modes */
-    {
-        if (destName[0] == '#') /* Channel */
-        {
-            Channel *channel;
-
-            /* Check if the channel exists */
-            channel = server.findChannel(destName);
-            if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
-            {
-                src->sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
-                return ;
-            }
-
-            /* Check if modes exists */
-            for (std::size_t i = 1; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
-            {
-                if (!channel->isMode(modes[i]))
-                {
-                    src->sendToFD(Message::err_umodeunknowflag_501(serverName, srcName));
-                    return ;
-                }
-            }
-
-            if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
-                src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
-            else if (!channel->isOp(*src)) /* ERR_CHANOPRIVSNEEDED (482) */
-                src->sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, destName));
-            else /* MODES */
-            {
-                /* Adding all the modes */
-                this->setModes(channel, modes);
-
-                /* Confirmation to the client */
-                src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
-            }
-        }
-        else /* Client */
-        {
-
-        }
-    }
+        this->modeAdd(serverName, srcName, destName, src, server, modes);
 }
 
 void Command::modeCheck(const std::string &serverName, const std::string &srcName, const std::string &destName, const Client &client, const Server &server) const
@@ -265,6 +225,49 @@ void Command::modeCheck(const std::string &serverName, const std::string &srcNam
     else /* Client */
     {
             
+    }
+}
+
+void Command::modeAdd(const std::string &serverName, const std::string &srcName, const std::string &destName, Client *src, const Server &server, const std::string &modes) const
+{
+    if (destName[0] == '#') /* Channel */
+    {
+        Channel *channel;
+
+        /* Check if the channel exists */
+        channel = server.findChannel(destName);
+        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+        {
+            src->sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
+            return ;
+        }
+
+        /* Check if modes exists */
+        for (std::size_t i = 1; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
+        {
+            if (!channel->isMode(modes[i]))
+            {
+                src->sendToFD(Message::err_umodeunknowflag_501(serverName, srcName));
+                return ;
+            }
+        }
+
+        if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+            src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+        else if (!channel->isOp(*src)) /* ERR_CHANOPRIVSNEEDED (482) */
+            src->sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, destName));
+        else /* MODES */
+        {
+            /* Adding all the modes */
+            this->setModes(channel, modes);
+
+            /* Confirmation to the client */
+            src->sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, modes));
+        }
+    }
+    else /* Client */
+    {
+
     }
 }
 
