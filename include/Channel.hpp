@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 17:09:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 20:23:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class Channel
 		int											addMode(const char &mode); // add an channel mode, return 0 if it went well
 		int											rmMode(const char &mode); // remove an channel mode, return 0 if it went well
 		bool										hasMode(const char &mode) const; // search if channel has mode activated
+		bool										isMode(const char &mode) const;
 		int											addOp(const Client &client); // add a channel operator, return 0 if it went well
 		int											rmOp(const Client &client); // remove a channel operator, return 0 if it went well
 		bool										isOp(const Client &client) const; // search if client is a channel operator

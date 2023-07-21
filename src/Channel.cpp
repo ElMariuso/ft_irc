@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/20 17:10:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 20:23:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,13 @@ bool Channel::hasMode(const char &mode) const
 	if (_modesList.find(mode) == std::string::npos)
 		return (false);
 	return (true);
+}
+
+bool Channel::isMode(const char &mode) const
+{
+	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l')
+		return (true);
+	return (false);
 }
 
 int	Channel::addOp(const Client &client)
