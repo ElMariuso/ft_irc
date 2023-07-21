@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 20:59:25 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 21:10:42 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,9 +124,6 @@ void Command::part(Server *server, const Client &client, const std::string &name
         return ;
     }
 
-    /* Get the connected list */
-    const std::map<int, Client*>    &connected = channel->getConnected();
-
     if (channel->findConnectedByName(client.getNickname()) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
         client.sendToFD(Message::err_notonchannel_442(serverName, clientName, name));
     else /* PART */
@@ -136,6 +133,9 @@ void Command::part(Server *server, const Client &client, const std::string &name
 
         /* Remove the user from the connected list */
         channel->removeConnected(client.getFd());
+
+        /* Get the connected list */
+        const std::map<int, Client*>    &connected = channel->getConnected();
 
         /* Delete the channel if there is no user left */
         if (connected.empty())
