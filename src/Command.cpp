@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 20:26:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 20:32:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,12 +212,11 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
             }
 
             /* Check if modes exists */
-            bool    isMode;
             for (std::size_t i = 1; i < modes.length(); ++i)
             {
                 if (!channel->isMode(modes[i]))
                 {
-                    
+                    src->sendToFD(Message::err_umodeunknowflag_501(serverName, srcName));
                     return ;
                 }
             }

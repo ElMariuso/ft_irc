@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 00:47:10 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 20:31:45 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -310,4 +310,13 @@ std::string Message::err_chanoprivsneeded_482(const std::string &serverName, con
     stream << ":" << serverName << " 482 " << clientNickname << " " << channelName \
         << " :You're not channel operator" << "\r\n";
     return (stream.str()); 
+}
+
+std::string Message::err_umodeunknowflag_501(const std::string &serverName, const std::string &nickname)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 501 " << nickname \
+        << " :Unknown MODE flag" << "\r\n";
+    return (stream.str());    
 }
