@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:55:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 01:41:44 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,6 +288,61 @@ void Command::modeAdd(const std::string &serverName, const std::string &srcName,
     }
 }
 
+void Command::topic(const Server &server, const Client &src, const std::string &destName, const std::string &topic) const
+{
+    Channel                         *channel;
+
+    /* Used for messages */
+    const std::string               &serverName = server.getName();
+    const std::string               &srcName = src.getNickname();
+    
+    if (destName[0] != '#') /* ERR_NOSUCHCHANNEL (403) */
+    {
+        src.sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
+        return ;
+    }
+
+    /* Check if the channel exists */
+    channel = server.findChannel(destName);
+    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    {
+        src.sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
+        return ;
+    }
+
+    /* Used for messages */
+    const std::string               &channelName = channel->getName();
+
+    if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+        src.sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+    else /* TOPIC */
+    {
+        if (topic.empty()) /* Send the topic */
+        {
+            std::cout << "SENDING" << std::endl;
+            if (channel->hasTopic()) /* Send the topic */
+                src.sendToFD(Message::rpl_topic_332(serverName, srcName, channelName, topic));
+            else /* There is no topic */
+                src.sendToFD(Message::rpl_notopic_331(serverName, srcName, channelName));
+        }
+        else /* Change the topic */
+        {
+            if (channel->getHasTopicProtection() && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+                src.sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, destName));
+            else if (topic == "-delete") /* Deleting the topic */
+            {
+                channel->setTopic("");
+                src.sendToFD(Message::rpl_notopic_331(serverName, srcName, channelName));
+            }
+            else /* Change the topic */
+            {
+                channel->setTopic(topic);
+                src.sendToFD(Message::rpl_topic_332(serverName, srcName, channelName, topic));
+            }
+        }
+    }
+}
+
 void Command::kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const
 {
     /* Used for messages */
@@ -527,8 +582,6 @@ void Command::setType()
         this->type = NAMES;
     else if (type == "KICK")
         this->type = KICK;
-    else if (type == "BAN")
-        this->type = BAN;
     else if (type == "WHOIS")
         this->type = WHOIS;
     else if (type == "PING")

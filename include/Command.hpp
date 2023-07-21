@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:45:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 01:13:06 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ enum MessageType
     LIST,
     NAMES,
     KICK,
-    BAN,
     WHOIS,
     PING,
     PONG
@@ -55,6 +54,7 @@ class Command
         void                        mode(const Server &server, Client *src, const std::string &destName, const std::string &modes, const std::string &args) const;
         void                        modeCheck(const std::string &serverName, const std::string &srcName, const std::string &destName, const Client &client, const Server &server) const;
         void                        modeAdd(const std::string &serverName, const std::string &srcName, const std::string &destName, Client *src, const Server &server, const std::string &modes, const std::string &args) const;
+        void                        topic(const Server &server, const Client &src, const std::string &destName, const std::string &topic) const;
         void                        kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const;
 
         /* Nick Utils */
