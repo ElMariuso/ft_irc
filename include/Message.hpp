@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 20:30:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:21:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class Message
         static std::string  kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message);
 
         /* RPL */
+        static std::string  rpl_umodeis_221(const std::string &serverName, const std::string &nickname, const std::string &modes);
         static std::string  rpl_channelmodesis_324(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &modes);
         static std::string  rpl_notopic_331(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  rpl_topic_332(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &topic);

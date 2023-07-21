@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 20:31:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:23:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,20 +99,21 @@ std::string Message::kick(const std::string &srcName, const std::string &destNam
 }
 
 /* RPL */
+std::string Message::rpl_umodeis_221(const std::string &serverName, const std::string &nickname, const std::string &modes)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 221 " << nickname << " " \
+        << modes << "\r\n";
+    return (stream.str());
+}
+
 std::string Message::rpl_channelmodesis_324(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &modes)
 {
     std::stringstream   stream;
 
-    if (modes.empty())
-    {
-        stream << ":" << serverName << " 324 " << clientNickname << " " \
-            << channelName << "\r\n";
-    }
-    else
-    {
-        stream << ":" << serverName << " 324 " << clientNickname << " " \
-            << channelName << " " << modes << "\r\n";
-    }
+    stream << ":" << serverName << " 324 " << clientNickname << " " \
+        << channelName << " " << modes << "\r\n";
     return (stream.str());
 }
 

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 02:39:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:25:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class Client
 		std::string	getNickname() const;
 		std::string	getUsername() const;
 		std::string	getHostname() const;
+		std::string	getModesList() const;
 		float		getTimeSinceLastPing() const;
 		std::string	getLastPingIdentifier() const;
         

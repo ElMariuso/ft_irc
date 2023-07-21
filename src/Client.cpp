@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 05:00:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:26:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ bool Client::getIsConnected() const { return (this->isConnected); }
 std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
+std::string	Client::getModesList() const { return (this->_modesList); }
 float Client::getTimeSinceLastPing() const
 {
 	clock_t	t;

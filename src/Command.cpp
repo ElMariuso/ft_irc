@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 23:15:25 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:28:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,10 +224,13 @@ void Command::modeCheck(const std::string &serverName, const std::string &srcNam
     }
     else /* Client */
     {
-        // Client *client;
+        /* Get modes list */
+        const std::string               &modes = client.getModesList();
 
-        /* Check if the user exists */
-        
+        if (modes.empty()) /* Send there is no modes */
+            client.sendToFD(Message::rpl_umodeis_221(serverName, srcName, ""));
+        else /* Send mode list */
+            client.sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
     }
 }
 
@@ -344,7 +347,7 @@ void Command::setModes(const std::string &serverName, const std::string &srcName
             channel->rmMode(modes2[i]);
             this->rmMode(channel, modes2[i]);
         }
-        channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channelName, "Removing: " + modes), srcName, true);
+        channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channelName, "Removing: " + modes2), srcName, true);
     }
     else /* Adding */
     {
@@ -356,7 +359,7 @@ void Command::setModes(const std::string &serverName, const std::string &srcName
                 channel->addMode(modes2[i]);
                 this->addMode(channel, modes2[i]);
             }
-            channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channelName, "Adding: " + modes), srcName, true);
+            channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channelName, "Adding: " + modes2), srcName, true);
         }
         else /* Change restrictions */
             this->changeRestriction(serverName, channel, src, modes2[0], args);
