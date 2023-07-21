@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 21:10:42 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 21:58:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
         const std::map<std::string, bool>   &invited = channel->getInvited();
         const std::string                   &passwordChannel = channel->getPassword();
 
-        if (channel->hasLimit() && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
+        if (channel->getHasLimit() && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
             client->sendToFD(Message::err_channelisfull_471(serverName, clientName, name));
         else if (channel->getHasInvitedList() && invited.find(clientName) == invited.end()) /* ERR_INVITEONLYCHAN (473) */
             client->sendToFD(Message::err_inviteonlychan_473(serverName, clientName, name));
-        else if (channel->hasPassword() && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
+        else if (channel->getHasPassword() && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
             client->sendToFD(Message::err_badchannelkey_475(serverName, clientName, name));
         else if (channel->findConnectedByName(clientName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
             client->sendToFD(Message::err_useronchannel_443(serverName, clientName, name));
@@ -343,14 +343,62 @@ void Command::setModes(Channel *channel, const std::string &modes) const
     {
         /* Removing all modes */
         for (std::size_t i = 0; i < modes2.length(); ++i)
+        {
             channel->rmMode(modes2[i]);
+            this->rmMode(channel, modes2[i]);
+        }
     }
     else /* Adding */
     {   
         /* Setting modes */
         for (std::size_t i = 0; i < modes2.length(); ++i)
+        {
             channel->addMode(modes2[i]);
+            this->addMode(channel, modes2[i]);
+        }
     }
+}
+
+void Command::addMode(Channel *channel, const char &mode) const
+{
+    switch (mode)
+    {
+        case 'i':
+            channel->setHasInvitedList(true);
+            break ;
+        case 't':
+            channel->setHasTopicProtection(true);
+            break ;
+        case 'k':
+            channel->setHasPassword(true);
+            break ;
+        case 'l':
+            channel->setHasLimit(true);
+            break ;
+        default:
+            break ;
+    }   
+}
+
+void Command::rmMode(Channel *channel, const char &mode) const
+{
+    switch (mode)
+    {
+        case 'i':
+            channel->setHasInvitedList(false);
+            break ;
+        case 't':
+            channel->setHasTopicProtection(false);
+            break ;
+        case 'k':
+            channel->setHasPassword(false);
+            break ;
+        case 'l':
+            channel->setHasLimit(false);
+            break ;
+        default:
+            break ;
+    }   
 }
 
 /* Setters */

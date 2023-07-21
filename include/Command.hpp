@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 20:58:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 21:25:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ class Command
 
         /* MODE Utils */
         void                        setModes(Channel *channel, const std::string &modes) const;
+        void                        addMode(Channel *channel, const char &mode) const;
+        void                        rmMode(Channel *channel, const char &mode) const;
 
         /* Setters */
         void                        setMessage(const std::string &message);
