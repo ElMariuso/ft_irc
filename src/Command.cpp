@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:28:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:29:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ void Command::modeCheck(const std::string &serverName, const std::string &srcNam
         const std::string               &modes = client.getModesList();
 
         if (modes.empty()) /* Send there is no modes */
-            client.sendToFD(Message::rpl_umodeis_221(serverName, srcName, ""));
+            client.sendToFD(Message::rpl_umodeis_221(serverName, srcName, "Nothing"));
         else /* Send mode list */
             client.sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
     }
