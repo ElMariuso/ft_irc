@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 20:17:10 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 20:26:45 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
     /* Used for messages */
     const std::string   &serverName = server.getName();
     const std::string   &srcName = src->getNickname();
-    
+
     if (modes.empty()) /* Check modes */
     {
         if (destName[0] == '#') /* Channel */
@@ -206,7 +206,21 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
                 return ;
             }
             else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+            {
                 src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+                return ;
+            }
+
+            /* Check if modes exists */
+            bool    isMode;
+            for (std::size_t i = 1; i < modes.length(); ++i)
+            {
+                if (!channel->isMode(modes[i]))
+                {
+                    
+                    return ;
+                }
+            }
 
             /* Send mode list to the user */
             if (channel->getModesList().empty()) /* Send there is no modes */
