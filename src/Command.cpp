@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/21 00:56:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/21 20:17:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,6 +299,17 @@ void Command::setModes(Channel *channel, const std::string &modes) const
 {
     std::string modes2 = "";
 
+    bool    removing = true;
+    /* Checking if you need to remove or not */
+    for (std::size_t i = 1; i < modes.length(); ++i)
+    {
+        if (!channel->hasMode(modes[i]))
+        {
+            removing = false;
+            break ;
+        }
+    }
+
     /* Parsing modes */
     for (std::size_t i = 1; i < modes.length(); ++i)
     {
@@ -306,10 +317,18 @@ void Command::setModes(Channel *channel, const std::string &modes) const
         if (modes2.find(letter) == std::string::npos)
             modes2 += letter;
     }
-
-    /* Setting modes */
-    for (std::size_t i = 0; i < modes2.length(); ++i)
-        channel->addMode(modes2[i]);
+    if (removing) /* Removing */
+    {
+        /* Removing all modes */
+        for (std::size_t i = 0; i < modes2.length(); ++i)
+            channel->rmMode(modes2[i]);
+    }
+    else /* Adding */
+    {   
+        /* Setting modes */
+        for (std::size_t i = 0; i < modes2.length(); ++i)
+            channel->addMode(modes2[i]);
+    }
 }
 
 /* Setters */
