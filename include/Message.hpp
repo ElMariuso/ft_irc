@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 17:13:15 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 21:12:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Message
 
         /* Errors */
         static std::string  err_nosuchnick_401(const std::string &serverName, const std::string &nickname);
+        static std::string  err_nosuchserver_402(const std::string &serverName, const std::string &nickname, const std::string &destName);
         static std::string  err_nosuchchannel_403(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_cannotsendtochan_404(const std::string &serverName, const std::string &nickname);
         static std::string  err_nonicknamegiven_431(const std::string &serverName);

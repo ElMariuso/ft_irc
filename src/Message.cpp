@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 17:13:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 21:12:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,15 @@ std::string Message::err_nosuchnick_401(const std::string &serverName, const std
 
     stream << ":" << serverName << " 401 " << nickname \
         << " :No such nick/channel" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::err_nosuchserver_402(const std::string &serverName, const std::string &nickname, const std::string &destName)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 402 " << nickname << " " \
+        << destName << " :No such server" << "\r\n";
     return (stream.str());
 }
 
