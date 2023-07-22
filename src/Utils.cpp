@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 19:48:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:38:06 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void Utils::waiting_message(const std::string &message)
 	const int			maxDots = 4;
 	std::string 		dots = std::string(numDots, '.');
 	
-	std::cout << "\x1b[1F\x1b[2K\r" << GREEN << "[WAITING]" << RESET << " - " << message << dots << std::endl;;
+	std::cout << DELETING << GREEN << "[WAITING]" << RESET << " - " << message << dots << std::endl;;
 
 	numDots = (numDots + 1) % maxDots;
 	if (numDots == 0)

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 16:29:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:28:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ void Client::setHostname()
 	Utils::ft_strncpy(clientHost, hostEntry->h_name, NI_MAXHOST);
 	this->_hostname = clientHost;
 }
+void Client::setPingCount(int ping) { this->pingCount = ping; }
 
 /* getters */
 int Client::getFd() const { return (this->_fd); }
@@ -183,3 +184,4 @@ std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
 std::string	Client::getModesList() const { return (this->_modesList); }
+int	Client::getPingCount() const { return (this->pingCount); }
