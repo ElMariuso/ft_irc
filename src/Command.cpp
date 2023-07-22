@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 02:15:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 02:22:24 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -580,6 +580,8 @@ void Command::setType()
         this->type = KICK;
     else if (type == "WHOIS")
         this->type = WHOIS;
+    else if (type == "INVITE")
+        this->type = INVITE;
     else if (type == "PING")
 	this->type = PING;
     else if (type == "PONG")
