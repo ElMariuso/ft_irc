@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 14:49:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 14:56:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -396,7 +396,9 @@ void Command::invite(const Server &server, const Client &src, Client *dest, Chan
     }
     else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
         src.sendToFD(Message::err_notonchannel_442(serverName, srcName, channelName));
-    else if (channel->hasInvitedList() && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+    else if (channel->findConnectedByName(destName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
+        src.sendToFD(Message::err_useronchannel_443(serverName, destName, channelName));
+    else if (channel->getHasInvitedList() && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
         src.sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, channelName));
     else /* INVITE */
     {
