@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 17:03:19 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 16:25:04 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,6 @@ class Server
         void                                            getMessages(const std::string &message, const int client_socket);
         void                                            withoutAuthentification(const Command &command, Client *client);
         void                                            withAuthentification(const Command &command, Client *client);
-       
-	    /* Ping message */
-	    void                                            sendPingMessage(const int client_socket);
-	    bool                                            pingTimeOut(const int client_socket);
 
         /* Logout */
         void                                            handleDisconnection(const int client_socket, const std::string &message);

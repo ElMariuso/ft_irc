@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 15:10:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 16:26:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ int Server::processServer()
                     i--; /* Client disconnected */
                 }
             }
-	    if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) || this->pingTimeOut(client_socket) == true ) /* Check for logout */
+	    if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
             {
                 Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
                 this->handleDisconnection(client_socket, "leaving");
@@ -123,8 +123,6 @@ int Server::processServer()
 
                 i--; /* Client disconnected */
             }
-	    else
-            this->sendPingMessage(client_socket);
         }
     } while (!Utils::stop(1));
     return (0);
@@ -275,36 +273,6 @@ void Server::withAuthentification(const Command &command, Client *client)
         default:
             break ;
     }
-}
-
-/* Ping message */
-void Server::sendPingMessage(const int client_socket)
-{
-    (void)client_socket;
-	// std::map<int, Client*>::iterator	it = this->clientsList.find(client_socket);
-	// std::string				identifier;
-	// std::string				pingMessage;
-
-	// std::srand(std::time(0));
-	// identifier = Utils::intToString(std::rand()); //random identifier
-	// pingMessage = "PING " + identifier;
-	// if (it->second->getTimeSinceLastPing() >= 300) //time between 2 ping msg in seconds
-	// {
-	// 	it->second->sendToFD(pingMessage);
-	// 	it->second->setTimeSinceLastPing();
-	// 	it->second->setLastPingIdentifier(identifier);
-	// }
-}
-
-bool Server::pingTimeOut(const int client_socket)
-{
-    (void)client_socket;
-	// std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
-
-	// if (it->second->getTimeSinceLastPing() >= 600 && it->second->getLastPingIdentifier() != "-1" )
-	// 	return (true);
-	// return (false);
-    return (false);
 }
 
 /* Logout */
