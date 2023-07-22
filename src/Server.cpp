@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 19:59:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:18:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,11 @@ int Server::processServer()
         /* Check last PING */
         clock_t currentTime = clock();
         double elapsedTime = static_cast<double>(currentTime - lastPingTime) / CLOCKS_PER_SEC;
-        if (elapsedTime >= 60) /* Send PING to all connected clients */
+        double elapsedTimeMilliseconds = elapsedTime * 1000;
+        if (elapsedTimeMilliseconds >= 53.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
         {
-            // sendPingToAllClients();
+            this->sendToAll(Message::ping(this->name));
+            std::cout << std::endl;
             lastPingTime = currentTime;
         }
 
@@ -447,4 +449,22 @@ std::map<int, Client*>::const_iterator Server::findClientByName(const std::strin
             return (it);
     }
     return (this->clientsList.end());
+}
+
+/* Senders */
+void Server::sendToAll(const std::string &message)
+{
+    const std::map<int, Client*>	&clients = this->clientsList;
+
+    if (clients.empty())
+    {
+        Utils::debug_message("No clients connected to the server");
+        return ;
+    }
+	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		const Client &client = *(it->second);
+
+		client.sendToFD(message);
+	}
 }

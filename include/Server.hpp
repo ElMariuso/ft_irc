@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 19:57:42 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:01:24 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,9 @@ class Server
         Client*                                         findClient(const int &fd) const;
         Channel*                                        findChannel(const std::string &name) const;
         std::map<int, Client*>::const_iterator          findClientByName(const std::string &name) const;
+
+        /* Senders */
+		void                                            sendToAll(const std::string &message);
 
     private:
         int                             serverSocket;
