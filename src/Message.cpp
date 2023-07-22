@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 01:26:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 01:30:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /* Authentification and connection */
 std::string Message::connection(const std::string &serverName, const std::string &clientNickname)
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << serverName << " 001 " << clientNickname \
         << " :Please authenticate to get the rest of the server" << "\r\n";
