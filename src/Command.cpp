@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 15:35:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 15:38:36 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -403,6 +403,7 @@ void Command::invite(const Server &server, const Client &src, Client *dest, Chan
     else /* INVITE */
     {
         dest->sendToFD(Message::rpl_inviting_341(serverName, srcName, channelName, destName));
+        channel->sendToAll(Message::rpl_inviting_341(serverName, srcName, channelName, destName), srcName, true);
 
         /* Increase invited list */
         if (channel->getHasInvitedList())
