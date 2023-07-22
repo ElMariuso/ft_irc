@@ -41,7 +41,8 @@ class Client
 		void		setIsConnected(bool isConnected);
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
-		void		setHostname();
+		void		setHostname(std::string hostName);
+		void		setRealname(std::string realName);
 		void		setTimeSinceLastPing();
 		void		setLastPingIdentifier(std::string identifier);
 		
@@ -52,6 +53,7 @@ class Client
 		std::string	getNickname() const;
 		std::string	getUsername() const;
 		std::string	getHostname() const;
+		std::string	getRealname() const;
 		float		getTimeSinceLastPing() const;
 		std::string	getLastPingIdentifier() const;
         
@@ -62,6 +64,7 @@ class Client
         std::string _nickname;
         std::string _username;
 		std::string	_hostname;
+		std::string	_realname;
 		std::string _modesList;
 		clock_t		_timeSinceLastPing;
 		std::string	_LastPingIdentifier;
