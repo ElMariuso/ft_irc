@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 15:35:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 17:13:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,14 @@ std::string Message::kick(const std::string &srcName, const std::string &destNam
         stream << ":" << srcName <<  " KICK " << channelName << " " << destName << " " \
             << message << "\r\n";
     }
+    return (stream.str());
+}
+
+std::string Message::ping(const std::string &serverName)
+{
+    std::stringstream   stream;
+
+    stream << "PING :" << serverName << "\r\n";
     return (stream.str());
 }
 
