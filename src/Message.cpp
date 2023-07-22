@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 00:32:56 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 14:31:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,14 @@ std::string Message::rpl_topic_332(const std::string &serverName, const std::str
 
     stream << ":" << serverName << " 332 " << clientNickname << " " << channelName \
         << " :" << topic << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_inviting_341(const std::string &serverName, const std::string &nickname, const std::string &channelName)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 341 " << nickname << " " << channelName << "\r\n";
     return (stream.str());
 }
 
