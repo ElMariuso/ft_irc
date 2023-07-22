@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 19:57:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 19:59:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,15 @@ int Server::processServer()
     /* Main loop */
     do
     {
+        /* Check last PING */
+        clock_t currentTime = clock();
+        double elapsedTime = static_cast<double>(currentTime - lastPingTime) / CLOCKS_PER_SEC;
+        if (elapsedTime >= 60) /* Send PING to all connected clients */
+        {
+            // sendPingToAllClients();
+            lastPingTime = currentTime;
+        }
+
         /* Wait for events on sockets */
         Utils::waiting_message("Waiting for events with poll()");
         ready = poll(this->fds.data(), this->fds.size(), 100);
