@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 20:18:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 21:02:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ int Server::processServer()
                     i--; /* Client disconnected */
                 }
             }
-	    if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
+	        if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) || this->clientsList.find(client_socket)->second->getPingCount() == 4) /* Check for logout */
             {
                 Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
                 this->handleDisconnection(client_socket, "leaving");
@@ -238,6 +238,8 @@ void Server::withoutAuthentification(const Command &command, Client *client)
         else /* No */
             client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
     }
+    else if (command.getType() == PONG)
+        client->setPingCount(0);
 }
 
 void Server::withAuthentification(const Command &command, Client *client)
@@ -467,4 +469,22 @@ void Server::sendToAll(const std::string &message)
 
 		client.sendToFD(message);
 	}
+}
+
+
+void Server::sendPingToAll()
+{
+    const std::map<int, Client*>	&clients = this->clientsList;
+
+    if (clients.empty())
+    {
+        Utils::debug_message("No clients connected to the server");
+        return ;
+    }
+	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		Client *client = it->second;
+
+		client->incPingCount();
+	} 
 }

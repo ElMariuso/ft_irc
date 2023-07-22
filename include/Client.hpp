@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 20:27:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:52:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class Client
 		void		setUsername(std::string userName);
 		void		setHostname();
 		void		setPingCount(int ping);
+		void		incPingCount();
 		
 		/* Getters */
 		int			getFd() const;

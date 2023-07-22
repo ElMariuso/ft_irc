@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 20:01:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:54:36 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class Server
 
         /* Senders */
 		void                                            sendToAll(const std::string &message);
+        void                                            sendPingToAll();
 
     private:
         int                             serverSocket;

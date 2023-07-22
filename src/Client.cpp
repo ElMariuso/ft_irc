@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 20:28:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:52:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ void Client::setHostname()
 	this->_hostname = clientHost;
 }
 void Client::setPingCount(int ping) { this->pingCount = ping; }
+void Client::incPingCount() { this->pingCount++; }
 
 /* getters */
 int Client::getFd() const { return (this->_fd); }
