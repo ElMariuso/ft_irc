@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/21 22:11:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 22:03:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Channel::~Channel() {}
 /* mode function */
 int	Channel::addMode(const char &mode)
 {
-	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l') // list of existing modes
+	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l' || mode == 'o') // list of existing modes
 	{
 		if (_modesList.find(mode) == std::string::npos)
 			_modesList = _modesList + mode;
@@ -42,7 +42,7 @@ int	Channel::addMode(const char &mode)
 	
 int	Channel::rmMode(const char &mode)
 {
-	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l') // list of existing modes
+	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l' || mode == 'o') // list of existing modes
 	{
 		if (_modesList.find(mode) != std::string::npos)
 			_modesList.erase(_modesList.find(mode), 1);
@@ -63,7 +63,7 @@ bool Channel::hasMode(const char &mode) const
 
 bool Channel::isMode(const char &mode) const
 {
-	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l')
+	if (mode == 't' || mode == 'i' || mode == 'k' || mode == 'l' || mode == 'o')
 		return (true);
 	return (false);
 }
