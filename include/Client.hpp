@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 00:39:04 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 16:29:41 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ class Client
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
 		void		setHostname();
-		void		setTimeSinceLastPing();
-		void		setLastPingIdentifier(std::string identifier);
 		
 		/* Getters */
 		int			getFd() const;
@@ -52,8 +50,6 @@ class Client
 		std::string	getUsername() const;
 		std::string	getHostname() const;
 		std::string	getModesList() const;
-		float		getTimeSinceLastPing() const;
-		std::string	getLastPingIdentifier() const;
         
     private:
         int         _fd;
@@ -63,8 +59,6 @@ class Client
         std::string _username;
 		std::string	_hostname;
 		std::string _modesList;
-		clock_t		_timeSinceLastPing;
-		std::string	_LastPingIdentifier;
 };
 
 /* all user modes currently added : 
