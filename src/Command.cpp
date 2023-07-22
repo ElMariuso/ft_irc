@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 14:56:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 15:12:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,7 +402,11 @@ void Command::invite(const Server &server, const Client &src, Client *dest, Chan
         src.sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, channelName));
     else /* INVITE */
     {
-        
+        dest->sendToFD(Message::rpl_inviting_341(serverName, destName, channelName));
+
+        /* Increase invited list */
+        if (channel->getHasInvitedList())
+            channel->setInvited(destName);   
     }
 }
 
