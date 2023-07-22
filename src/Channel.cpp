@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/22 22:03:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 22:47:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ bool Channel::getHasLimit() const { return (this->hasLimit); }
 
 
 std::map<int, Client*>::const_iterator Channel::getConnectedEnd() const { return (this->_connected.end()); }
+std::vector<int>::iterator Channel::getOperatorsEnd() { return (this->_operators.end()); }
 std::map<std::string, bool>::const_iterator	Channel::getInvitedEnd() const { return (this->invited.end()); }
 
 /* Finders */

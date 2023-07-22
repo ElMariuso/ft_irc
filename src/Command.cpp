@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 22:37:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 22:54:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -580,8 +580,13 @@ void Command::changeRestriction(const Server &server, Channel *channel, const Cl
                 src.sendToFD(Message::err_usernotinchannel_441(serverName, args, channel->getName()));
             else
             {
-                channel->addOp(*client);
-                channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channel->getName(), args + " is now operator on this channel"), srcName, true);
+                if (channel->addOp(*client) == 0)
+                    channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channel->getName(), args + " is now operator on this channel"), srcName, true);
+                else
+                {
+                    channel->rmOp(*client);
+                    channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channel->getName(), args + " is no longer operator on this channel"), srcName, true);
+                }
             }
             break ;
         }

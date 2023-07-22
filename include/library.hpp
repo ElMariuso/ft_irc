@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 20:37:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 22:46:18 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@
 # include <cstring>
 # include <netdb.h>
 # include <ctime>
+# include <algorithm>
 
 # include <vector>
 # include <map>
