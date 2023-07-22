@@ -20,12 +20,14 @@ class Client
     private:
 		Client(); // default constructor should never be called
     public:
-		Client(const std::string &nickname, const std::string &username, int fd, bool isConnected);
+		Client(const std::string &nickname, const std::string &username, const std::string &realname, int fd, bool isConnected);
+
         ~Client();
 
 		/* function */
 		void		sendToFD(const std::string &str) const; // write a string on the client's fd
 		std::string	receiveFromFD(); // receive and return a string written by the client
+		void		initHostname();
 
 		/* mode function */
 		int			addMode(char mode); // add an user mode, return 0 if it went well

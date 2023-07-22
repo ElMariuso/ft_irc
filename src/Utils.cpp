@@ -51,3 +51,12 @@ char*	Utils::ft_strncpy(char* dest, const char* src, size_t n)
         dest[i] = '\0';
     return (dest);
 }
+
+std::string Utils::strCopyWithoutFirst(std::string str)
+{
+	std::string tmp;
+
+	for (int i = 0; i + 1 != str.size(); i++)
+		tmp[0] = str[i + 1];
+	return (tmp);
+}

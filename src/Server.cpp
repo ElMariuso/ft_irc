@@ -146,13 +146,28 @@ int Server::acceptNewConnection()
 
 void Server::addNewClient(const int client_socket)
 {
-    struct pollfd   clientPfd;
+    struct pollfd               clientPfd;
+    std::string                 username;
+    std::string                 realname;
+    char		                buffer[BUFFER_SIZE + 1];
+    std::string                 msg;
+    std::vector<std::string>    commands;
+    ssize_t                     ret;
 
     /* Add new client to the list */
     std::string nickname = "Guest" + Utils::intToString(client_socket);
-    std::string username = "User" + Utils::intToString(client_socket);
 
-    Client *new_client = new Client(nickname, username, client_socket, true);
+    ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
+    buffer[ret] = '\0';
+	msg = msg + buffer;
+    commands = this->splitCommands(msg, ' ');
+    if (commands.at(0) == "USER")
+    {
+        username = commands.at(1);
+        realname = Utils::strCopyWithoutFirst(commands.at(4));
+    }
+
+    Client *new_client = new Client(nickname, username, realname, client_socket, true);
     clientsList.insert(std::make_pair(client_socket, new_client));
     clientPfd.fd = client_socket;
     clientPfd.events = POLLIN;

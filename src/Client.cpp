@@ -14,16 +14,17 @@
 
 Client::Client() {}
 
-Client::Client(const std::string &nickname, const std::string &username, int fd, bool isConnected)
+Client::Client(const std::string &nickname, const std::string &username, const std::string &realname, int fd, bool isConnected);
 {	
 	/* Arguments */
 	this->setNickname(nickname);
 	this->setUsername(username);
+	this->setRealname(realname);
 	this->setFd(fd);
 	this->setIsConnected(isConnected);
 	this->setIsAuthenticated(false);
 	this->_hostname = "127.0.0.1";
-	this->setHostname();
+	this->initHostname();
 	this->setTimeSinceLastPing();
 	this->setLastPingIdentifier("-1");
 }
@@ -57,6 +58,46 @@ std::string	Client::receiveFromFD()
 	buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer; // turn the string fron "char*" to "std::string"
 	return (msg);
+}
+
+void Client::initHostname()
+{
+	sockaddr_storage	addr;
+    socklen_t 			len;
+    char 				clientHost[NI_MAXHOST];
+    char 				*clientIP;
+	struct sockaddr_in	*s;
+	struct hostent		*hostEntry;
+
+	len = sizeof(addr);
+    if (getsockname(this->_fd, (struct sockaddr*)&addr, &len) == -1)
+	{
+		Utils::error_message("Error getting socket information");
+		return ;
+    }
+	if (addr.ss_family == AF_INET)
+	{
+		s = (struct sockaddr_in*)&addr;
+		clientIP = inet_ntoa(s->sin_addr);
+	}
+	else if (addr.ss_family == AF_INET6)
+	{
+		Utils::error_message("IPv6 address not supported");
+		return ;
+    }
+	else
+	{
+		Utils::error_message("Unsupported address family");
+		return ;
+	}
+	hostEntry = gethostbyname(clientIP);
+	if (hostEntry == NULL)
+	{
+		Utils::error_message("Error during reverse resolution");
+		return ;
+	}
+	Utils::ft_strncpy(clientHost, hostEntry->h_name, NI_MAXHOST);
+	this->_hostname = clientHost;
 }
 
 /* mode function */
@@ -128,45 +169,8 @@ void Client::setIsAuthenticated(bool isAuthenticated) { this->isAuthenticated = 
 void Client::setIsConnected(bool isConnected) { this->isConnected = isConnected; }
 void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
 void Client::setUsername(std::string userName) { this->_username = userName; }
-void Client::setHostname()
-{
-	sockaddr_storage	addr;
-    socklen_t 			len;
-    char 				clientHost[NI_MAXHOST];
-    char 				*clientIP;
-	struct sockaddr_in	*s;
-	struct hostent		*hostEntry;
-
-	len = sizeof(addr);
-    if (getsockname(this->_fd, (struct sockaddr*)&addr, &len) == -1)
-	{
-		Utils::error_message("Error getting socket information");
-		return ;
-    }
-	if (addr.ss_family == AF_INET)
-	{
-		s = (struct sockaddr_in*)&addr;
-		clientIP = inet_ntoa(s->sin_addr);
-	}
-	else if (addr.ss_family == AF_INET6)
-	{
-		Utils::error_message("IPv6 address not supported");
-		return ;
-    }
-	else
-	{
-		Utils::error_message("Unsupported address family");
-		return ;
-	}
-	hostEntry = gethostbyname(clientIP);
-	if (hostEntry == NULL)
-	{
-		Utils::error_message("Error during reverse resolution");
-		return ;
-	}
-	Utils::ft_strncpy(clientHost, hostEntry->h_name, NI_MAXHOST);
-	this->_hostname = clientHost;
-}
+void Client::setHostname(std::string hostName) { this->_hostname = hostName; }
+void Client::setRealname(std::string realName) { this->_realname = realName; }
 void	Client::setTimeSinceLastPing() { this->_timeSinceLastPing = clock(); }
 void	Client::setLastPingIdentifier(std::string identifier) { this->_LastPingIdentifier = identifier; }
 
@@ -176,7 +180,8 @@ bool Client::getIsAuthenticated() const { return (this->isAuthenticated); }
 bool Client::getIsConnected() const { return (this->isConnected); }
 std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
-std::string	Client::getHostname() const { return (this->_hostname); } 
+std::string	Client::getHostname() const { return (this->_hostname); }
+std::string	Client::getRealname() const { return (this->_realname); } 
 float Client::getTimeSinceLastPing() const
 {
 	clock_t	t;
