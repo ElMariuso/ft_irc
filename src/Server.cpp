@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 18:18:53 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 19:57:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ Server::Server(const std::string &port_str, const std::string &password, const s
     this->name = name;
 
     /* Start server processing */
+    this->setLastPingTime(clock());
     ret = this->processServer();
     if (ret < 0)
         throw (std::runtime_error("Problem during running the server!"));
@@ -387,6 +388,7 @@ void Server::setClient(const int &fd, Client *client) { this->clientsList.insert
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
+void Server::setLastPingTime(clock_t time) { this->lastPingTime = time; }
 
 /* Removers */
 void Server::removeChannel(Channel *channel)
@@ -402,6 +404,7 @@ std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
+clock_t Server::getLastPingTime() const { return (this->lastPingTime); };
 
 std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
 std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }
