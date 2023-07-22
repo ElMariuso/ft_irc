@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 21:13:07 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 21:27:53 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,6 +246,8 @@ void Server::withoutAuthentification(const Command &command, Client *client)
         else
             client->sendToFD(Message::err_nosuchserver_402(this->name, client->getNickname(), arg));
     }
+    else if (command.getType() == PING)
+        client->sendToFD(Message::pong(this->name));
 }
 
 void Server::withAuthentification(const Command &command, Client *client)
