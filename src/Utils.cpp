@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 01:01:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 01:23:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,22 @@ std::string Utils::getDate()
     stream << day[timeInfo->tm_wday] << " " << month[timeInfo->tm_mon] << " " << timeInfo->tm_mday << " ";
     stream << std::setfill('0') << std::setw(2) << timeInfo->tm_hour << ":";
     stream << std::setfill('0') << std::setw(2) << timeInfo->tm_min << " " << 1900 + timeInfo->tm_year;
+    return (stream.str());
+}
+
+std::string Utils::displayBox(const std::string &message, int minWidth)
+{
+    std::ostringstream  stream;
+    int                 messageLength = message.length();
+    int                 boxWidth = std::max(minWidth, messageLength + 6);
+    int                 padding = (boxWidth - messageLength - 2) / 2;
+
+    std::string         horizontalLine = std::string(boxWidth, '*');
+    std::string         paddingSpaces = std::string(padding, ' ');
+
+    stream << horizontalLine << std::endl \
+        << "*" << paddingSpaces << message << paddingSpaces;
+    stream << "*" << std::endl \
+        << horizontalLine;
     return (stream.str());
 }

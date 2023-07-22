@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 01:09:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 01:26:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ std::string Message::connection(const std::string &serverName, const std::string
 
 std::string Message::welcome(const std::string &serverName, const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &date)
 {
-    std::ostringstream   stream;
+    std::ostringstream  stream;
+    std::ostringstream  client;
 
-    stream << ":" << serverName << " 001 " << clientNickname << " :Welcome to " << serverName \
-        << ", " << clientNickname << "!" << clientUsername << "@" << clientHostname << "\r\n" \
+    client << "Welcome to " << clientNickname << "!" << clientUsername << "@" << clientHostname << "!";
+    stream << ":" << serverName << " 001 " << clientNickname << " :" << Utils::displayBox(client.str(), 32) << "\r\n" \
         << ":" << serverName << " 002 " << clientNickname << " :Your host is " << serverName \
         << ", running version 0.1" << "\r\n" \
         << ":" << serverName << " 003 " << clientNickname \
