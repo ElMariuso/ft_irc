@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 14:30:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 15:35:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class Message
         static std::string  rpl_channelmodesis_324(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &modes);
         static std::string  rpl_notopic_331(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  rpl_topic_332(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const std::string &topic);
-        static std::string  rpl_inviting_341(const std::string &serverName, const std::string &nickname, const std::string &channelName);
+        static std::string  rpl_inviting_341(const std::string &serverName, const std::string &srcNickname, const std::string &channelName, const std::string &destNickname);
         static std::string  rpl_namreplay_353(const std::string &serverName, const std::string &clientNickname, const std::string &channelName, const Channel &channel);
         static std::string  rpl_endofnames_366(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
 
