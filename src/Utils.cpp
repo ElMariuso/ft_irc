@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/12 22:48:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 01:01:34 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,19 @@ char*	Utils::ft_strncpy(char* dest, const char* src, size_t n)
     for (; i < n; ++i)
         dest[i] = '\0';
     return (dest);
+}
+
+std::string Utils::getDate()
+{
+    std::ostringstream  stream;
+    std::time_t         currentTime = std::time(NULL);
+    const char*         day[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+    const char*         month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+    std::tm *timeInfo = std::localtime(&currentTime);
+
+    stream << day[timeInfo->tm_wday] << " " << month[timeInfo->tm_mon] << " " << timeInfo->tm_mday << " ";
+    stream << std::setfill('0') << std::setw(2) << timeInfo->tm_hour << ":";
+    stream << std::setfill('0') << std::setw(2) << timeInfo->tm_min << " " << 1900 + timeInfo->tm_year;
+    return (stream.str());
 }

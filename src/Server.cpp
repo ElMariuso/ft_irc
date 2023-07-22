@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 15:10:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 01:00:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Server::Server(const std::string &port_str, const std::string &password, const s
 {
     int ret;
 
+    this->setDate(Utils::getDate());
     /* Creating server socket */
     ret = this->createServerSocket(std::atoi(port_str.c_str()));
     if (ret < 0)
@@ -222,7 +223,7 @@ void Server::withoutAuthentification(const Command &command, Client *client)
     {
         if (this->password == command.getArgs().at(0)) /* Ok */
         {
-            client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname()));
+            client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname(), this->date));
             client->setIsAuthenticated(true);
         }
         else /* No */
@@ -419,6 +420,7 @@ void Server::setClient(const int &fd, Client *client) { this->clientsList.insert
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
+void Server::setDate(const std::string &date) { this->date = date; }
 
 /* Removers */
 void Server::removeChannel(Channel *channel)
@@ -434,6 +436,7 @@ std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
+std::string Server::getDate() const { return (this->date); }
 
 std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
 std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }

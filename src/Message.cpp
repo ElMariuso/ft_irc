@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 15:35:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 01:00:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,16 @@ std::string Message::connection(const std::string &serverName, const std::string
     return (stream.str());
 }
 
-std::string Message::welcome(const std::string &serverName, const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname)
+std::string Message::welcome(const std::string &serverName, const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &date)
 {
     std::stringstream   stream;
 
     stream << ":" << serverName << " 001 " << clientNickname << " :Welcome to " << serverName \
         << ", " << clientNickname << "!" << clientUsername << "@" << clientHostname << "\r\n" \
         << ":" << serverName << " 002 " << clientNickname << " :Your host is " << serverName \
-        << ", running version 0.1" << "\r\n";
-    // std::string welcome003 = ":" + server.getName() + " 003 " + client.getNickname()
-    //     + " :..." + "\r\n";
+        << ", running version 0.1" << "\r\n" \
+        << ":" << serverName << " 003 " << clientNickname \
+        << " :This server was created " << date << "\r\n";
     // std::string welcome004 = ":" + server.getName() + " 004 " + client.getNickname()
     //     + " :..." + "\r\n";
     return (stream.str());

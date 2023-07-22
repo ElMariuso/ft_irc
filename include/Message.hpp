@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 15:35:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 01:00:08 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class Message
     public:
         /* Authentification and connection */
         static std::string  connection(const std::string &serverName, const std::string &clientNickname);
-        static std::string  welcome(const std::string &serverName, const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname);
+        static std::string  welcome(const std::string &serverName, const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &date);
 
         /* Commands */
         static std::string  join(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName);
