@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 01:47:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 02:15:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -328,11 +328,6 @@ void Command::topic(const Server &server, const Client &src, const std::string &
         {
             if (channel->getHasTopicProtection() && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
                 src.sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, destName));
-            else if (topic == "-delete") /* Deleting the topic */
-            {
-                channel->setTopic("");
-                src.sendToFD(Message::rpl_notopic_331(serverName, srcName, channelName));
-            }
             else /* Change the topic */
             {
                 std::string newTopic = topic.substr(1);
