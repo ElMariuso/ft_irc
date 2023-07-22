@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 21:12:10 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 21:25:40 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Message
         static std::string  nick(const std::string &serverName, const std::string &newNickname);
         static std::string  kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message);
         static std::string  ping(const std::string &serverName);
+        static std::string  pong(const std::string &serverName);
 
         /* RPL */
         static std::string  rpl_umodeis_221(const std::string &serverName, const std::string &nickname, const std::string &modes);

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 21:12:19 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 21:26:16 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,14 @@ std::string Message::ping(const std::string &serverName)
     std::stringstream   stream;
 
     stream << "PING :" << serverName << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::pong(const std::string &serverName)
+{
+    std::stringstream   stream;
+
+    stream << "PONG " << serverName << "\r\n";
     return (stream.str());
 }
 
