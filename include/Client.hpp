@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 02:39:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:39:04 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Client
 		int			rmMode(char mode); // remove an user mode, return 0 if it went well
 		bool		hasMode(std::string mode); // search if client has mode activated with the mode's name
 		bool		hasModeLetter(char mode); // search if client has mode activated with the mode's letter
+		bool		isMode(const char &mode) const;
 
 		/* Setters */
 		void		setFd(const int fd);
@@ -50,6 +51,7 @@ class Client
 		std::string	getNickname() const;
 		std::string	getUsername() const;
 		std::string	getHostname() const;
+		std::string	getModesList() const;
 		float		getTimeSinceLastPing() const;
 		std::string	getLastPingIdentifier() const;
         

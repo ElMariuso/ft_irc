@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 07:16:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:45:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,21 @@ class Command
         void                        join(Server *server, Client *client, const std::string &name, const std::string &password, Channel *channel) const;
         void                        part(Server *server, const Client &client, const std::string &name, const std::string &message, Channel *channel) const;
         void                        privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message) const;
+        void                        mode(const Server &server, Client *src, const std::string &destName, const std::string &modes, const std::string &args) const;
+        void                        modeCheck(const std::string &serverName, const std::string &srcName, const std::string &destName, const Client &client, const Server &server) const;
+        void                        modeAdd(const std::string &serverName, const std::string &srcName, const std::string &destName, Client *src, const Server &server, const std::string &modes, const std::string &args) const;
         void                        kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const;
 
         /* Nick Utils */
         bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;
+
+        /* MODE Utils */
+        void                        setModes(const std::string &serverName, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const;
+        void                        setModesClient(const std::string &serverName, const std::string &srcName, Client *src, const std::string &modes) const;
+        void                        addMode(Channel *channel, const char &mode) const;
+        void                        rmMode(Channel *channel, const char &mode) const;
+        void                        changeRestriction(const std::string &serverName, Channel *channel, const Client &src, const char &mode, const std::string &args) const;
+        bool                        isInteger(const std::string &str) const;
 
         /* Setters */
         void                        setMessage(const std::string &message);

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/20 05:00:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:53:06 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,15 @@ bool Client::hasModeLetter(char mode)
 	return (true);
 }
 
+bool Client::isMode(const char &mode) const
+{
+	if (mode == '+') /* Prefix */
+		return (true);
+	if (mode == 'i' || mode == 'w' || mode == 'o' || mode == 's' || mode == 'x' || mode == 'a' || mode == 'r' || mode == 'q' || mode == 'b' || mode == 'D' || mode == 'G')
+		return (true);
+	return (false);
+}
+
 /* Setters */
 void Client::setFd(const int fd) { this->_fd = fd; }
 void Client::setIsAuthenticated(bool isAuthenticated) { this->isAuthenticated = isAuthenticated; }
@@ -177,6 +186,7 @@ bool Client::getIsConnected() const { return (this->isConnected); }
 std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
+std::string	Client::getModesList() const { return (this->_modesList); }
 float Client::getTimeSinceLastPing() const
 {
 	clock_t	t;

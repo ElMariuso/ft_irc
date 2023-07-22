@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/20 21:10:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 00:55:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
         const std::map<std::string, bool>   &invited = channel->getInvited();
         const std::string                   &passwordChannel = channel->getPassword();
 
-        if (channel->hasLimit() && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
+        if (channel->getHasLimit() && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
             client->sendToFD(Message::err_channelisfull_471(serverName, clientName, name));
         else if (channel->getHasInvitedList() && invited.find(clientName) == invited.end()) /* ERR_INVITEONLYCHAN (473) */
             client->sendToFD(Message::err_inviteonlychan_473(serverName, clientName, name));
-        else if (channel->hasPassword() && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
+        else if (channel->getHasPassword() && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
             client->sendToFD(Message::err_badchannelkey_475(serverName, clientName, name));
         else if (channel->findConnectedByName(clientName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
             client->sendToFD(Message::err_useronchannel_443(serverName, clientName, name));
@@ -124,9 +124,6 @@ void Command::part(Server *server, const Client &client, const std::string &name
         return ;
     }
 
-    /* Get the connected list */
-    const std::map<int, Client*>    &connected = channel->getConnected();
-
     if (channel->findConnectedByName(client.getNickname()) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
         client.sendToFD(Message::err_notonchannel_442(serverName, clientName, name));
     else /* PART */
@@ -136,6 +133,9 @@ void Command::part(Server *server, const Client &client, const std::string &name
 
         /* Remove the user from the connected list */
         channel->removeConnected(client.getFd());
+
+        /* Get the connected list */
+        const std::map<int, Client*>    &connected = channel->getConnected();
 
         /* Delete the channel if there is no user left */
         if (connected.empty())
@@ -155,9 +155,9 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
 
         /* Check if the channel exists */
         channel = server.findChannel(destName);
-        if (channel ==  NULL) /* ERR_CANNOTSENDTOCHAN (404) */
+        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
         {
-            src.sendToFD(Message::err_cannotsendtochan_404(serverName, srcName));
+            src.sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
             return ;
         }
 
@@ -183,6 +183,108 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
         }
         client = it->second;
         client->sendToFD(Message::privmsg(srcName, destName, message));
+    }
+}
+
+void Command::mode(const Server &server, Client *src, const std::string &destName, const std::string &modes, const std::string &args) const
+{
+    /* Used for messages */
+    const std::string   &serverName = server.getName();
+    const std::string   &srcName = src->getNickname();
+
+    if (modes.empty()) /* Check modes */
+        this->modeCheck(serverName, srcName, destName, *src, server);
+    else /* Add modes */
+        this->modeAdd(serverName, srcName, destName, src, server, modes, args);
+}
+
+void Command::modeCheck(const std::string &serverName, const std::string &srcName, const std::string &destName, const Client &client, const Server &server) const
+{
+    if (destName[0] == '#') /* Channel */
+    {
+        Channel *channel;
+
+        /* Check if the channel exists */
+        channel = server.findChannel(destName);
+        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+        {
+            client.sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
+            return ;
+        }
+
+        /* Get modes list */
+        const std::string               &modes = channel->getModesList();
+
+        if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+            client.sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+        else if (modes.empty()) /* Send there is no modes */
+            client.sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, "No mode is set up"));
+        else /* Send mode list */
+            client.sendToFD(Message::rpl_channelmodesis_324(serverName, srcName, destName, "Actual modes: " + modes));
+    }
+    else /* Client */
+    {
+        /* Get modes list */
+        const std::string               &modes = client.getModesList();
+
+        if (modes.empty()) /* Send there is no modes */
+            client.sendToFD(Message::rpl_umodeis_221(serverName, srcName, "Nothing"));
+        else /* Send mode list */
+            client.sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
+    }
+}
+
+void Command::modeAdd(const std::string &serverName, const std::string &srcName, const std::string &destName, Client *src, const Server &server, const std::string &modes, const std::string &args) const
+{
+    if (destName[0] == '#') /* Channel */
+    {
+        Channel *channel;
+
+        /* Check if the channel exists */
+        channel = server.findChannel(destName);
+        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+        {
+            src->sendToFD(Message::err_nosuchchannel_403(serverName, srcName, destName));
+            return ;
+        }
+
+        /* Check if modes exists */
+        for (std::size_t i = 1; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
+        {
+            if (!channel->isMode(modes[i]))
+            {
+                src->sendToFD(Message::err_umodeunknowflag_501(serverName, srcName));
+                return ;
+            }
+        }
+
+        if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+            src->sendToFD(Message::err_notonchannel_442(serverName, srcName, destName));
+        else if (!channel->isOp(*src)) /* ERR_CHANOPRIVSNEEDED (482) */
+            src->sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, destName));
+        else /* MODES */
+            this->setModes(serverName, srcName, destName, channel, *src, modes, args);
+    }
+    else /* Client */
+    {
+        if (srcName != destName) /* ERR_USERSDONTMATCH (502) */
+        {
+            src->sendToFD(Message::err_usersdontmatch_502(serverName, srcName));
+            return ;
+        }
+
+        /* Check if modes exists */
+        for (std::size_t i = 0; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
+        {
+            if (!src->isMode(modes[i]) && modes[i] != '+')
+            {
+                src->sendToFD(Message::err_umodeunknowflag_501(serverName, srcName));
+                return ;
+            }
+        }
+
+        /* Change modes of the user */
+        this->setModesClient(serverName, srcName, src, modes);
     }
 }
 
@@ -229,6 +331,165 @@ void Command::kick(const Server &server, const Client &src, Client *dest, const 
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
 {
     return (newNickname == serverName);
+}
+
+/* MODE Utils */
+void Command::setModes(const std::string &serverName, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const
+{
+    std::string modes2 = "";
+
+    bool    removing = true;
+    /* Checking if you need to remove or not */
+    for (std::size_t i = 1; i < modes.length(); ++i)
+    {
+        if (!channel->hasMode(modes[i]))
+        {
+            removing = false;
+            break ;
+        }
+    }
+
+    /* Parsing modes */
+    for (std::size_t i = 1; i < modes.length(); ++i)
+    {
+        char    letter = modes[i];
+        if (modes2.find(letter) == std::string::npos)
+            modes2 += letter;
+    }
+    if (args.empty() && removing) /* Removing */
+    {
+        /* Removing all modes */
+        for (std::size_t i = 0; i < modes2.length(); ++i)
+        {
+            channel->rmMode(modes2[i]);
+            this->rmMode(channel, modes2[i]);
+        }
+        channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channelName, "Removing: " + modes2), srcName, true);
+    }
+    else /* Adding */
+    {
+        if (args.empty() || modes2.length() > 1)
+        {
+            /* Setting modes */
+            for (std::size_t i = 0; i < modes2.length(); ++i)
+            {
+                channel->addMode(modes2[i]);
+                this->addMode(channel, modes2[i]);
+            }
+            channel->sendToAll(Message::rpl_channelmodesis_324(serverName, srcName, channelName, "Adding: " + modes2), srcName, true);
+        }
+        else /* Change restrictions */
+            this->changeRestriction(serverName, channel, src, modes2[0], args);
+    }
+}
+
+void Command::setModesClient(const std::string &serverName, const std::string &srcName, Client *src, const std::string &modes) const
+{
+    std::string modes2 = "";
+
+    /* Parsing modes */
+    for (std::size_t i = 0; i < modes.length(); ++i)
+    {
+        char    letter = modes[i];
+        if (modes2.find(letter) == std::string::npos)
+            modes2 += letter;
+    }
+
+    if (modes2[0] != '+') /* Removing */
+    {
+        /* Removing all modes */
+        for (std::size_t i = 0; i < modes2.length(); ++i)
+            src->rmMode(modes2[i]);
+        src->sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
+    }
+    else /* Adding */
+    {
+        /* Setting modes */
+        for (std::size_t i = 1; i < modes2.length(); ++i)
+            src->addMode(modes2[i]);
+        src->sendToFD(Message::rpl_umodeis_221(serverName, srcName, modes));
+    }
+}
+
+void Command::addMode(Channel *channel, const char &mode) const
+{
+    switch (mode)
+    {
+        case 'i':
+            channel->setHasInvitedList(true);
+            break ;
+        case 't':
+            channel->setHasTopicProtection(true);
+            break ;
+        case 'k':
+            channel->setHasPassword(true);
+            break ;
+        case 'l':
+            channel->setHasLimit(true);
+            break ;
+        default:
+            break ;
+    }   
+}
+
+void Command::rmMode(Channel *channel, const char &mode) const
+{
+    switch (mode)
+    {
+        case 'i':
+            channel->setHasInvitedList(false);
+            channel->clearInvited();
+            break ;
+        case 't':
+            channel->setHasTopicProtection(false);
+            break ;
+        case 'k':
+            channel->setHasPassword(false);
+            channel->setPassword("");
+            break ;
+        case 'l':
+            channel->setHasLimit(false);
+            channel->setLimit(0);
+            break ;
+        default:
+            break ;
+    }   
+}
+
+void Command::changeRestriction(const std::string &serverName, Channel *channel, const Client &src, const char &mode, const std::string &args) const
+{
+    switch (mode)
+    {
+        case 'k':
+            channel->setPassword(args);
+            channel->sendToAll(Message::rpl_channelmodesis_324(serverName, src.getNickname(), channel->getName(), "Changing the password of the channel (k)"), src.getNickname(), true);
+            break ;
+        case 'l':
+            if (this->isInteger(args))
+            {
+                channel->setLimit(std::atoi(args.c_str()));
+                channel->sendToAll(Message::rpl_channelmodesis_324(serverName, src.getNickname(), channel->getName(), "Changing the connection limit to: " + args + " (l)"), src.getNickname(), true);
+            }
+            else
+                src.sendToFD(Message::err_umodeunknowflag_501(serverName, src.getNickname()));
+            break ;
+        default:
+            break ;
+    }
+}
+
+bool Command::isInteger(const std::string &str) const
+{
+    if (str.empty())
+        return (false);
+    if (str.length() != 1 && str[0] == '0')
+        return (false);
+    for (std::size_t i = 0; i != str.length(); ++i)
+    {
+        if (!std::isdigit(str[i]))
+            return (false);
+    }
+    return (true);
 }
 
 /* Setters */
