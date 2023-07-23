@@ -6,14 +6,14 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 13:24:45 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 00:38:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Utils.hpp"
 
-void Utils::debug_message(const std::string &message) { std::cout << BLUE << "[DEBUG]" << RESET << " - " << message << std::endl; }
-void Utils::error_message(const std::string &message) { std::cerr << RED << "[ERROR]" << RESET << " - " << message << std::endl; }
+void Utils::debug_message(const std::string &message) { std::cout << BLUE << "[DEBUG]" << RESET << " - " << message << std::endl << std::endl; }
+void Utils::error_message(const std::string &message) { std::cerr << RED << "[ERROR]" << RESET << " - " << message << std::endl << std::endl; }
 
 void Utils::waiting_message(const std::string &message)
 {

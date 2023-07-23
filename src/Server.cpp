@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 22:59:41 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 00:43:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ int Server::processServer()
             }
             else
                 Utils::debug_message("No clients connected to the server");
-            std::cout << std::endl;
             lastPingTime = currentTime;
         }
 
