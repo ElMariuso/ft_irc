@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 17:00:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:05:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,15 @@ void Command::nick(const Server &server, Client *client, const std::string &name
     }
 }
 
-void Command::join(Server *server, Client *client, const std::string &name, const std::string &password, Channel *channel) const
+void Command::join(Server *server, Client *client, const std::string &name, const std::string &password) const
 {
+    Channel                                 *channel;
     /* Used for messages */
     const std::string                       &clientName = client->getNickname();
     const std::string                       &clientUser = client->getUsername();
     const std::string                       &clientHost = client->getHostname();
 
+    channel = server->findChannel(name);
     if (channel != NULL) /* JOIN with channel */
     {
         /* Get some lists */

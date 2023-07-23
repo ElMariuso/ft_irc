@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 15:32:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 16:34:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ class Message
         ~Message();
 
         /* Authentification and connection */
-        std::string  connection(const std::string &clientNickname) const;
-        std::string  welcome(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &date) const;
+        std::string connection(const std::string &clientNickname) const;
+        std::string welcome(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &date) const;
 
         /* Commands */
         std::string join(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName) const;
