@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 15:02:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:14:40 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,25 +205,23 @@ void Server::getMessages(const std::string &message, const int client_socket)
 {
     Command                                 command(message);
     Client                                  *client;
-    std::string                             arg0 = command.getArgs().at(0);
-    std::string                             arg1 = "";
-    std::string                             arg2 = "";
+    std::vector<std::string>                args = command.getArgs();
     std::map<int, Client*>::const_iterator  it = this->clientsList.find(client_socket);
 
-    if (command.getArgs().size() > 1)
-        arg1 = command.getArgs().at(1);
-    if (command.getArgs().size() > 2)
-        arg2 = command.getArgs().at(2);
+    if (command.getArgs().size() <= 2)
+        args.push_back("");   
+    if (command.getArgs().size() == 1)
+        args.push_back("");
     if (it != this->clientsList.end())
     {
         client = it->second;
         
         /* No need to authenticate */
-        this->withoutAuthentification(command, client, arg0);
+        this->withoutAuthentification(command, client, args[0]);
 
         /* Need to authenticate */
         if (client->getIsConnected() && client->getIsAuthenticated())
-            this->withAuthentification(command, client, arg0, arg1, arg2);
+            this->withAuthentification(command, client, args);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
             client->sendToFD(Message::err_notregistered_451(this->getName(), client->getNickname()));
     }
@@ -275,33 +273,33 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
     }
 }
 
-void Server::withAuthentification(const Command &command, Client *client, const std::string &arg0, const std::string &arg1, const std::string &arg2)
+void Server::withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args)
 {
     switch (command.getType())
     {
         case NICK:
-            command.nick(*this, client, arg0);
+            command.nick(*this, client, args[0]);
             break ;
         case JOIN:
-            command.join(this, client, arg0, arg1, this->findChannel(arg0));
+            command.join(this, client, args[0], args[1], this->findChannel(args[0]));
             break ;
         case PART:
-            command.part(this, *client, arg0, arg1, this->findChannel(arg0));
+            command.part(this, *client, args[0], args[1], this->findChannel(args[0]));
             break ;
         case PRIVMSG:
-            command.privmsg(*this, *client, arg0, arg1);
+            command.privmsg(*this, *client, args[0], args[1]);
             break ;
         case MODE:
-            command.mode(*this, client, arg0, arg1, arg2);
+            command.mode(*this, client, args[0], args[1], args[2]);
             break ;
         case TOPIC:
-            command.topic(*this, *client, arg0, arg1);
+            command.topic(*this, *client, args[0], args[1]);
             break ;
         case KICK:
-            command.kick(*this, *client, this->findClientByName(arg1)->second, arg2, this->findChannel(arg0));
+            command.kick(*this, *client, this->findClientByName(args[1])->second, args[2], this->findChannel(args[0]));
             break ;
         case INVITE:
-            command.invite(*this, *client, arg0, arg1);
+            command.invite(*this, *client, args[0], args[1]);
             break ;
         default:
             break ;
