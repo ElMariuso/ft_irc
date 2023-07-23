@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 22:19:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 22:59:41 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,13 @@ int Server::processServer()
         double elapsedTimeMilliseconds = elapsedTime * 1000;
         if (elapsedTimeMilliseconds >= 12.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
         {
-            this->sendToAll(this->ping());
-            this->sendPingToAll();
+            if (!this->clientsList.empty())
+            {
+                this->sendToAll(this->ping());
+                this->sendPingToAll();
+            }
+            else
+                Utils::debug_message("No clients connected to the server");
             std::cout << std::endl;
             lastPingTime = currentTime;
         }
@@ -482,12 +487,7 @@ std::map<int, Client*>::const_iterator Server::findClientByName(const std::strin
 void Server::sendToAll(const std::string &message)
 {
     const std::map<int, Client*>	&clients = this->clientsList;
-
-    if (clients.empty())
-    {
-        Utils::debug_message("No clients connected to the server");
-        return ;
-    }
+    
 	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
 	{
 		const Client &client = *(it->second);
@@ -500,12 +500,7 @@ void Server::sendToAll(const std::string &message)
 void Server::sendPingToAll()
 {
     const std::map<int, Client*>	&clients = this->clientsList;
-
-    if (clients.empty())
-    {
-        Utils::debug_message("No clients connected to the server");
-        return ;
-    }
+    
 	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
 	{
 		Client *client = it->second;
