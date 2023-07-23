@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 17:05:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:18:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ Server::Server(const std::string &port_str, const std::string &password, const s
     if (ret < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;
-    this->name = name;
 
     /* Start server processing */
     this->setLastPingTime(clock());
@@ -412,7 +411,6 @@ std::vector<std::string> Server::splitCommands(const std::string &message, const
 
 /* Setters */
 void Server::setServerSocket(int serverSocket) { this->serverSocket = serverSocket; }
-void Server::setName(std::string name) { this->name = name; this->setServerName(name); }
 void Server::setPassword(std::string password) { this->password = password; }
 void Server::setFd(struct pollfd fd) { this->fds.push_back(fd); }
 void Server::setFds(std::vector<struct pollfd> fds) { this->fds = fds; }
@@ -432,7 +430,6 @@ void Server::removeChannel(Channel *channel)
 
 /* Getters */
 int Server::getServerSocket() const { return (this->serverSocket); }
-std::string Server::getName() const { return (this->name); }
 std::string Server::getPassword() const { return (this->password); }
 std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }

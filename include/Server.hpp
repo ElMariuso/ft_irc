@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 15:54:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:20:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ class Server: public Message
 
         /* Setters */
         void                                            setServerSocket(int serverSocket);
-        void                                            setName(std::string name);
         void                                            setPassword(std::string password);
         void                                            setFd(struct pollfd fd);
         void                                            setFds(std::vector<struct pollfd> fds);
@@ -58,11 +57,10 @@ class Server: public Message
         void                                            setLastPingTime(clock_t time);
 
         /* Removers */
-	void                                            removeChannel(Channel *channel);
+	    void                                            removeChannel(Channel *channel);
 
         /* Getters */
         int                                             getServerSocket() const;
-        std::string                                     getName() const;
         std::string                                     getPassword() const;
         std::vector<struct pollfd>                      getFds() const;
         std::map<int, Client*>                          getClientsList() const;
@@ -84,7 +82,6 @@ class Server: public Message
 
     private:
         int                             serverSocket;
-        std::string                     name;
         std::string                     password;
         std::vector<struct pollfd>      fds;
         std::map<int, Client*>          clientsList;

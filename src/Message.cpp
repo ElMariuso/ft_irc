@@ -6,16 +6,13 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 16:55:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:20:25 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/library.hpp"
 
-Message::Message(const std::string &serverName)
-{
-    this->setServerName(serverName);
-}
+Message::Message(const std::string &name) { this->setName(name); }
 Message::~Message() {}
 
 /* Authentification and connection */
@@ -23,7 +20,7 @@ std::string Message::connection(const std::string &clientNickname) const
 {
     std::ostringstream  stream;
 
-    stream << ":" << this->serverName << " 001 " << clientNickname \
+    stream << ":" << this->name << " 001 " << clientNickname \
         << " :Please authenticate to get the rest of the server" << "\r\n";
     return (stream.str());
 }
@@ -34,13 +31,13 @@ std::string Message::welcome(const std::string &clientNickname, const std::strin
     std::ostringstream  client;
 
     client << "Welcome to " << clientNickname << "!" << clientUsername << "@" << clientHostname << "!";
-    stream << ":" << this->serverName << " 001 " << clientNickname << " :" << Utils::displayBox(client.str(), 32) << "\r\n" \
-        << ":" << this->serverName << " 002 " << clientNickname << " :Your host is " << this->serverName \
+    stream << ":" << this->name << " 001 " << clientNickname << " :" << Utils::displayBox(client.str(), 32) << "\r\n" \
+        << ":" << this->name << " 002 " << clientNickname << " :Your host is " << this->name \
         << ", running version 0.1" << "\r\n" \
-        << ":" << this->serverName << " 003 " << clientNickname \
+        << ":" << this->name << " 003 " << clientNickname \
         << " :This server was created " << date << "\r\n" \
-        << ":" + this->serverName + " 004 " + clientNickname \
-        << " " << this->serverName << " 0.1 " << "iwosxarqbDG " << "itklo" << "\r\n";
+        << ":" + this->name + " 004 " + clientNickname \
+        << " " << this->name << " 0.1 " << "iwosxarqbDG " << "itklo" << "\r\n";
     return (stream.str());
 }
 
@@ -84,7 +81,7 @@ std::string Message::nick(const std::string &newNickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 001 " << newNickname \
+    stream << ":" << this->name << " 001 " << newNickname \
         << " :You're now known as " << newNickname << "\r\n";
     return (stream.str());
 }
@@ -109,7 +106,7 @@ std::string Message::ping() const
 {
     std::stringstream   stream;
 
-    stream << "PING :" << this->serverName << "\r\n";
+    stream << "PING :" << this->name << "\r\n";
     return (stream.str());
 }
 
@@ -117,7 +114,7 @@ std::string Message::pong() const
 {
     std::stringstream   stream;
 
-    stream << "PONG " << this->serverName << "\r\n";
+    stream << "PONG " << this->name << "\r\n";
     return (stream.str());
 }
 
@@ -126,7 +123,7 @@ std::string Message::rpl_umodeis_221(const std::string &nickname, const std::str
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 221 " << nickname << " " \
+    stream << ":" << this->name << " 221 " << nickname << " " \
         << modes << "\r\n";
     return (stream.str());
 }
@@ -135,7 +132,7 @@ std::string Message::rpl_channelmodesis_324(const std::string &clientNickname, c
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 324 " << clientNickname << " " \
+    stream << ":" << this->name << " 324 " << clientNickname << " " \
         << channelName << " " << modes << "\r\n";
     return (stream.str());
 }
@@ -144,7 +141,7 @@ std::string Message::rpl_notopic_331(const std::string &clientNickname, const st
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 331 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 331 " << clientNickname << " " << channelName \
         << " :No topic is set" << "\r\n";
     return (stream.str());
 }
@@ -153,7 +150,7 @@ std::string Message::rpl_topic_332(const std::string &clientNickname, const std:
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 332 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 332 " << clientNickname << " " << channelName \
         << " :" << topic << "\r\n";
     return (stream.str());
 }
@@ -162,7 +159,7 @@ std::string Message::rpl_inviting_341(const std::string &srcNickname, const std:
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 341 " << srcNickname << " " << channelName << " " << destNickname << "\r\n";
+    stream << ":" << this->name << " 341 " << srcNickname << " " << channelName << " " << destNickname << "\r\n";
     return (stream.str());
 }
 
@@ -188,7 +185,7 @@ std::string Message::rpl_namreplay_353(const std::string &clientNickname, const 
             userListStr += ' ';
         }
     }
-    stream << ":" << this->serverName << " 353 " << clientNickname << " = " << channelName \
+    stream << ":" << this->name << " 353 " << clientNickname << " = " << channelName \
         << " :" << userListStr << "\r\n";
     return (stream.str());
 }
@@ -197,7 +194,7 @@ std::string Message::rpl_endofnames_366(const std::string &clientNickname, const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 366 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 366 " << clientNickname << " " << channelName \
         << " :End of NAMES list" << "\r\n";
     return (stream.str());
 }
@@ -207,7 +204,7 @@ std::string Message::err_nosuchnick_401(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 401 " << nickname \
+    stream << ":" << this->name << " 401 " << nickname \
         << " :No such nick/channel" << "\r\n";
     return (stream.str());
 }
@@ -216,7 +213,7 @@ std::string Message::err_nosuchserver_402(const std::string &nickname, const std
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 402 " << nickname << " " \
+    stream << ":" << this->name << " 402 " << nickname << " " \
         << destName << " :No such server" << "\r\n";
     return (stream.str());
 }
@@ -225,7 +222,7 @@ std::string Message::err_nosuchchannel_403(const std::string &clientNickname, co
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 403 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 403 " << clientNickname << " " << channelName \
         << " :No such channel" << "\r\n";
     return (stream.str());
 }
@@ -234,7 +231,7 @@ std::string Message::err_cannotsendtochan_404(const std::string &nickname) const
 {
     std::stringstream   stream;
     
-    stream << ":" << this->serverName << " 404 " << nickname \
+    stream << ":" << this->name << " 404 " << nickname \
         << " :Cannot send to channel" << "\r\n";
     return (stream.str());
 }
@@ -243,7 +240,7 @@ std::string Message::err_nonicknamegiven_431() const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 431 *" \
+    stream << ":" << this->name << " 431 *" \
         << " :No nickname given" << "\r\n";
     return (stream.str());
 }
@@ -252,7 +249,7 @@ std::string Message::err_erroneusnickname_432(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 432 * " << nickname \
+    stream << ":" << this->name << " 432 * " << nickname \
         << " :Erroneous nickname" << "\r\n";
     return (stream.str());
 }
@@ -261,7 +258,7 @@ std::string Message::err_nicknameinuse_433(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 433 * " << nickname \
+    stream << ":" << this->name << " 433 * " << nickname \
         << " :Nickname is already in use" << "\r\n";
     return (stream.str());
 }
@@ -270,7 +267,7 @@ std::string Message::err_usernotinchannel_441(const std::string &clientNickname,
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 441 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 441 " << clientNickname << " " << channelName \
         << " :They aren't on that channel" << "\r\n";
     return (stream.str());
 }
@@ -279,7 +276,7 @@ std::string Message::err_notonchannel_442(const std::string &clientNickname, con
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 442 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 442 " << clientNickname << " " << channelName \
         << " :You're not on that channel" << "\r\n";
     return (stream.str());
 }
@@ -288,7 +285,7 @@ std::string Message::err_useronchannel_443(const std::string &clientNickname, co
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 443 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 443 " << clientNickname << " " << channelName \
         << " :is already on channel" << "\r\n";
     return (stream.str());
 }
@@ -297,7 +294,7 @@ std::string Message::err_notregistered_451(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 451 " << nickname << " :You have not registered" << "\r\n";
+    stream << ":" << this->name << " 451 " << nickname << " :You have not registered" << "\r\n";
     return (stream.str());
 }
 
@@ -305,7 +302,7 @@ std::string Message::err_needmoreparams_461(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << serverName << " 461 " << nickname << " :Not enough parameters (user command)" << "\r\n";
+    stream << ":" << this->name << " 461 " << nickname << " :Not enough parameters (user command)" << "\r\n";
     return (stream.str());
 }
 
@@ -313,7 +310,7 @@ std::string Message::err_alreadyregistered_462(const std::string &nickname) cons
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 462 " << nickname << " :Unauthorized command (already registered)" << "\r\n";
+    stream << ":" << this->name << " 462 " << nickname << " :Unauthorized command (already registered)" << "\r\n";
     return (stream.str());
 }
 
@@ -321,7 +318,7 @@ std::string Message::err_passwdmismatch_464(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 464 " << nickname << " :Password incorrect" << "\r\n";
+    stream << ":" << this->name << " 464 " << nickname << " :Password incorrect" << "\r\n";
     return (stream.str());
 }
 
@@ -329,7 +326,7 @@ std::string Message::err_channelisfull_471(const std::string &clientNickname, co
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 471 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 471 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+l) - Channel user limit reached" << "\r\n";
     return (stream.str());
 }
@@ -338,7 +335,7 @@ std::string Message::err_inviteonlychan_473(const std::string &clientNickname, c
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 473 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 473 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+i) - Invite only" << "\r\n";
     return (stream.str());
 }
@@ -347,7 +344,7 @@ std::string Message::err_badchannelkey_475(const std::string &clientNickname, co
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 475 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 475 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
     return (stream.str());
 }
@@ -356,7 +353,7 @@ std::string Message::err_chanoprivsneeded_482(const std::string &clientNickname,
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 482 " << clientNickname << " " << channelName \
+    stream << ":" << this->name << " 482 " << clientNickname << " " << channelName \
         << " :You're not channel operator" << "\r\n";
     return (stream.str()); 
 }
@@ -365,7 +362,7 @@ std::string Message::err_umodeunknowflag_501(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 501 " << nickname \
+    stream << ":" << this->name << " 501 " << nickname \
         << " :Unknown MODE flag" << "\r\n";
     return (stream.str());    
 }
@@ -374,13 +371,13 @@ std::string Message::err_usersdontmatch_502(const std::string &nickname) const
 {
     std::stringstream   stream;
 
-    stream << ":" << this->serverName << " 502 " << nickname \
+    stream << ":" << this->name << " 502 " << nickname \
         << " :Cannot change mode for other users" << "\r\n";
     return (stream.str());    
 }
 
 /* Setters */
-void Message::setServerName(const std::string &serverName) { this->serverName = serverName; }
+void Message::setName(const std::string &name) { this->name = name; }
 
 /* Getters */
-std::string Message::getServerName() const { return (this->serverName); }
+std::string Message::getName() const { return (this->name); }

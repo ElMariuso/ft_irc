@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 16:34:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:20:47 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ class Message
         std::string err_usersdontmatch_502(const std::string &nickname) const;
 
         /* Setters */
-        void        setServerName(const std::string &serverName);
+        void        setName(const std::string &name);
 
         /* Getters */
-        std::string getServerName() const;
+        std::string getName() const;
 
-    private:
-        std::string serverName;
+    protected:
+        std::string name;
 };
 
 #endif
