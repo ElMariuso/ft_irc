@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 21:40:18 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 21:53:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,14 +314,17 @@ void Server::withAuthentification(const Command &command, Client *client, const 
 void Server::handleDisconnection(const int client_socket, const std::string &message)
 {
     if (this->clientsList.size() == 0)
+    {
         Utils::debug_message("No clients connected to the server");
+        return ;
+    }
     
     /* Manage logout */
     std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
     Client                              *client = this->findClient(client_socket);
     int                                 fd;
 
-    if (client != NULL && client->getIsConnected() == true)
+    if (!client && client->getIsConnected())
     {
         fd = client->getFd();
         client->setIsConnected(false);
