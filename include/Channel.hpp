@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/21 22:10:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 22:47:18 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ class Channel
 		bool										getHasLimit() const;
 
 		std::map<int, Client*>::const_iterator		getConnectedEnd() const;
+		std::vector<int>::iterator					getOperatorsEnd();
 		std::map<std::string, bool>::const_iterator	getInvitedEnd() const;
 
 		/* Finders */
@@ -100,6 +101,7 @@ class Channel
 	topic protection (t) : only channel operators can change the channel topic
 	key (k) : a password is required to join the channel
 	limit (l) : restricts the number of users that can join the channel
+	operator (o)
 */
 
 #endif

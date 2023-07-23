@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 00:55:33 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:23:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,11 @@
 
 # define BUFFER_SIZE 1024
 
+/* Others ******************************************************************* */
+
+# define DELETING   "\x1b[1F\x1b[2K\r"
+
+
 /* Includes ***************************************************************** */
 
 # include <poll.h>
@@ -51,6 +56,7 @@
 # include <netdb.h>
 # include <ctime>
 # include <iomanip>
+# include <algorithm>
 
 # include <vector>
 # include <map>

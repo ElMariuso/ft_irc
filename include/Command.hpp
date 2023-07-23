@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 14:40:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 22:31:33 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,11 @@ class Command
         bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;
 
         /* MODE Utils */
-        void                        setModes(const std::string &serverName, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const;
+        void                        setModes(const Server &server, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const;
         void                        setModesClient(const std::string &serverName, const std::string &srcName, Client *src, const std::string &modes) const;
         void                        addMode(Channel *channel, const char &mode) const;
         void                        rmMode(Channel *channel, const char &mode) const;
-        void                        changeRestriction(const std::string &serverName, Channel *channel, const Client &src, const char &mode, const std::string &args) const;
+        void                        changeRestriction(const Server &server, Channel *channel, const Client &src, const char &mode, const std::string &args) const;
         bool                        isInteger(const std::string &str) const;
 
         /* Setters */

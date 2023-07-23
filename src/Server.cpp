@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 01:00:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:24:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ Server::Server(const std::string &port_str, const std::string &password, const s
     this->name = name;
 
     /* Start server processing */
+    this->setLastPingTime(clock());
     ret = this->processServer();
     if (ret < 0)
         throw (std::runtime_error("Problem during running the server!"));
@@ -67,9 +68,20 @@ int Server::processServer()
     /* Main loop */
     do
     {
+        /* Check last PING */
+        clock_t currentTime = clock();
+        double elapsedTime = static_cast<double>(currentTime - lastPingTime) / CLOCKS_PER_SEC;
+        double elapsedTimeMilliseconds = elapsedTime * 1000;
+        if (elapsedTimeMilliseconds >= 53.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
+        {
+            this->sendToAll(Message::ping(this->name));
+            std::cout << std::endl;
+            lastPingTime = currentTime;
+        }
+
         /* Wait for events on sockets */
-        Utils::debug_message("Waiting for events with poll()...");
-        ready = poll(this->fds.data(), this->fds.size(), -1);
+        Utils::waiting_message("Waiting for events with poll()");
+        ready = poll(this->fds.data(), this->fds.size(), 100);
 		if (Utils::stop(1))
 			break ;
         if (ready == -1 && !Utils::stop(1))
@@ -114,7 +126,7 @@ int Server::processServer()
                     i--; /* Client disconnected */
                 }
             }
-	    if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) || this->pingTimeOut(client_socket) == true ) /* Check for logout */
+	        if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) || this->clientsList.find(client_socket)->second->getPingCount() == 4) /* Check for logout */
             {
                 Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
                 this->handleDisconnection(client_socket, "leaving");
@@ -124,8 +136,6 @@ int Server::processServer()
 
                 i--; /* Client disconnected */
             }
-	    else
-            this->sendPingMessage(client_socket);
         }
     } while (!Utils::stop(1));
     return (0);
@@ -229,6 +239,16 @@ void Server::withoutAuthentification(const Command &command, Client *client)
         else /* No */
             client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
     }
+    else if (command.getType() == PING)
+        client->sendToFD(Message::pong(this->name));
+    else if (command.getType() == PONG)
+    {
+        const std::string &arg = command.getArgs().at(0).substr(1);
+        if (arg == this->name)
+            client->setPingCount(0);
+        else
+            client->sendToFD(Message::err_nosuchserver_402(this->name, client->getNickname(), arg));
+    }
 }
 
 void Server::withAuthentification(const Command &command, Client *client)
@@ -276,36 +296,6 @@ void Server::withAuthentification(const Command &command, Client *client)
         default:
             break ;
     }
-}
-
-/* Ping message */
-void Server::sendPingMessage(const int client_socket)
-{
-    (void)client_socket;
-	// std::map<int, Client*>::iterator	it = this->clientsList.find(client_socket);
-	// std::string				identifier;
-	// std::string				pingMessage;
-
-	// std::srand(std::time(0));
-	// identifier = Utils::intToString(std::rand()); //random identifier
-	// pingMessage = "PING " + identifier;
-	// if (it->second->getTimeSinceLastPing() >= 300) //time between 2 ping msg in seconds
-	// {
-	// 	it->second->sendToFD(pingMessage);
-	// 	it->second->setTimeSinceLastPing();
-	// 	it->second->setLastPingIdentifier(identifier);
-	// }
-}
-
-bool Server::pingTimeOut(const int client_socket)
-{
-    (void)client_socket;
-	// std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
-
-	// if (it->second->getTimeSinceLastPing() >= 600 && it->second->getLastPingIdentifier() != "-1" )
-	// 	return (true);
-	// return (false);
-    return (false);
 }
 
 /* Logout */
@@ -421,6 +411,7 @@ void Server::setClients(std::map<int, Client*> clients) { this->clientsList = cl
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
 void Server::setDate(const std::string &date) { this->date = date; }
+void Server::setLastPingTime(clock_t time) { this->lastPingTime = time; }
 
 /* Removers */
 void Server::removeChannel(Channel *channel)
@@ -437,6 +428,7 @@ std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
 std::string Server::getDate() const { return (this->date); }
+clock_t Server::getLastPingTime() const { return (this->lastPingTime); };
 
 std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
 std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }
@@ -470,4 +462,40 @@ std::map<int, Client*>::const_iterator Server::findClientByName(const std::strin
             return (it);
     }
     return (this->clientsList.end());
+}
+
+/* Senders */
+void Server::sendToAll(const std::string &message)
+{
+    const std::map<int, Client*>	&clients = this->clientsList;
+
+    if (clients.empty())
+    {
+        Utils::debug_message("No clients connected to the server");
+        return ;
+    }
+	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		const Client &client = *(it->second);
+
+		client.sendToFD(message);
+	}
+}
+
+
+void Server::sendPingToAll()
+{
+    const std::map<int, Client*>	&clients = this->clientsList;
+
+    if (clients.empty())
+    {
+        Utils::debug_message("No clients connected to the server");
+        return ;
+    }
+	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		Client *client = it->second;
+
+		client->incPingCount();
+	} 
 }

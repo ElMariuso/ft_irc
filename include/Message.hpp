@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 01:00:08 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:22:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ class Message
         static std::string  privmsg(const std::string &srcName, const std::string &destName, const std::string &message);
         static std::string  nick(const std::string &serverName, const std::string &newNickname);
         static std::string  kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message);
+        static std::string  ping(const std::string &serverName);
+        static std::string  pong(const std::string &serverName);
 
         /* RPL */
         static std::string  rpl_umodeis_221(const std::string &serverName, const std::string &nickname, const std::string &modes);
@@ -43,6 +45,7 @@ class Message
 
         /* Errors */
         static std::string  err_nosuchnick_401(const std::string &serverName, const std::string &nickname);
+        static std::string  err_nosuchserver_402(const std::string &serverName, const std::string &nickname, const std::string &destName);
         static std::string  err_nosuchchannel_403(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_cannotsendtochan_404(const std::string &serverName, const std::string &nickname);
         static std::string  err_nonicknamegiven_431(const std::string &serverName);

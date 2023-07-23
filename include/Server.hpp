@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 00:58:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:24:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,6 @@ class Server
         void                                            getMessages(const std::string &message, const int client_socket);
         void                                            withoutAuthentification(const Command &command, Client *client);
         void                                            withAuthentification(const Command &command, Client *client);
-       
-	    /* Ping message */
-	    void                                            sendPingMessage(const int client_socket);
-	    bool                                            pingTimeOut(const int client_socket);
 
         /* Logout */
         void                                            handleDisconnection(const int client_socket, const std::string &message);
@@ -59,9 +55,10 @@ class Server
         void                                            setChannel(std::string name, Channel *channel);
         void                                            setChannels(std::map<std::string, Channel*> channels);
         void                                            setDate(const std::string &date);
+        void                                            setLastPingTime(clock_t time);
 
         /* Removers */
-		void                                            removeChannel(Channel *channel);
+	void                                            removeChannel(Channel *channel);
 
         /* Getters */
         int                                             getServerSocket() const;
@@ -71,6 +68,7 @@ class Server
         std::map<int, Client*>                          getClientsList() const;
         std::map<std::string, Channel*>                 getChannelsList() const;
         std::string                                     getDate() const;
+        clock_t                                         getLastPingTime() const;
 
         std::map<int, Client*>::const_iterator          getClientsListEnd() const;
         std::map<std::string, Channel*>::const_iterator getChannelsListEnd() const;
@@ -80,6 +78,10 @@ class Server
         Channel*                                        findChannel(const std::string &name) const;
         std::map<int, Client*>::const_iterator          findClientByName(const std::string &name) const;
 
+        /* Senders */
+        void                                            sendToAll(const std::string &message);
+        void                                            sendPingToAll();
+
     private:
         int                             serverSocket;
         std::string                     name;
@@ -88,6 +90,7 @@ class Server
         std::map<int, Client*>          clientsList;
         std::map<std::string, Channel*> channelsList;
         std::string                     date;
+        clock_t                         lastPingTime;
 };
 
 #endif

@@ -6,20 +6,28 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 01:23:56 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:24:45 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Utils.hpp"
 
-void Utils::debug_message(std::string message)
-{
-    std::cout << BLUE << "[DEBUG]" << RESET << " - " << message << std::endl;
-}
+void Utils::debug_message(const std::string &message) { std::cout << BLUE << "[DEBUG]" << RESET << " - " << message << std::endl; }
+void Utils::error_message(const std::string &message) { std::cerr << RED << "[ERROR]" << RESET << " - " << message << std::endl; }
 
-void Utils::error_message(std::string message)
+void Utils::waiting_message(const std::string &message)
 {
-    std::cerr << RED << "[ERROR]" << RESET << " - " << message << std::endl;
+	static int			numDots = 1;
+	const int			maxDots = 4;
+	std::string 		dots = std::string(numDots, '.');
+	
+	std::cout << DELETING << GREEN << "[WAITING]" << RESET << " - " << message << dots << std::endl;;
+
+	numDots = (numDots + 1) % maxDots;
+	if (numDots == 0)
+		numDots = 1;
+
+	std::cout.flush();
 }
 
 std::string	Utils::intToString(int nb)

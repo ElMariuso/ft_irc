@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 01:30:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:24:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,22 @@ std::string Message::kick(const std::string &srcName, const std::string &destNam
     return (stream.str());
 }
 
+std::string Message::ping(const std::string &serverName)
+{
+    std::stringstream   stream;
+
+    stream << "PING :" << serverName << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::pong(const std::string &serverName)
+{
+    std::stringstream   stream;
+
+    stream << "PONG " << serverName << "\r\n";
+    return (stream.str());
+}
+
 /* RPL */
 std::string Message::rpl_umodeis_221(const std::string &serverName, const std::string &nickname, const std::string &modes)
 {
@@ -187,6 +203,15 @@ std::string Message::err_nosuchnick_401(const std::string &serverName, const std
 
     stream << ":" << serverName << " 401 " << nickname \
         << " :No such nick/channel" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::err_nosuchserver_402(const std::string &serverName, const std::string &nickname, const std::string &destName)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 402 " << nickname << " " \
+        << destName << " :No such server" << "\r\n";
     return (stream.str());
 }
 
