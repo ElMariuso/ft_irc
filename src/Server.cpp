@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 18:47:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 19:13:16 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int Server::processServer()
 
         /* Wait for events on sockets */
         Utils::waiting_message("Waiting for events with poll()");
-        ready = poll(this->fds.data(), this->fds.size(), 100);
+        ready = poll(this->fds.data(), this->fds.size(), 333);
 		if (Utils::stop(1))
 			break ;
         if (ready == -1 && !Utils::stop(1))
@@ -88,6 +88,7 @@ int Server::processServer()
             Utils::error_message("Error in poll()!");
             return (-1);
         }
+        Utils::debug_message("Event detected!");
         
         /* Check if a new connection is in waiting */
         if (this->fds[0].revents & POLLIN)
