@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 21:53:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 22:19:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,10 @@ int Server::processServer()
         clock_t currentTime = clock();
         double elapsedTime = static_cast<double>(currentTime - lastPingTime) / CLOCKS_PER_SEC;
         double elapsedTimeMilliseconds = elapsedTime * 1000;
-        if (elapsedTimeMilliseconds >= 53.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
+        if (elapsedTimeMilliseconds >= 12.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
         {
             this->sendToAll(this->ping());
+            this->sendPingToAll();
             std::cout << std::endl;
             lastPingTime = currentTime;
         }
