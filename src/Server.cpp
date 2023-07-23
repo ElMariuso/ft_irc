@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 16:58:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:02:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,7 +412,7 @@ std::vector<std::string> Server::splitCommands(const std::string &message, const
 
 /* Setters */
 void Server::setServerSocket(int serverSocket) { this->serverSocket = serverSocket; }
-void Server::setName(std::string name) { this->name = name; }
+void Server::setName(std::string name) { this->name = name; this->setServerName(name); }
 void Server::setPassword(std::string password) { this->password = password; }
 void Server::setFd(struct pollfd fd) { this->fds.push_back(fd); }
 void Server::setFds(std::vector<struct pollfd> fds) { this->fds = fds; }
