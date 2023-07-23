@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 15:57:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 16:58:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,9 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
                     client->sendToFD(this->err_passwdmismatch_464(nickname));
             }
             break ;
+        case USER:
+            command.user(*this, client);
+            break ;
         case PING:
             client->sendToFD(this->pong());
             break ;
@@ -270,8 +273,6 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
         default:
             break ;
     }
-    else if (command.getType() == USER)
-        command.user(*this, client);
 }
 
 void Server::withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args)
