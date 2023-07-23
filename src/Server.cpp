@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 18:43:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 18:47:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,13 +214,10 @@ void Server::getMessages(const std::string &message, const int client_socket)
     if (it != this->clientsList.end())
     {
         client = it->second;
-        
-        /* No need to authenticate */
-        if (client->getIsConnected())
-            this->withoutAuthentification(command, client, args[0]);
 
-        /* Need to authenticate */
-        if (client->getIsConnected() && client->getIsAuthenticated())
+        if (client->getIsConnected() && !client->getIsAuthenticated())
+            this->withoutAuthentification(command, client, args[0]);
+        else if (client->getIsConnected() && client->getIsAuthenticated())
             this->withAuthentification(command, client, args);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
