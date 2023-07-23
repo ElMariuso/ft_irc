@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 19:34:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 20:53:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,19 +72,14 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
 
             /* Check for a topic */
             /* Send a message for the new user */
-            const std::string   &msg331 = server->rpl_notopic_331(clientName, name);
-            const std::string   &msg332 = server->rpl_topic_332(clientName, name, channel->getTopic());
-            const std::string   &msg353 = server->rpl_namreplay_353(clientName, name, *channel);
-            const std::string   &msg366 = server->rpl_endofnames_366(clientName, name);
-            std::string         toSend;
+            std::ostringstream  stream;
             
+            stream << server->rpl_namreplay_353(clientName, name, *channel) << server->rpl_endofnames_366(clientName, name);
             if (!channel->hasTopic()) /* RPL_NOTOPIC (331) */
-                toSend += msg331;
+                stream << server->rpl_notopic_331(clientName, name);
             else /* RPL_TOPIC (332) */
-                toSend += msg332;
-            toSend += msg353;
-            toSend += msg366;
-            client->sendToFD(toSend);
+                stream << server->rpl_topic_332(clientName, name, channel->getTopic());
+            client->sendToFD(stream.str());
         }
     }
     else /* JOIN without channel */
