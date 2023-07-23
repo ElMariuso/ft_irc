@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 15:12:53 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:54:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ class Client;
 class Channel;
 class Command;
 
-class Server
+class Server: public Message
 {
     public:
         Server(const std::string &port_str, const std::string &password, const std::string &name);

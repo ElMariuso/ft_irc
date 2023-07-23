@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 15:34:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:58:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,4 +375,4 @@ std::string Message::err_usersdontmatch_502(const std::string &nickname) const
 void Message::setServerName(const std::string &serverName) { this->serverName = serverName; }
 
 /* Getters */
-std::string getServerName() const { return (this->serverName); }
+std::string Message::getServerName() const { return (this->serverName); }

@@ -6,13 +6,13 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 15:14:40 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:57:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
-Server::Server(const std::string &port_str, const std::string &password, const std::string &name)
+Server::Server(const std::string &port_str, const std::string &password, const std::string &name): Message(name)
 {
     int ret;
 
@@ -74,7 +74,7 @@ int Server::processServer()
         double elapsedTimeMilliseconds = elapsedTime * 1000;
         if (elapsedTimeMilliseconds >= 53.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
         {
-            this->sendToAll(Message::ping(this->name));
+            this->sendToAll(this->ping());
             std::cout << std::endl;
             lastPingTime = currentTime;
         }
@@ -105,7 +105,7 @@ int Server::processServer()
 
             /* Ask for authentification */
             Client *client = this->findClient(new_socket);
-            client->sendToFD(Message::connection(this->getName(), client->getNickname()));
+            client->sendToFD(this->connection(client->getNickname()));
         }
 
         /* Browse existing clients sockets */
@@ -223,7 +223,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
         if (client->getIsConnected() && client->getIsAuthenticated())
             this->withAuthentification(command, client, args);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
-            client->sendToFD(Message::err_notregistered_451(this->getName(), client->getNickname()));
+            client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
@@ -231,7 +231,6 @@ void Server::getMessages(const std::string &message, const int client_socket)
 
 void Server::withoutAuthentification(const Command &command, Client *client, const std::string &arg0)
 {
-    const std::string   &serverName = this->getName();
     int                 fd = client->getFd();
     const std::string   &nickname = client->getNickname();
     const std::string   &username = client->getUsername();
@@ -244,20 +243,20 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
             break ;
         case PASS:
             if (client->getIsAuthenticated()) /* Already registered */
-                client->sendToFD(Message::err_alreadyregistered_462(serverName, nickname));
+                client->sendToFD(this->err_alreadyregistered_462(nickname));
             else
             {
                 if (this->password == arg0) /* Ok */
                 {
-                    client->sendToFD(Message::welcome(serverName, nickname, username, hostname, this->date));
+                    client->sendToFD(this->welcome(nickname, username, hostname, this->date));
                     client->setIsAuthenticated(true);
                 }
                 else /* No */
-                    client->sendToFD(Message::err_passwdmismatch_464(serverName, nickname));
+                    client->sendToFD(this->err_passwdmismatch_464(nickname));
             }
             break ;
         case PING:
-            client->sendToFD(Message::pong(this->name));
+            client->sendToFD(this->pong());
             break ;
         case PONG:
         {
@@ -265,7 +264,7 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
             if (arg == this->name)
                 client->setPingCount(0);
             else
-                client->sendToFD(Message::err_nosuchserver_402(this->name, nickname, arg));
+                client->sendToFD(this->err_nosuchserver_402(client->getNickname(), arg));
             break ;
         }
         default:

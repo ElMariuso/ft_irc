@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 13:23:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:55:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@
 # include "Client.hpp"
 # include "Utils.hpp"
 # include "Command.hpp"
-# include "Server.hpp"
+
 # include "Message.hpp"
+# include "Server.hpp"
 
 #endif
