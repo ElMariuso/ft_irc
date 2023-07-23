@@ -6,13 +6,13 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 13:53:04 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 16:39:47 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Server.hpp"
 
-Server::Server(const std::string &port_str, const std::string &password, const std::string &name)
+Server::Server(const std::string &port_str, const std::string &password, const std::string &name): Message(name)
 {
     int ret;
 
@@ -74,7 +74,7 @@ int Server::processServer()
         double elapsedTimeMilliseconds = elapsedTime * 1000;
         if (elapsedTimeMilliseconds >= 53.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
         {
-            this->sendToAll(Message::ping(this->name));
+            this->sendToAll(this->ping());
             std::cout << std::endl;
             lastPingTime = currentTime;
         }
@@ -105,7 +105,7 @@ int Server::processServer()
 
             /* Ask for authentification */
             Client *client = this->findClient(new_socket);
-            client->sendToFD(Message::connection(this->getName(), client->getNickname()));
+            client->sendToFD(this->connection(client->getNickname()));
         }
 
         /* Browse existing clients sockets */
@@ -203,95 +203,102 @@ int Server::handleEvent(const int client_socket)
 
 void Server::getMessages(const std::string &message, const int client_socket)
 {
-    Command command(message);
+    Command                                 command(message);
+    Client                                  *client;
+    std::vector<std::string>                args = command.getArgs();
+    std::map<int, Client*>::const_iterator  it = this->clientsList.find(client_socket);
 
-    std::map<int, Client*>::const_iterator it = this->clientsList.find(client_socket);
+    if (command.getArgs().size() <= 2)
+        args.push_back("");   
+    if (command.getArgs().size() == 1)
+        args.push_back("");
     if (it != this->clientsList.end())
     {
-        Client  *client = it->second;
+        client = it->second;
         
         /* No need to authenticate */
-        this->withoutAuthentification(command, client);
+        this->withoutAuthentification(command, client, args[0]);
 
         /* Need to authenticate */
         if (client->getIsConnected() && client->getIsAuthenticated())
-            this->withAuthentification(command, client);
+            this->withAuthentification(command, client, args);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
-            client->sendToFD(Message::err_notregistered_451(this->getName(), client->getNickname()));
+            client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
 }
 
-void Server::withoutAuthentification(const Command &command, Client *client)
+void Server::withoutAuthentification(const Command &command, Client *client, const std::string &arg0)
 {
-    if (command.getType() == QUIT) /* Bye :( */
-        this->handleDisconnection(client->getFd(), command.getArgs().at(0));
-    else if ((command.getType() == PASS) && client->getIsAuthenticated()) /* Already registered */
-        client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
-    else if (command.getType() == PASS) /* Authentification */
+    int                 fd = client->getFd();
+    const std::string   &nickname = client->getNickname();
+    const std::string   &username = client->getUsername();
+    const std::string   &hostname = client->getHostname();
+
+    switch (command.getType())
     {
-        if (this->password == command.getArgs().at(0)) /* Ok */
+        case QUIT: /* Bye :( */
+            this->handleDisconnection(fd, arg0);
+            break ;
+        case PASS:
+            if (client->getIsAuthenticated()) /* Already registered */
+                client->sendToFD(this->err_alreadyregistered_462(nickname));
+            else
+            {
+                if (this->password == arg0) /* Ok */
+                {
+                    client->sendToFD(this->welcome(nickname, username, hostname, this->date));
+                    client->setIsAuthenticated(true);
+                }
+                else /* No */
+                    client->sendToFD(this->err_passwdmismatch_464(nickname));
+            }
+            break ;
+        case PING:
+            client->sendToFD(this->pong());
+            break ;
+        case PONG:
         {
-            client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname(), this->date));
-            client->setIsAuthenticated(true);
+            const std::string &arg = arg0.substr(1);
+            if (arg == this->name)
+                client->setPingCount(0);
+            else
+                client->sendToFD(this->err_nosuchserver_402(client->getNickname(), arg));
+            break ;
         }
-        else /* No */
-            client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
-    }
-    else if (command.getType() == PING)
-        client->sendToFD(Message::pong(this->name));
-    else if (command.getType() == PONG)
-    {
-        const std::string &arg = command.getArgs().at(0).substr(1);
-        if (arg == this->name)
-            client->setPingCount(0);
-        else
-            client->sendToFD(Message::err_nosuchserver_402(this->name, client->getNickname(), arg));
+        default:
+            break ;
     }
 }
 
-void Server::withAuthentification(const Command &command, Client *client)
+void Server::withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args)
 {
     switch (command.getType())
     {
         case NICK:
-            command.nick(*this, client, command.getArgs().at(0));
+            command.nick(*this, client, args[0]);
             break ;
         case JOIN:
-            if (command.getArgs().size() == 1)
-                command.join(this, client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
-            else
-                command.join(this, client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            command.join(this, client, args[0], args[1]);
             break ;
         case PART:
-            if (command.getArgs().size() == 1)
-                command.part(this, *client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
-            else
-                command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            command.part(this, *client, args[0], args[1], this->findChannel(args[0]));
             break ;
         case PRIVMSG:
-            command.privmsg(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            command.privmsg(*this, *client, args[0], args[1]);
             break ;
         case MODE:
-            if (command.getArgs().size() == 1)
-                command.mode(*this, client, command.getArgs().at(0), "", "");
-            else if (command.getArgs().size() == 2)
-                command.mode(*this, client, command.getArgs().at(0), command.getArgs().at(1), "");
-            else
-                command.mode(*this, client, command.getArgs().at(0), command.getArgs().at(1), command.getArgs().at(2));
+            command.mode(*this, client, args[0], args[1], args[2]);
             break ;
         case TOPIC:
-            if (command.getArgs().size() == 1)
-                command.topic(*this, *client, command.getArgs().at(0), "");
-            else
-                command.topic(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            command.topic(*this, *client, args[0], args[1]);
             break ;
         case KICK:
-            command.kick(*this, *client, this->findClientByName(command.getArgs().at(1))->second, command.getArgs().at(2), this->findChannel(command.getArgs().at(0)));
+            command.kick(*this, *client, this->findClientByName(args[1])->second, args[2], this->findChannel(args[0]));
             break ;
         case INVITE:
-            command.invite(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            command.invite(*this, *client, args[0], args[1]);
             break ;
         default:
             break ;

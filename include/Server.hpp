@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 13:24:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:54:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ class Client;
 class Channel;
 class Command;
 
-class Server
+class Server: public Message
 {
     public:
         Server(const std::string &port_str, const std::string &password, const std::string &name);
@@ -34,8 +34,8 @@ class Server
         /* Commands */
         int                                             handleEvent(const int client_socket);
         void                                            getMessages(const std::string &message, const int client_socket);
-        void                                            withoutAuthentification(const Command &command, Client *client);
-        void                                            withAuthentification(const Command &command, Client *client);
+        void                                            withoutAuthentification(const Command &command, Client *client, const std::string &arg0);
+        void                                            withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args);
 
         /* Logout */
         void                                            handleDisconnection(const int client_socket, const std::string &message);
