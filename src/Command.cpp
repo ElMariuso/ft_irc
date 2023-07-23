@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 22:54:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 14:13:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,13 +375,13 @@ void Command::kick(const Server &server, const Client &src, Client *dest, const 
     }
 }
 
-void Command::invite(const Server &server, const Client &src, Client *dest, Channel *channel) const
+void Command::invite(const Server &server, const Client &src, const std::string &destName, const std::string &channelName) const
 {
-    /* Used for messages */
-    const std::string               &serverName = server.getName();
-    const std::string               &srcName = src.getNickname();
-    const std::string               &destName = dest->getNickname();
-    const std::string               &channelName = channel->getName();
+    Client                                  *dest;
+    Channel                                 *channel = server.findChannel(channelName);
+    const std::string                       &serverName = server.getName();
+    const std::string                       &srcName = src.getNickname();
+    std::map<int, Client*>::const_iterator  itClient = server.findClientByName(destName);
 
     /* Check if the channel and the user exists */
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
@@ -389,16 +389,19 @@ void Command::invite(const Server &server, const Client &src, Client *dest, Chan
         src.sendToFD(Message::err_nosuchchannel_403(serverName, srcName, channelName));
         return ;
     }
-    else if (dest == NULL) /* ERR_NOSUCHNICK (401) */
+    else if (itClient == server.getClientsListEnd()) /* ERR_NOSUCHNICK (401) */
     {
         src.sendToFD(Message::err_nosuchnick_401(serverName, destName));
         return ;
     }
-    else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+    dest = itClient->second;
+
+    /* Send error or response if both channel and user exists */
+    if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
         src.sendToFD(Message::err_notonchannel_442(serverName, srcName, channelName));
     else if (channel->findConnectedByName(destName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
         src.sendToFD(Message::err_useronchannel_443(serverName, destName, channelName));
-    else if (channel->getHasInvitedList() && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+    else if (channel->hasMode('i') && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
         src.sendToFD(Message::err_chanoprivsneeded_482(serverName, srcName, channelName));
     else /* INVITE */
     {
@@ -406,7 +409,7 @@ void Command::invite(const Server &server, const Client &src, Client *dest, Chan
         channel->sendToAll(Message::rpl_inviting_341(serverName, srcName, channelName, destName), srcName, true);
 
         /* Increase invited list */
-        if (channel->getHasInvitedList())
+        if (channel->hasMode('i'))
             channel->setInvited(destName);   
     }
 }
