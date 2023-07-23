@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 21:34:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 21:39:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
     }
 }
 
-void Command::part(Server *server, const Client &client, const std::string &name, const std::string &message, Channel *channel) const
+void Command::part(Server *server, const Client &client, Channel *channel, const std::string &name, const std::string &message) const
 {
     /* Used for messages */
     const std::string               &clientName = client.getNickname();

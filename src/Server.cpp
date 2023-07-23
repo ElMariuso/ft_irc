@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 20:35:18 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 21:40:18 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,7 +288,7 @@ void Server::withAuthentification(const Command &command, Client *client, const 
             command.join(this, client, args[0], args[1]);
             break ;
         case PART:
-            command.part(this, *client, args[0], args[1], this->findChannel(args[0]));
+            command.part(this, *client, this->findChannel(args[0]), args[0], args[1]);
             break ;
         case PRIVMSG:
             command.privmsg(*this, *client, args[0], args[1]);
@@ -339,7 +339,7 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
                 Command command;
                 const std::string   &channelName = channel->getName();
                 
-                command.part(this, *(it->second), channelName, message, this->findChannel(channelName));
+                command.part(this, *(it->second), this->findChannel(channelName), channelName, message);
                 channel->rmOp(*it->second);
             }
             if (this->channelsList.empty())
