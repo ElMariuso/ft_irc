@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 13:53:04 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 14:44:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,9 +203,16 @@ int Server::handleEvent(const int client_socket)
 
 void Server::getMessages(const std::string &message, const int client_socket)
 {
-    Command command(message);
+    Command                                 command(message);
+    std::string                             arg0 = command.getArgs().at(0);
+    std::string                             arg1 = "";
+    std::string                             arg2 = "";
+    std::map<int, Client*>::const_iterator  it = this->clientsList.find(client_socket);
 
-    std::map<int, Client*>::const_iterator it = this->clientsList.find(client_socket);
+    if (command.getArgs().size() > 1)
+        arg1 = command.getArgs().at(1);
+    if (command.getArgs().size() > 2)
+        arg2 = command.getArgs().at(2);
     if (it != this->clientsList.end())
     {
         Client  *client = it->second;
@@ -215,7 +222,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
 
         /* Need to authenticate */
         if (client->getIsConnected() && client->getIsAuthenticated())
-            this->withAuthentification(command, client);
+            this->withAuthentification(command, client, arg0, arg1, arg2);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
             client->sendToFD(Message::err_notregistered_451(this->getName(), client->getNickname()));
     }
@@ -251,47 +258,33 @@ void Server::withoutAuthentification(const Command &command, Client *client)
     }
 }
 
-void Server::withAuthentification(const Command &command, Client *client)
+void Server::withAuthentification(const Command &command, Client *client, const std::string &arg0, const std::string &arg1, const std::string &arg2)
 {
     switch (command.getType())
     {
         case NICK:
-            command.nick(*this, client, command.getArgs().at(0));
+            command.nick(*this, client, arg0);
             break ;
         case JOIN:
-            if (command.getArgs().size() == 1)
-                command.join(this, client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
-            else
-                command.join(this, client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            command.join(this, client, arg0, arg1, this->findChannel(arg0));
             break ;
         case PART:
-            if (command.getArgs().size() == 1)
-                command.part(this, *client, command.getArgs().at(0), "", this->findChannel(command.getArgs().at(0)));
-            else
-                command.part(this, *client, command.getArgs().at(0), command.getArgs().at(1), this->findChannel(command.getArgs().at(0)));
+            command.part(this, *client, arg0, arg1, this->findChannel(arg0));
             break ;
         case PRIVMSG:
-            command.privmsg(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            command.privmsg(*this, *client, arg0, arg1);
             break ;
         case MODE:
-            if (command.getArgs().size() == 1)
-                command.mode(*this, client, command.getArgs().at(0), "", "");
-            else if (command.getArgs().size() == 2)
-                command.mode(*this, client, command.getArgs().at(0), command.getArgs().at(1), "");
-            else
-                command.mode(*this, client, command.getArgs().at(0), command.getArgs().at(1), command.getArgs().at(2));
+            command.mode(*this, client, arg0, arg1, arg2);
             break ;
         case TOPIC:
-            if (command.getArgs().size() == 1)
-                command.topic(*this, *client, command.getArgs().at(0), "");
-            else
-                command.topic(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            command.topic(*this, *client, arg0, arg1);
             break ;
         case KICK:
-            command.kick(*this, *client, this->findClientByName(command.getArgs().at(1))->second, command.getArgs().at(2), this->findChannel(command.getArgs().at(0)));
+            command.kick(*this, *client, this->findClientByName(arg1)->second, arg2, this->findChannel(arg0));
             break ;
         case INVITE:
-            command.invite(*this, *client, command.getArgs().at(0), command.getArgs().at(1));
+            command.invite(*this, *client, arg0, arg1);
             break ;
         default:
             break ;
