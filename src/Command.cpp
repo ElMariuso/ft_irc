@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 16:40:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:05:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -405,6 +405,29 @@ void Command::invite(const Server &server, const Client &src, const std::string 
         if (channel->hasMode('i'))
             channel->setInvited(destName);   
     }
+}
+
+void Command::user(const Server &server, Client *client) const
+{
+    std::string realname;
+    std::string bitmask;
+    int         bitlen;
+
+    if (this->args.size() < 4)
+        client->sendToFD(server.err_needmoreparams_461(client->getNickname()));
+    if (client->getIsRegistered())
+        client->sendToFD(server.err_alreadyregistered_462(client->getNickname()));
+    client->setIsRegistered(true);
+    client->setUsername(this->args.at(0));
+    bitmask = this->args.at(1);
+    bitlen = bitmask.size();
+    if (bitmask[bitlen - 2] == 1)
+        client->addMode('w');
+    if (bitmask[bitlen - 3] == 1)
+        client->addMode('i');
+    for (std::size_t i = 3; i < this->args.size(); i++)
+        realname = realname + this->args.at(i);
+    client->setRealname(realname);
 }
 
 /* Nick Utils */

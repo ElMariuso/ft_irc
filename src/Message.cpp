@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 15:58:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 16:55:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,6 +298,14 @@ std::string Message::err_notregistered_451(const std::string &nickname) const
     std::stringstream   stream;
 
     stream << ":" << this->serverName << " 451 " << nickname << " :You have not registered" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::err_needmoreparams_461(const std::string &nickname) const
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 461 " << nickname << " :Not enough parameters (user command)" << "\r\n";
     return (stream.str());
 }
 
