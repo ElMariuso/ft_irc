@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/24 00:43:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 01:41:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,6 +228,8 @@ void Server::getMessages(const std::string &message, const int client_socket)
             this->withAuthentification(command, client, args);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
+        else if (command.getType() == QUIT)
+            this->handleDisconnection(client_socket, args[0]);
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
@@ -235,16 +237,12 @@ void Server::getMessages(const std::string &message, const int client_socket)
 
 void Server::withoutAuthentification(const Command &command, Client *client, const std::string &arg0)
 {
-    int                 fd = client->getFd();
     const std::string   &nickname = client->getNickname();
     const std::string   &username = client->getUsername();
     const std::string   &hostname = client->getHostname();
 
     switch (command.getType())
     {
-        case QUIT: /* Bye :( */
-            this->handleDisconnection(fd, arg0);
-            break ;
         case PASS:
             if (client->getIsAuthenticated()) /* Already registered */
                 client->sendToFD(this->err_alreadyregistered_462(nickname));
