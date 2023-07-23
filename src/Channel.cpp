@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/22 22:47:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:06:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,6 @@ Channel::Channel(const std::string &name)
 	this->setTopic("");
 	this->setPassword("");
 	this->setLimit(0);
-	this->setHasInvitedList(false);
-	this->setHasTopicProtection(false);
-	this->setHasPassword(false);
-	this->setHasLimit(false);
 }
 Channel::~Channel() {}
 
@@ -128,10 +124,6 @@ void Channel::setPassword(const std::string &password) { this->password = passwo
 void Channel::setLimit(std::size_t limit)  { this->limit = limit; }
 void Channel::setInvited(const std::string &name) { this->invited.insert(std::make_pair(name, true)); }
 void Channel::setInvitedList(std::map<std::string, bool> &invited) { this->invited = invited; }
-void Channel::setHasInvitedList(bool hasInvitedList) { this->hasInvitedList = hasInvitedList; }
-void Channel::setHasTopicProtection(bool hasTopicProtection) { this->hasTopicProtection = hasTopicProtection; }
-void Channel::setHasPassword(bool hasPassword) { this->hasPassword = hasPassword; }
-void Channel::setHasLimit(bool hasLimit) { this->hasLimit = hasLimit; }
 
 /* Removers */
 void Channel::removeConnected(const int &fd) { this->_connected.erase(fd); }
@@ -145,10 +137,6 @@ std::string Channel::getTopic() const { return (this->_topic); }
 std::string	Channel::getPassword() const { return (this->password); }
 std::size_t Channel::getLimit() const  { return (this->limit); }
 std::map<std::string, bool>	Channel::getInvited() const { return (this->invited); }
-bool Channel::getHasInvitedList() const { return (this->hasInvitedList); }
-bool Channel::getHasTopicProtection() const { return (this->hasTopicProtection); }
-bool Channel::getHasPassword() const { return (this->hasPassword); }
-bool Channel::getHasLimit() const { return (this->hasLimit); }
 
 
 std::map<int, Client*>::const_iterator Channel::getConnectedEnd() const { return (this->_connected.end()); }

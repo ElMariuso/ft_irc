@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 17:05:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:12:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
         const std::map<std::string, bool>   &invited = channel->getInvited();
         const std::string                   &passwordChannel = channel->getPassword();
 
-        if (channel->getHasLimit() && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
+        if (channel->hasMode('l') && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
             client->sendToFD(server->err_channelisfull_471(clientName, name));
-        else if (channel->getHasInvitedList() && invited.find(clientName) == invited.end()) /* ERR_INVITEONLYCHAN (473) */
+        else if (channel->hasMode('i') && invited.find(clientName) == invited.end()) /* ERR_INVITEONLYCHAN (473) */
             client->sendToFD(server->err_inviteonlychan_473(clientName, name));
-        else if (channel->getHasPassword() && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
+        else if (channel->hasMode('k') && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
             client->sendToFD(server->err_badchannelkey_475(clientName, name));
         else if (channel->findConnectedByName(clientName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
             client->sendToFD(server->err_useronchannel_443(clientName, name));
@@ -321,7 +321,7 @@ void Command::topic(const Server &server, const Client &src, const std::string &
         }
         else /* Change the topic */
         {
-            if (channel->getHasTopicProtection() && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+            if (channel->hasMode('t') && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
                 src.sendToFD(server.err_chanoprivsneeded_482(srcName, destName));
             else /* Change the topic */
             {
@@ -465,7 +465,22 @@ void Command::setModes(const Server &server, const std::string &srcName, const s
         for (std::size_t i = 0; i < modes2.length(); ++i)
         {
             channel->rmMode(modes2[i]);
-            this->rmMode(channel, modes2[i]);
+            switch (modes2[i])
+            {
+                case 'i':
+                    channel->clearInvited();
+                    break ;
+                case 't':
+                    break ;
+                case 'k':
+                    channel->setPassword("");
+                    break ;
+                case 'l':
+                    channel->setLimit(0);
+                    break ;
+                default:
+                    break ;
+            }
         }
         channel->sendToAll(server.rpl_channelmodesis_324(srcName, channelName, "Removing: " + modes2), srcName, true);
     }
@@ -475,10 +490,7 @@ void Command::setModes(const Server &server, const std::string &srcName, const s
         {
             /* Setting modes */
             for (std::size_t i = 0; i < modes2.length(); ++i)
-            {
                 channel->addMode(modes2[i]);
-                this->addMode(channel, modes2[i]);
-            }
             channel->sendToAll(server.rpl_channelmodesis_324(srcName, channelName, "Adding: " + modes2), srcName, true);
         }
         else /* Change restrictions */
@@ -512,51 +524,6 @@ void Command::setModesClient(const Server &server, const std::string &srcName, C
             src->addMode(modes2[i]);
         src->sendToFD(server.rpl_umodeis_221(srcName, modes));
     }
-}
-
-void Command::addMode(Channel *channel, const char &mode) const
-{
-    switch (mode)
-    {
-        case 'i':
-            channel->setHasInvitedList(true);
-            break ;
-        case 't':
-            channel->setHasTopicProtection(true);
-            break ;
-        case 'k':
-            channel->setHasPassword(true);
-            break ;
-        case 'l':
-            channel->setHasLimit(true);
-            break ;
-        default:
-            break ;
-    }   
-}
-
-void Command::rmMode(Channel *channel, const char &mode) const
-{
-    switch (mode)
-    {
-        case 'i':
-            channel->setHasInvitedList(false);
-            channel->clearInvited();
-            break ;
-        case 't':
-            channel->setHasTopicProtection(false);
-            break ;
-        case 'k':
-            channel->setHasPassword(false);
-            channel->setPassword("");
-            break ;
-        case 'l':
-            channel->setHasLimit(false);
-            channel->setLimit(0);
-            break ;
-        default:
-            break ;
-    }   
 }
 
 void Command::changeRestriction(const Server &server, Channel *channel, const Client &src, const char &mode, const std::string &args) const

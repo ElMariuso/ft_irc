@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 22:47:18 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:06:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,6 @@ class Channel
 		void										setLimit(std::size_t limit);
 		void										setInvited(const std::string &name);
 		void										setInvitedList(std::map<std::string, bool> &invited);
-		void										setHasInvitedList(bool hasInvitedList);
-		void										setHasTopicProtection(bool hasTopicProtection);
-		void										setHasPassword(bool hasPassword);
-		void										setHasLimit(bool hasLimit);
 
 		/* Removers */
 		void										removeConnected(const int &fd);
@@ -61,10 +57,6 @@ class Channel
 		std::string									getPassword() const;
 		std::size_t									getLimit() const;
 		std::map<std::string, bool>					getInvited() const;
-		bool										getHasInvitedList() const;
-		bool										getHasTopicProtection() const;
-		bool										getHasPassword() const;
-		bool										getHasLimit() const;
 
 		std::map<int, Client*>::const_iterator		getConnectedEnd() const;
 		std::vector<int>::iterator					getOperatorsEnd();
@@ -89,10 +81,6 @@ class Channel
 		std::string					password;
 		std::size_t					limit;
 		std::map<std::string, bool>	invited;
-		bool						hasInvitedList;
-		bool						hasTopicProtection;
-		bool						hasPassword;
-		bool						hasLimit;
 };
 
 /* all channel modes currently added : 
