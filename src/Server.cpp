@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 14:44:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 14:51:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,29 +232,39 @@ void Server::getMessages(const std::string &message, const int client_socket)
 
 void Server::withoutAuthentification(const Command &command, Client *client)
 {
-    if (command.getType() == QUIT) /* Bye :( */
-        this->handleDisconnection(client->getFd(), command.getArgs().at(0));
-    else if ((command.getType() == PASS) && client->getIsAuthenticated()) /* Already registered */
-        client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
-    else if (command.getType() == PASS) /* Authentification */
+    switch (command.getType())
     {
-        if (this->password == command.getArgs().at(0)) /* Ok */
+        case QUIT: /* Bye :( */
+            this->handleDisconnection(client->getFd(), command.getArgs().at(0));
+            break ;
+        case PASS:
+            if (client->getIsAuthenticated()) /* Already registered */
+                client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
+            else
+            {
+                if (this->password == command.getArgs().at(0)) /* Ok */
+                {
+                    client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname(), this->date));
+                    client->setIsAuthenticated(true);
+                }
+                else /* No */
+                    client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
+            }
+            break ;
+        case PING:
+            client->sendToFD(Message::pong(this->name));
+            break ;
+        case PONG:
         {
-            client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname(), this->date));
-            client->setIsAuthenticated(true);
+            const std::string &arg = command.getArgs().at(0).substr(1);
+            if (arg == this->name)
+                client->setPingCount(0);
+            else
+                client->sendToFD(Message::err_nosuchserver_402(this->name, client->getNickname(), arg));
+            break ;
         }
-        else /* No */
-            client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
-    }
-    else if (command.getType() == PING)
-        client->sendToFD(Message::pong(this->name));
-    else if (command.getType() == PONG)
-    {
-        const std::string &arg = command.getArgs().at(0).substr(1);
-        if (arg == this->name)
-            client->setPingCount(0);
-        else
-            client->sendToFD(Message::err_nosuchserver_402(this->name, client->getNickname(), arg));
+        default:
+            break ;
     }
 }
 
