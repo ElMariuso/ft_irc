@@ -38,9 +38,11 @@ class Client
 		void		setFd(const int fd);
 		void		setIsAuthenticated(bool isAuthenticated);
 		void		setIsConnected(bool isConnected);
+		void		setIsRegistered(bool Registered);
 		void		setNickname(std::string nickName);
 		void		setUsername(std::string userName);
 		void		setHostname();
+		void		setRealname(std::string realName);
 		void		setPingCount(int ping);
 		void		incPingCount();
 		
@@ -48,9 +50,11 @@ class Client
 		int			getFd() const;
 		bool		getIsAuthenticated() const;
 		bool		getIsConnected() const;
+		bool		getIsRegistered() const;
 		std::string	getNickname() const;
 		std::string	getUsername() const;
 		std::string	getHostname() const;
+		std::string	getRealname() const;
 		std::string	getModesList() const;
 		int			getPingCount() const;
         
@@ -58,9 +62,11 @@ class Client
         int         _fd;
 		bool		isAuthenticated;
 		bool		isConnected;
+		bool		isRegistered;
         std::string _nickname;
         std::string _username;
 		std::string	_hostname;
+		std::string	_realname;
 		std::string _modesList;
 		int			pingCount;
 };

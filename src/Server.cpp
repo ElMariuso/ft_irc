@@ -249,6 +249,8 @@ void Server::withoutAuthentification(const Command &command, Client *client)
         else
             client->sendToFD(Message::err_nosuchserver_402(this->name, client->getNickname(), arg));
     }
+    else if (command.getType() == USER)
+        command.user(*this, client);
 }
 
 void Server::withAuthentification(const Command &command, Client *client)

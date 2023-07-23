@@ -295,6 +295,14 @@ std::string Message::err_notregistered_451(const std::string &serverName, const 
     return (stream.str());
 }
 
+std::string Message::err_needmoreparams_461(const std::string &serverName, const std::string &nickname)
+{
+    std::stringstream   stream;
+
+    stream << ":" << serverName << " 461 " << nickname << " :Not enough parameters (user command)" << "\r\n";
+    return (stream.str());
+}
+
 std::string Message::err_alreadyregistered_462(const std::string &serverName, const std::string &nickname)
 {
     std::stringstream   stream;

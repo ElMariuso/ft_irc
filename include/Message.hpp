@@ -55,6 +55,7 @@ class Message
         static std::string  err_notonchannel_442(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_useronchannel_443(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);
         static std::string  err_notregistered_451(const std::string &serverName, const std::string &nickname);
+        static std::string  err_needmoreparams_461(const std::string &serverName, const std::string &nickname);
         static std::string  err_alreadyregistered_462(const std::string &serverName, const std::string &nickname);
         static std::string  err_passwdmismatch_464(const std::string &serverName, const std::string &nickname);
         static std::string  err_channelisfull_471(const std::string &serverName, const std::string &clientNickname, const std::string &channelName);

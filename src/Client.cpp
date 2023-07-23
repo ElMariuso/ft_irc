@@ -22,6 +22,7 @@ Client::Client(const std::string &nickname, const std::string &username, int fd,
 	this->setFd(fd);
 	this->setIsConnected(isConnected);
 	this->setIsAuthenticated(false);
+	this->setIsRegistered(false);
 	this->_hostname = "127.0.0.1";
 	this->setHostname();
 }
@@ -133,6 +134,7 @@ bool Client::isMode(const char &mode) const
 void Client::setFd(const int fd) { this->_fd = fd; }
 void Client::setIsAuthenticated(bool isAuthenticated) { this->isAuthenticated = isAuthenticated; }
 void Client::setIsConnected(bool isConnected) { this->isConnected = isConnected; }
+void Client::setIsRegistered(bool Registered) { this->isRegistered = Registered; }
 void Client::setNickname(std::string nickName) { this->_nickname = nickName; }
 void Client::setUsername(std::string userName) { this->_username = userName; }
 void Client::setHostname()
@@ -174,6 +176,7 @@ void Client::setHostname()
 	Utils::ft_strncpy(clientHost, hostEntry->h_name, NI_MAXHOST);
 	this->_hostname = clientHost;
 }
+void Client::setRealname(std::string realName) {this->_realname = realName}
 void Client::setPingCount(int ping) { this->pingCount = ping; }
 void Client::incPingCount() { this->pingCount++; }
 
@@ -181,8 +184,10 @@ void Client::incPingCount() { this->pingCount++; }
 int Client::getFd() const { return (this->_fd); }
 bool Client::getIsAuthenticated() const { return (this->isAuthenticated); }
 bool Client::getIsConnected() const { return (this->isConnected); }
+bool Client::getIsRegistered() const { return (this->isRegistered); }
 std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
+std::string	Client::getRealname() const { return (this->_realname); }
 std::string	Client::getModesList() const { return (this->_modesList); }
 int	Client::getPingCount() const { return (this->pingCount); }

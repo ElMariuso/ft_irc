@@ -411,6 +411,29 @@ void Command::invite(const Server &server, const Client &src, Client *dest, Chan
     }
 }
 
+void Command::user(const Server &server, Client *client)
+{
+    std::string realname;
+    std::string bitmask;
+    int         bitlen;
+
+    if (this->args.size() < 4)
+        client->sendToFD(Message::err_needmoreparams_461(server.getName(), client.getNickname()));
+    if (client.getIsRegistered() == true)
+        client->sendToFD(Message::err_alreadyregistered_462(server.getName(), client.getNickname()));
+    client.setIsRegistered(true);
+    client.setUsername(this->args.at(0));
+    bitmask = this->args.at(1);
+    bitlen = bitmask.size();
+    if (bitmask[bitlen - 2] == 1)
+        client.addMode('w');
+    if (bitmask[bitlen - 3] == 1)
+        client.addMode('i');
+    for (int i = 3; i < this->args.size(); i++)
+        realname = realname + this->args.at(i);
+    client.setRealname(realname);
+}
+
 /* Nick Utils */
 bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const
 {

@@ -58,6 +58,7 @@ class Command
         void                        topic(const Server &server, const Client &src, const std::string &destName, const std::string &topic) const;
         void                        kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const;
         void                        invite(const Server &server, const Client &src, Client *dest, Channel *channel) const;
+        void                        user(const Server &server, Client *client);
 
         /* Nick Utils */
         bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;
