@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 20:54:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 13:24:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,11 @@ class Server
         void                                            setClients(std::map<int, Client*> clients);
         void                                            setChannel(std::string name, Channel *channel);
         void                                            setChannels(std::map<std::string, Channel*> channels);
+        void                                            setDate(const std::string &date);
         void                                            setLastPingTime(clock_t time);
 
         /* Removers */
-		void                                            removeChannel(Channel *channel);
+	void                                            removeChannel(Channel *channel);
 
         /* Getters */
         int                                             getServerSocket() const;
@@ -66,6 +67,7 @@ class Server
         std::vector<struct pollfd>                      getFds() const;
         std::map<int, Client*>                          getClientsList() const;
         std::map<std::string, Channel*>                 getChannelsList() const;
+        std::string                                     getDate() const;
         clock_t                                         getLastPingTime() const;
 
         std::map<int, Client*>::const_iterator          getClientsListEnd() const;
@@ -77,7 +79,7 @@ class Server
         std::map<int, Client*>::const_iterator          findClientByName(const std::string &name) const;
 
         /* Senders */
-		void                                            sendToAll(const std::string &message);
+        void                                            sendToAll(const std::string &message);
         void                                            sendPingToAll();
 
     private:
@@ -87,6 +89,7 @@ class Server
         std::vector<struct pollfd>      fds;
         std::map<int, Client*>          clientsList;
         std::map<std::string, Channel*> channelsList;
+        std::string                     date;
         clock_t                         lastPingTime;
 };
 
