@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 14:59:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:02:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,6 +204,7 @@ int Server::handleEvent(const int client_socket)
 void Server::getMessages(const std::string &message, const int client_socket)
 {
     Command                                 command(message);
+    Client                                  *client;
     std::string                             arg0 = command.getArgs().at(0);
     std::string                             arg1 = "";
     std::string                             arg2 = "";
@@ -215,7 +216,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
         arg2 = command.getArgs().at(2);
     if (it != this->clientsList.end())
     {
-        Client  *client = it->second;
+        client = it->second;
         
         /* No need to authenticate */
         this->withoutAuthentification(command, client, arg0);
