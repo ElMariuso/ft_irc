@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 17:20:25 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 17:25:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ std::string Message::welcome(const std::string &clientNickname, const std::strin
 /* Commands */
 std::string Message::join(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << clientNickname << "!" << clientUsername << "@" << clientHostname \
         << " JOIN " << channelName << "\r\n";
@@ -53,7 +53,7 @@ std::string Message::join(const std::string &clientNickname, const std::string &
 
 std::string Message::part(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName, const std::string &message) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     if (message.empty()) /* If there is no message */
     {
@@ -70,7 +70,7 @@ std::string Message::part(const std::string &clientNickname, const std::string &
 
 std::string Message::privmsg(const std::string &srcName, const std::string &destName, const std::string &message) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << srcName << " PRIVMSG " \
         << destName << " " << message << "\r\n";
@@ -79,7 +79,7 @@ std::string Message::privmsg(const std::string &srcName, const std::string &dest
 
 std::string Message::nick(const std::string &newNickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 001 " << newNickname \
         << " :You're now known as " << newNickname << "\r\n";
@@ -88,7 +88,7 @@ std::string Message::nick(const std::string &newNickname) const
 
 std::string Message::kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     if (message.empty()) /* If there is no message */
     {
@@ -104,7 +104,7 @@ std::string Message::kick(const std::string &srcName, const std::string &destNam
 
 std::string Message::ping() const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << "PING :" << this->name << "\r\n";
     return (stream.str());
@@ -112,7 +112,7 @@ std::string Message::ping() const
 
 std::string Message::pong() const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << "PONG " << this->name << "\r\n";
     return (stream.str());
@@ -121,7 +121,7 @@ std::string Message::pong() const
 /* RPL */
 std::string Message::rpl_umodeis_221(const std::string &nickname, const std::string &modes) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 221 " << nickname << " " \
         << modes << "\r\n";
@@ -130,7 +130,7 @@ std::string Message::rpl_umodeis_221(const std::string &nickname, const std::str
 
 std::string Message::rpl_channelmodesis_324(const std::string &clientNickname, const std::string &channelName, const std::string &modes) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 324 " << clientNickname << " " \
         << channelName << " " << modes << "\r\n";
@@ -139,7 +139,7 @@ std::string Message::rpl_channelmodesis_324(const std::string &clientNickname, c
 
 std::string Message::rpl_notopic_331(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 331 " << clientNickname << " " << channelName \
         << " :No topic is set" << "\r\n";
@@ -148,7 +148,7 @@ std::string Message::rpl_notopic_331(const std::string &clientNickname, const st
 
 std::string Message::rpl_topic_332(const std::string &clientNickname, const std::string &channelName, const std::string &topic) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 332 " << clientNickname << " " << channelName \
         << " :" << topic << "\r\n";
@@ -157,7 +157,7 @@ std::string Message::rpl_topic_332(const std::string &clientNickname, const std:
 
 std::string Message::rpl_inviting_341(const std::string &srcNickname, const std::string &channelName, const std::string &destNickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 341 " << srcNickname << " " << channelName << " " << destNickname << "\r\n";
     return (stream.str());
@@ -165,7 +165,7 @@ std::string Message::rpl_inviting_341(const std::string &srcNickname, const std:
 
 std::string Message::rpl_namreplay_353(const std::string &clientNickname, const std::string &channelName, const Channel &channel) const
 {
-    std::stringstream               stream;
+    std::ostringstream              stream;
     char                            prefix;
     std::string                     userListStr;
 
@@ -192,7 +192,7 @@ std::string Message::rpl_namreplay_353(const std::string &clientNickname, const 
 
 std::string Message::rpl_endofnames_366(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 366 " << clientNickname << " " << channelName \
         << " :End of NAMES list" << "\r\n";
@@ -202,7 +202,7 @@ std::string Message::rpl_endofnames_366(const std::string &clientNickname, const
 /* Errors */
 std::string Message::err_nosuchnick_401(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 401 " << nickname \
         << " :No such nick/channel" << "\r\n";
@@ -211,7 +211,7 @@ std::string Message::err_nosuchnick_401(const std::string &nickname) const
 
 std::string Message::err_nosuchserver_402(const std::string &nickname, const std::string &destName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 402 " << nickname << " " \
         << destName << " :No such server" << "\r\n";
@@ -220,7 +220,7 @@ std::string Message::err_nosuchserver_402(const std::string &nickname, const std
 
 std::string Message::err_nosuchchannel_403(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 403 " << clientNickname << " " << channelName \
         << " :No such channel" << "\r\n";
@@ -229,7 +229,7 @@ std::string Message::err_nosuchchannel_403(const std::string &clientNickname, co
 
 std::string Message::err_cannotsendtochan_404(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
     
     stream << ":" << this->name << " 404 " << nickname \
         << " :Cannot send to channel" << "\r\n";
@@ -238,7 +238,7 @@ std::string Message::err_cannotsendtochan_404(const std::string &nickname) const
 
 std::string Message::err_nonicknamegiven_431() const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 431 *" \
         << " :No nickname given" << "\r\n";
@@ -247,7 +247,7 @@ std::string Message::err_nonicknamegiven_431() const
 
 std::string Message::err_erroneusnickname_432(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 432 * " << nickname \
         << " :Erroneous nickname" << "\r\n";
@@ -256,7 +256,7 @@ std::string Message::err_erroneusnickname_432(const std::string &nickname) const
 
 std::string Message::err_nicknameinuse_433(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 433 * " << nickname \
         << " :Nickname is already in use" << "\r\n";
@@ -265,7 +265,7 @@ std::string Message::err_nicknameinuse_433(const std::string &nickname) const
 
 std::string Message::err_usernotinchannel_441(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 441 " << clientNickname << " " << channelName \
         << " :They aren't on that channel" << "\r\n";
@@ -274,7 +274,7 @@ std::string Message::err_usernotinchannel_441(const std::string &clientNickname,
 
 std::string Message::err_notonchannel_442(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 442 " << clientNickname << " " << channelName \
         << " :You're not on that channel" << "\r\n";
@@ -283,7 +283,7 @@ std::string Message::err_notonchannel_442(const std::string &clientNickname, con
 
 std::string Message::err_useronchannel_443(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 443 " << clientNickname << " " << channelName \
         << " :is already on channel" << "\r\n";
@@ -292,7 +292,7 @@ std::string Message::err_useronchannel_443(const std::string &clientNickname, co
 
 std::string Message::err_notregistered_451(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 451 " << nickname << " :You have not registered" << "\r\n";
     return (stream.str());
@@ -300,7 +300,7 @@ std::string Message::err_notregistered_451(const std::string &nickname) const
 
 std::string Message::err_needmoreparams_461(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 461 " << nickname << " :Not enough parameters (user command)" << "\r\n";
     return (stream.str());
@@ -308,7 +308,7 @@ std::string Message::err_needmoreparams_461(const std::string &nickname) const
 
 std::string Message::err_alreadyregistered_462(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream   stream;
 
     stream << ":" << this->name << " 462 " << nickname << " :Unauthorized command (already registered)" << "\r\n";
     return (stream.str());
@@ -316,7 +316,7 @@ std::string Message::err_alreadyregistered_462(const std::string &nickname) cons
 
 std::string Message::err_passwdmismatch_464(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 464 " << nickname << " :Password incorrect" << "\r\n";
     return (stream.str());
@@ -324,7 +324,7 @@ std::string Message::err_passwdmismatch_464(const std::string &nickname) const
 
 std::string Message::err_channelisfull_471(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 471 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+l) - Channel user limit reached" << "\r\n";
@@ -333,7 +333,7 @@ std::string Message::err_channelisfull_471(const std::string &clientNickname, co
 
 std::string Message::err_inviteonlychan_473(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 473 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+i) - Invite only" << "\r\n";
@@ -342,7 +342,7 @@ std::string Message::err_inviteonlychan_473(const std::string &clientNickname, c
 
 std::string Message::err_badchannelkey_475(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 475 " << clientNickname << " " << channelName \
         << " :Cannot join channel(+k) - Bad channel key" << "\r\n";
@@ -351,7 +351,7 @@ std::string Message::err_badchannelkey_475(const std::string &clientNickname, co
 
 std::string Message::err_chanoprivsneeded_482(const std::string &clientNickname, const std::string &channelName) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 482 " << clientNickname << " " << channelName \
         << " :You're not channel operator" << "\r\n";
@@ -360,7 +360,7 @@ std::string Message::err_chanoprivsneeded_482(const std::string &clientNickname,
 
 std::string Message::err_umodeunknowflag_501(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 501 " << nickname \
         << " :Unknown MODE flag" << "\r\n";
@@ -369,7 +369,7 @@ std::string Message::err_umodeunknowflag_501(const std::string &nickname) const
 
 std::string Message::err_usersdontmatch_502(const std::string &nickname) const
 {
-    std::stringstream   stream;
+    std::ostringstream  stream;
 
     stream << ":" << this->name << " 502 " << nickname \
         << " :Cannot change mode for other users" << "\r\n";
