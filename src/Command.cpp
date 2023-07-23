@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 21:39:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 21:46:02 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,25 +127,18 @@ void Command::part(Server *server, const Client &client, Channel *channel, const
 
 void Command::privmsg(const Server &server, const Client &src, const std::string &destName, const std::string &message) const
 {
+    Channel             *channel;
+    Client              *client;
     /* Used for messages */
     const std::string   &srcName = src.getNickname();
     
     if (destName[0] == '#')
     {
-        Channel *channel;
-
         /* Check if the channel exists */
         channel = server.findChannel(destName);
         if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
-        {
             src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
-            return ;
-        }
-
-        /* Get the connected list */
-        const std::map<int, Client*>    &connected = channel->getConnected();
-        
-        if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+        else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
             src.sendToFD(server.err_notonchannel_442(srcName, destName));
         else /* PRIVMSG */
             channel->sendToAll(server.privmsg(srcName, destName, message), srcName, false);
@@ -154,16 +147,15 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
     {
         const std::map<int, Client*>            &clients = server.getClientsList();
         std::map<int, Client*>::const_iterator  it = server.findClientByName(destName);
-        Client                                  *client;
 
         /* Check if the user exists */
         if (it == clients.end()) /* ERR_NOSUCHNICK (401) */
-        {
             src.sendToFD(server.err_nosuchnick_401(destName));
-            return ;
+        else
+        {
+            client = it->second;
+            client->sendToFD(server.privmsg(srcName, destName, message));
         }
-        client = it->second;
-        client->sendToFD(server.privmsg(srcName, destName, message));
     }
 }
 
