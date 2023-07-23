@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/22 00:53:06 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 20:52:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ Client::Client(const std::string &nickname, const std::string &username, int fd,
 	this->setIsAuthenticated(false);
 	this->_hostname = "127.0.0.1";
 	this->setHostname();
-	this->setTimeSinceLastPing();
-	this->setLastPingIdentifier("-1");
 }
 
 Client::~Client()
@@ -176,8 +174,8 @@ void Client::setHostname()
 	Utils::ft_strncpy(clientHost, hostEntry->h_name, NI_MAXHOST);
 	this->_hostname = clientHost;
 }
-void	Client::setTimeSinceLastPing() { this->_timeSinceLastPing = clock(); }
-void	Client::setLastPingIdentifier(std::string identifier) { this->_LastPingIdentifier = identifier; }
+void Client::setPingCount(int ping) { this->pingCount = ping; }
+void Client::incPingCount() { this->pingCount++; }
 
 /* getters */
 int Client::getFd() const { return (this->_fd); }
@@ -187,11 +185,4 @@ std::string	Client::getNickname() const { return (this->_nickname); }
 std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
 std::string	Client::getModesList() const { return (this->_modesList); }
-float Client::getTimeSinceLastPing() const
-{
-	clock_t	t;
-
-	t = clock();
-	return ((float)t - (float)this->_timeSinceLastPing);
-}
-std::string	Client::getLastPingIdentifier() const { return (this->_LastPingIdentifier); }
+int	Client::getPingCount() const { return (this->pingCount); }

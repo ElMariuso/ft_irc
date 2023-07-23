@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/22 15:38:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/22 16:30:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -616,9 +616,9 @@ void Command::setType()
     else if (type == "INVITE")
         this->type = INVITE;
     else if (type == "PING")
-	this->type = PING;
+	    this->type = PING;
     else if (type == "PONG")
-	this->type = PONG;
+	    this->type = PONG;
     else
         this->type = UNKNOW;
 }
