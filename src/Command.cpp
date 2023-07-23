@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 17:12:19 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 19:34:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,7 +412,7 @@ void Command::user(const Server &server, Client *client) const
     std::string realname;
     std::string bitmask;
     int         bitlen;
-
+    
     if (this->args.size() < 4)
         client->sendToFD(server.err_needmoreparams_461(client->getNickname()));
     if (client->getIsRegistered())

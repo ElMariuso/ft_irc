@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 19:14:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 19:33:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,6 +280,9 @@ void Server::withAuthentification(const Command &command, Client *client, const 
     {
         case NICK:
             command.nick(*this, client, args[0]);
+            break ;
+        case USER:
+            command.user(*this, client);
             break ;
         case JOIN:
             command.join(this, client, args[0], args[1]);
