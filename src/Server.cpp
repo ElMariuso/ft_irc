@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 14:51:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 14:59:36 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
         Client  *client = it->second;
         
         /* No need to authenticate */
-        this->withoutAuthentification(command, client);
+        this->withoutAuthentification(command, client, arg0);
 
         /* Need to authenticate */
         if (client->getIsConnected() && client->getIsAuthenticated())
@@ -230,25 +230,31 @@ void Server::getMessages(const std::string &message, const int client_socket)
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
 }
 
-void Server::withoutAuthentification(const Command &command, Client *client)
+void Server::withoutAuthentification(const Command &command, Client *client, const std::string &arg0)
 {
+    const std::string   &serverName = this->getName();
+    int                 fd = client->getFd();
+    const std::string   &nickname = client->getNickname();
+    const std::string   &username = client->getUsername();
+    const std::string   &hostname = client->getHostname();
+
     switch (command.getType())
     {
         case QUIT: /* Bye :( */
-            this->handleDisconnection(client->getFd(), command.getArgs().at(0));
+            this->handleDisconnection(fd, arg0);
             break ;
         case PASS:
             if (client->getIsAuthenticated()) /* Already registered */
-                client->sendToFD(Message::err_alreadyregistered_462(this->getName(), client->getNickname()));
+                client->sendToFD(Message::err_alreadyregistered_462(serverName, nickname));
             else
             {
-                if (this->password == command.getArgs().at(0)) /* Ok */
+                if (this->password == arg0) /* Ok */
                 {
-                    client->sendToFD(Message::welcome(this->getName(), client->getNickname(), client->getUsername(), client->getHostname(), this->date));
+                    client->sendToFD(Message::welcome(serverName, nickname, username, hostname, this->date));
                     client->setIsAuthenticated(true);
                 }
                 else /* No */
-                    client->sendToFD(Message::err_passwdmismatch_464(this->getName(), client->getNickname()));
+                    client->sendToFD(Message::err_passwdmismatch_464(serverName, nickname));
             }
             break ;
         case PING:
@@ -256,11 +262,11 @@ void Server::withoutAuthentification(const Command &command, Client *client)
             break ;
         case PONG:
         {
-            const std::string &arg = command.getArgs().at(0).substr(1);
+            const std::string &arg = arg0.substr(1);
             if (arg == this->name)
                 client->setPingCount(0);
             else
-                client->sendToFD(Message::err_nosuchserver_402(this->name, client->getNickname(), arg));
+                client->sendToFD(Message::err_nosuchserver_402(this->name, nickname, arg));
             break ;
         }
         default:

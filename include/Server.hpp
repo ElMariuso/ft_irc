@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 14:41:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/23 14:56:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Server
         /* Commands */
         int                                             handleEvent(const int client_socket);
         void                                            getMessages(const std::string &message, const int client_socket);
-        void                                            withoutAuthentification(const Command &command, Client *client);
+        void                                            withoutAuthentification(const Command &command, Client *client, const std::string &arg0);
         void                                            withAuthentification(const Command &command, Client *client, const std::string &arg0, const std::string &arg1, const std::string &arg2);
 
         /* Logout */
