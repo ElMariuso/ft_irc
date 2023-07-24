@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/24 19:33:08 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 19:34:44 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,14 +222,17 @@ void Server::getMessages(const std::string &message, const int client_socket)
     {
         client = it->second;
 
+        if (command.getType() == QUIT)
+        {
+            this->handleDisconnection(client_socket, args[0]);
+            return ;
+        }
         if (client->getIsConnected())
             this->withoutAuthentification(command, client, args[0]);
         if (client->getIsConnected() && client->getIsAuthenticated())
             this->withAuthentification(command, client, args);
         else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
-        else if (command.getType() == QUIT)
-            this->handleDisconnection(client_socket, args[0]);
     }
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
