@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 17:25:03 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 19:43:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ std::string Message::connection(const std::string &clientNickname) const
     std::ostringstream  stream;
 
     stream << ":" << this->name << " 001 " << clientNickname \
-        << " :Please authenticate to get the rest of the server" << "\r\n";
+        << " :Login successful!" << "\r\n";
     return (stream.str());
 }
 
