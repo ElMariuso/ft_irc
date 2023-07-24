@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/24 19:34:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 19:38:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
         args.push_back("");   
     if (command.getArgs().size() == 1)
         args.push_back("");
-    if (it != this->clientsList.end())
+    if (it != this->clientsList.end() && command.getType() != UNKNOW)
     {
         client = it->second;
 
@@ -231,9 +231,11 @@ void Server::getMessages(const std::string &message, const int client_socket)
             this->withoutAuthentification(command, client, args[0]);
         if (client->getIsConnected() && client->getIsAuthenticated())
             this->withAuthentification(command, client, args);
-        else if (client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != UNKNOW)
+        else if (client->getIsConnected() && !client->getIsAuthenticated())
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
+    else if (command.getType() == UNKNOW)
+        Utils::debug_message("Unknow command");
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
 }
