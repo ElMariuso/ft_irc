@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/24 01:58:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 19:33:08 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,9 +256,6 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
                 else /* No */
                     client->sendToFD(this->err_passwdmismatch_464(nickname));
             }
-            break ;
-        case USER:
-            command.user(*this, client);
             break ;
         case PING:
             client->sendToFD(this->pong());

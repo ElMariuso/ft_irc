@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 21:46:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/24 19:33:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,9 +390,15 @@ void Command::user(const Server &server, Client *client) const
     int         bitlen;
     
     if (this->args.size() < 4)
+    {
         client->sendToFD(server.err_needmoreparams_461(client->getNickname()));
+        return ;
+    }
     if (client->getIsRegistered())
+    {
         client->sendToFD(server.err_alreadyregistered_462(client->getNickname()));
+        return ;
+    }
     client->setIsRegistered(true);
     client->setUsername(this->args.at(0));
     bitmask = this->args.at(1);
