@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/24 19:38:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/25 19:05:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int Server::processServer()
     serverPfd.events = POLLIN;
     this->fds.push_back(serverPfd);
     /* Main loop */
-    do
+    while (!Utils::stop(1))
     {
         /* Check last PING */
         clock_t currentTime = clock();
@@ -143,7 +143,7 @@ int Server::processServer()
                 i--; /* Client disconnected */
             }
         }
-    } while (!Utils::stop(1));
+    }
     return (0);
 }
 
