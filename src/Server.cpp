@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:39:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:42:46 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,11 @@ void Server::browseClients(time_t currentTime)
         /* Used for messages */
         const std::string   &username = client->getUsername();
 
+        if (!client)
+        {
+            Utils::error("Can't find client on iteration");
+            continue ;
+        }
         if (it->revents & POLLIN) /* Check if a new message is in waiting */
         {
             Utils::debug_message("Incoming event for " + username);
