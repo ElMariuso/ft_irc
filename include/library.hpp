@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 21:11:22 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:46:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <arpa/inet.h>
+# include <errno.h>
 
 # include <iostream>
 # include <stdexcept>

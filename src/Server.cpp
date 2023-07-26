@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:42:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:49:34 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ void Server::pingSystem(time_t currentTime)
 
 int Server::pollChecking()
 {
-    int ready;
+    int                         ready;
     std::vector<struct pollfd>  fds_vector(this->fds.begin(), this->fds.end());
 
     // Utils::waiting_message("Waiting for events with poll()");
@@ -117,7 +117,13 @@ int Server::pollChecking()
 	if (Utils::stop(1))
         return (1);
     if (ready == -1 && !Utils::stop(1))
+    {
+        if (errno == EINTR)
+            Utils::error_message("poll() interrupted by a signal");
+        else
+            Utils::error_message("Error in poll()");
         return (ready);
+    }
     else if (ready != 0)
         Utils::debug_message("Event detected!");
     return (0);
@@ -156,7 +162,7 @@ void Server::browseClients(time_t currentTime)
 
         if (!client)
         {
-            Utils::error("Can't find client on iteration");
+            Utils::error_message("Can't find client on iteration");
             continue ;
         }
         if (it->revents & POLLIN) /* Check if a new message is in waiting */
@@ -487,10 +493,9 @@ std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() con
 /* Finders */
 Client* Server::findClient(const int &fd) const
 {
-    std::map<int, Client*>              map = this->clientsList;
-    std::map<int, Client*>::iterator    it = map.find(fd);
+    std::map<int, Client*>::const_iterator  it = this->clientsList.find(fd);
     
-    if (it != map.end())
+    if (it != this->clientsList.end())
         return (it->second);
     return (NULL);
 }
