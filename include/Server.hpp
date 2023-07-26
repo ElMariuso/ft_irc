@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/26 23:51:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:54:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ class Server: public Message
         std::map<int, Client*>                          getClientsList() const;
         std::map<std::string, Channel*>                 getChannelsList() const;
         std::string                                     getDate() const;
-
         std::map<int, Client*>::const_iterator          getClientsListEnd() const;
         std::map<std::string, Channel*>::const_iterator getChannelsListEnd() const;
 
