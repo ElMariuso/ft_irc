@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:13:35 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:30:09 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ class Server: public Message
 
         /* Main Process */
         int                                             processServer();
+        int                                             pollChecking();
+        int                                             checkForNewConnection();
         void                                            browseClients(time_t currentTime);
 
         /* New connection */

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:21:36 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:32:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,7 @@ Server::~Server()
 int Server::processServer()
 {
     struct pollfd   serverPfd;
-    int             ready;
-    int             new_socket;
+    int             ret;
 
     /* Initialization of the poll descriptor for the server socket */
     serverPfd.fd = this->serverSocket;
@@ -79,41 +78,63 @@ int Server::processServer()
             Utils::debug_message("No clients connected to the server");
 
         /* Wait for events on sockets */
-        std::vector<struct pollfd>  fds_vector(this->fds.begin(), this->fds.end());
-
-        // Utils::waiting_message("Waiting for events with poll()");
-        ready = poll(fds_vector.data(), fds_vector.size(), 333);
-		if (Utils::stop(1))
-			break ;
-        else if (ready == -1 && !Utils::stop(1))
+        ret = this->pollChecking();
+        if (ret == 1)
+            break ;
+        else if (ret == -1)
         {
             Utils::error_message("Error in poll()!");
-            return (-1);
+            break ;
         }
-        else if (ready != 0)
-            Utils::debug_message("Event detected!");
         
         /* Check if a new connection is in waiting */
-        if (this->fds.begin()->revents & POLLIN)
+        ret = this->checkForNewConnection();
+        if (ret < 0)
         {
-            Utils::debug_message("New connection detected!");
-            new_socket = this->acceptNewConnection();
-            if (new_socket == -1)
-            {
-                Utils::error_message("Error in accept()!");
-                continue ;
-            }
-            this->addNewClient(new_socket);
-            Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
-
-            /* Ask for authentification */
-            Client *client = this->findClient(new_socket);
-            client->sendToFD(this->connection(client->getNickname()));
+            Utils::error_message("Error in accept()!");
+            continue ;
         }
+        
         /* Browse existing clients sockets */
         this->browseClients(currentTime);
     }
     return (0);
+}
+
+int Server::pollChecking()
+{
+    int ready;
+    std::vector<struct pollfd>  fds_vector(this->fds.begin(), this->fds.end());
+
+    // Utils::waiting_message("Waiting for events with poll()");
+    ready = poll(fds_vector.data(), fds_vector.size(), 333);
+	if (Utils::stop(1))
+        return (1);
+    if (ready == -1 && !Utils::stop(1))
+        return (ready);
+    else if (ready != 0)
+        Utils::debug_message("Event detected!");
+    return (0);
+}
+
+int Server::checkForNewConnection()
+{
+    int new_socket;
+    
+    if (this->fds.begin()->revents & POLLIN)
+    {
+        Utils::debug_message("New connection detected!");
+        new_socket = this->acceptNewConnection();
+        if (new_socket == -1)
+            return (new_socket);
+        this->addNewClient(new_socket);
+        Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
+
+        /* Ask for authentification */
+        Client *client = this->findClient(new_socket);
+        client->sendToFD(this->connection(client->getNickname()));
+    }
+    return (new_socket);
 }
 
 void Server::browseClients(time_t currentTime)
