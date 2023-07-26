@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 21:12:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 21:39:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ class Server: public Message
         void                                            setChannel(std::string name, Channel *channel);
         void                                            setChannels(std::map<std::string, Channel*> channels);
         void                                            setDate(const std::string &date);
-        void                                            setLastPingTime(clock_t time);
 
         /* Removers */
 	    void                                            removeChannel(Channel *channel);
@@ -66,7 +65,6 @@ class Server: public Message
         std::map<int, Client*>                          getClientsList() const;
         std::map<std::string, Channel*>                 getChannelsList() const;
         std::string                                     getDate() const;
-        clock_t                                         getLastPingTime() const;
 
         std::map<int, Client*>::const_iterator          getClientsListEnd() const;
         std::map<std::string, Channel*>::const_iterator getChannelsListEnd() const;
@@ -78,7 +76,6 @@ class Server: public Message
 
         /* Senders */
         void                                            sendToAll(const std::string &message);
-        void                                            sendPingToAll();
 
     private:
         int                             serverSocket;
@@ -87,7 +84,6 @@ class Server: public Message
         std::map<int, Client*>          clientsList;
         std::map<std::string, Channel*> channelsList;
         std::string                     date;
-        clock_t                         lastPingTime;
 };
 
 #endif

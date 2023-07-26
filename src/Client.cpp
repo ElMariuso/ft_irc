@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/24 00:56:06 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 21:53:42 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ Client::Client(const std::string &nickname, const std::string &username, int fd,
 	this->setIsRegistered(false);
 	this->_hostname = "127.0.0.1";
 	this->setHostname();
+	this->setLastActivityTime(time(NULL));
+	this->setLastPingTime(time(NULL));
 }
 
 Client::~Client()
@@ -182,8 +184,8 @@ void Client::setHostname()
 	this->_hostname = clientHost;
 }
 void Client::setRealname(std::string realName) {this->_realname = realName; }
-void Client::setPingCount(int ping) { this->pingCount = ping; }
-void Client::incPingCount() { this->pingCount++; }
+void Client::setLastActivityTime(time_t time) { this->lastActivityTime = time; }
+void Client::setLastPingTime(time_t time) { this->lastPingTime = time; }
 
 /* getters */
 int Client::getFd() const { return (this->_fd); }
@@ -195,4 +197,5 @@ std::string	Client::getUsername() const { return (this->_username); }
 std::string	Client::getHostname() const { return (this->_hostname); } 
 std::string	Client::getRealname() const { return (this->_realname); }
 std::string	Client::getModesList() const { return (this->_modesList); }
-int	Client::getPingCount() const { return (this->pingCount); }
+time_t Client::getLastActivityTime() const { return (this->lastActivityTime); }
+time_t Client::getLastPingTime() const { return (this->lastPingTime); };

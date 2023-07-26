@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 21:27:07 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:07:58 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ Server::Server(const std::string &port_str, const std::string &password, const s
     this->password = password;
 
     /* Start server processing */
-    this->setLastPingTime(clock());
     ret = this->processServer();
     if (ret < 0)
         throw (std::runtime_error("Problem during running the server!"));
@@ -68,20 +67,17 @@ int Server::processServer()
     while (!Utils::stop(1))
     {
         /* Check last PING */
-        clock_t currentTime = clock();
-        double elapsedTime = static_cast<double>(currentTime - lastPingTime) / CLOCKS_PER_SEC;
-        double elapsedTimeMilliseconds = elapsedTime * 1000;
-        if (elapsedTimeMilliseconds >= 12.000) /* Send PING to all connected clients - Latence of 7 seconds on the real time */
+        time_t  currentTime = time(NULL);
+        if (!this->clientsList.empty()) /* Send PING to all connected clients */
         {
-            if (!this->clientsList.empty())
+            for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
             {
-                this->sendToAll(this->ping());
-                this->sendPingToAll();
+                if (it->second->getLastActivityTime() + 120 < currentTime)
+                    it->second->sendToFD(this->ping());
             }
-            else
-                Utils::debug_message("No clients connected to the server");
-            lastPingTime = currentTime;
         }
+        else
+            Utils::debug_message("No clients connected to the server");
 
         /* Wait for events on sockets */
         std::vector<struct pollfd>  fds_vector(this->fds.begin(), this->fds.end());
@@ -125,20 +121,24 @@ int Server::processServer()
                 Utils::debug_message("Incoming event on client socket: " + Utils::intToString(client_socket));
                 if (this->handleEvent(client_socket) == 0)
                 {
-                    Utils::debug_message("Client disconnected on event: " + Utils::intToString(client_socket));
+                    Utils::debug_message(Utils::intToString(client_socket) + " leaving on POLLIN");
                     this->handleDisconnection(client_socket, "leaving");
-                
-                    /* Remove from fds */
                     this->fds.erase(it);
                     continue ;
                 }
             }
-	        if ((it->revents & (POLLHUP | POLLERR | POLLNVAL)) || this->clientsList.find(client_socket)->second->getPingCount() == 4) /* Check for logout */
+	        if ((it->revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
             {
-                Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
+                Utils::debug_message(Utils::intToString(client_socket) + " leaving on POLLHUP | POLLERR | POLLNVAL");
                 this->handleDisconnection(client_socket, "leaving");
-                
-                /* Remove from fds */
+                it = this->fds.erase(it);
+                continue ;
+            }
+            /* Time out */
+            Client  *client = this->findClient(it->fd);
+            if ((client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime))
+            {
+                this->handleDisconnection(client_socket, " timed out");
                 it = this->fds.erase(it);
                 continue ;
             }
@@ -196,7 +196,7 @@ int Server::handleEvent(const int client_socket)
         }
         return (ret);
     }
-
+    
     /* Processing of data received from the client */
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
@@ -214,7 +214,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
     Client                                  *client;
     std::vector<std::string>                args = command.getArgs();
     std::map<int, Client*>::const_iterator  it = this->clientsList.find(client_socket);
-
+    
     if (command.getArgs().size() <= 2)
         args.push_back("");   
     if (command.getArgs().size() == 1)
@@ -222,6 +222,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
     if (it != this->clientsList.end() && command.getType() != UNKNOW)
     {
         client = it->second;
+        client->setLastActivityTime(time(NULL));
 
         if (command.getType() == QUIT)
         {
@@ -270,7 +271,7 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
         {
             const std::string &arg = arg0.substr(1);
             if (arg == this->name)
-                client->setPingCount(0);
+                client->setLastPingTime(time(NULL));
             else
                 client->sendToFD(this->err_nosuchserver_402(client->getNickname(), arg));
             break ;
@@ -431,7 +432,6 @@ void Server::setClients(std::map<int, Client*> clients) { this->clientsList = cl
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
 void Server::setDate(const std::string &date) { this->date = date; }
-void Server::setLastPingTime(clock_t time) { this->lastPingTime = time; }
 
 /* Removers */
 void Server::removeChannel(Channel *channel)
@@ -447,7 +447,6 @@ std::list<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
 std::string Server::getDate() const { return (this->date); }
-clock_t Server::getLastPingTime() const { return (this->lastPingTime); };
 
 std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
 std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }
@@ -494,17 +493,4 @@ void Server::sendToAll(const std::string &message)
 
 		client.sendToFD(message);
 	}
-}
-
-
-void Server::sendPingToAll()
-{
-    const std::map<int, Client*>	&clients = this->clientsList;
-    
-	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
-	{
-		Client *client = it->second;
-
-		client->incPingCount();
-	} 
 }
