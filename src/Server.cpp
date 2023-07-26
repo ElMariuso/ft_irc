@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:23:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:26:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -438,16 +438,24 @@ int Server::createServerSocket(const int port)
     optValSize = sizeof(optVal);
     /* Creating socket server */
     this->serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&optVal, optValSize) == -1)
-    {
-        Utils::error_message("Failed to create server socket options");
-        return (-1);
-    }
-	fcntl(this->serverSocket, F_SETFL, O_NONBLOCK);
     if (this->serverSocket == -1)
     {
         Utils::error_message("Failed to create server socket");
+        return (-1);
+    }
+    
+    if (setsockopt(this->serverSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&optVal, optValSize) == -1)
+    {
+        close(this->serverSocket);
+        Utils::error_message("Failed to create server socket options");
         return (-2);
+    }
+
+	if (fcntl(this->serverSocket, F_SETFL, O_NONBLOCK) == -1)
+    {
+        close(this->serverSocket);
+        Utils::error_message("Failed to set server socket to non-blocking");
+        return (-3);
     }
 
     addr.sin_family = AF_INET;
@@ -459,7 +467,7 @@ int Server::createServerSocket(const int port)
     {
         close(this->serverSocket);
         Utils::error_message("Failed to bind server socket on port: " + Utils::intToString(port));
-        return (-3);
+        return (-4);
     }
 
     /* Put the server socket on listen */
@@ -467,7 +475,7 @@ int Server::createServerSocket(const int port)
     {
         close(this->serverSocket);
         Utils::error_message("Failed to listen on server socket");
-        return (-4);
+        return (-5);
     }
     Utils::debug_message("Server socket created and listening on port");
     return (0);
