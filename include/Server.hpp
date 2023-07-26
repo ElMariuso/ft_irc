@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/26 23:55:24 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:58:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ class Server: public Message
         * @return std::vector<std::string> Vector of at least 3 elements containing command arguments.
         */
 
-        void                                            withoutAuthentification(const Command &command, Client *client, const std::string &arg0);
-        void                                            withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args);
+        void                                            withoutAuthentication(const Command &command, Client *client, const std::string &arg0);
+        void                                            withAuthentication(const Command &command, Client *client, const std::vector<std::string> &args);
 
         /* Logout */
         void                                            handleDisconnection(const int client_socket, const std::string &message);

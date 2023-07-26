@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:53:43 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:58:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,9 +289,9 @@ void Server::getMessages(const std::string &message, const int client_socket)
             return ;
         }
         if (client->getIsConnected()) /* Process commands that don't require authentication */
-            this->withoutAuthentification(command, client, args[0]);
+            this->withoutAuthentication(command, client, args[0]);
         if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
-            this->withAuthentification(command, client, args);
+            this->withAuthentication(command, client, args);
         else if (client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
@@ -311,7 +311,7 @@ std::vector<std::string> Server::setArgsCommands(const Command &command)
     return (ret);
 }
 
-void Server::withoutAuthentification(const Command &command, Client *client, const std::string &arg0)
+void Server::withoutAuthentication(const Command &command, Client *client, const std::string &arg0)
 {
     const std::string   &nickname = client->getNickname();
     const std::string   &username = client->getUsername();
@@ -350,7 +350,7 @@ void Server::withoutAuthentification(const Command &command, Client *client, con
     }
 }
 
-void Server::withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args)
+void Server::withAuthentication(const Command &command, Client *client, const std::vector<std::string> &args)
 {
     switch (command.getType())
     {
