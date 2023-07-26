@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:32:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:36:33 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,7 @@ Server::~Server()
 
     /* Remove channels list */
     for (std::map<std::string, Channel*>::iterator it = this->channelsList.begin(); it != this->channelsList.end(); ++it)
-    {
         delete it->second;
-    }
     this->channelsList.clear();
 
     /* Close server Socket */
@@ -64,18 +62,10 @@ int Server::processServer()
     /* Main loop */
     while (!Utils::stop(1))
     {
-        /* PING system */
         time_t  currentTime = time(NULL);
-        if (!this->clientsList.empty()) /* Send PING to all connected clients */
-        {
-            for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
-            {
-                if (it->second->getLastActivityTime() + 120 < currentTime)
-                    it->second->sendToFD(this->ping());
-            }
-        }
-        else
-            Utils::debug_message("No clients connected to the server");
+        
+        /* PING system */
+        this->pingSystem(currentTime);
 
         /* Wait for events on sockets */
         ret = this->pollChecking();
@@ -99,6 +89,20 @@ int Server::processServer()
         this->browseClients(currentTime);
     }
     return (0);
+}
+
+void Server::pingSystem(time_t currentTime)
+{
+    if (!this->clientsList.empty()) /* Send PING to all connected clients */
+    {
+        for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
+        {
+            if (it->second->getLastActivityTime() + 120 < currentTime)
+                it->second->sendToFD(this->ping());
+        }
+    }
+    else
+        Utils::debug_message("No clients connected to the server");
 }
 
 int Server::pollChecking()
