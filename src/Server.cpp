@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 00:04:49 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 01:24:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,10 +118,9 @@ void Server::pingSystem(time_t currentTime)
 int Server::pollChecking()
 {
     int                         ready;
-    std::vector<struct pollfd>  fds_vector(this->fds.begin(), this->fds.end());
 
     // Utils::waiting_message("Waiting for events with poll()");
-    ready = poll(fds_vector.data(), fds_vector.size(), 333);
+    ready = poll(this->fds.data(), this->fds.size(), 333);
 	if (Utils::stop(1))
         return (1);
     if (ready == -1 && !Utils::stop(1))
@@ -143,7 +142,7 @@ int Server::checkForNewConnection()
     int     new_socket = 0;
     Client  *client;
     
-    if (this->fds.begin()->revents & POLLIN)
+    if (this->fds[0].revents & POLLIN)
     {
         Utils::debug_message("New connection detected!");
         new_socket = this->acceptNewConnection();
@@ -164,7 +163,7 @@ void Server::browseClients(time_t currentTime)
 {
     int ret = 1;
     
-    for (std::list<struct pollfd>::iterator it = ++this->fds.begin(); it != this->fds.end();)
+    for (std::vector<struct pollfd>::iterator it = ++this->fds.begin(); it != this->fds.end();)
     {
         Client              *client = this->findClient(it->fd);
 
@@ -183,7 +182,7 @@ void Server::browseClients(time_t currentTime)
             Utils::debug_message("Incoming event for " + username);
             ret = this->handleEvent(it->fd);
         }
-        if (ret <= 0 || (it->revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
+        if (ret < 0 || (it->revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
         {
             Utils::debug_message(username + " leaving on revents");
             this->handleDisconnection(it->fd, "leaving");
@@ -248,6 +247,7 @@ int Server::handleEvent(const int client_socket)
     ssize_t		                ret;
     char		                buffer[BUFFER_SIZE + 1];
     std::string                 msg;
+    std::string	                debug;
     std::vector<std::string>    commands;
     
     ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
@@ -261,12 +261,15 @@ int Server::handleEvent(const int client_socket)
     /* Processing of data received from the client */
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
-    Utils::debug_message(Utils::intToString(client_socket) + " send a message - " + msg);
+    debug = msg;
+    if (msg.size() >= 2 && msg.substr(msg.size() - 2) == "\r\n")
+		debug.erase(msg.size() - 2);
+    Utils::debug_message(Utils::intToString(client_socket) + " send a message - " + debug);
 
     commands = this->splitCommands(msg, '\n');
     for (std::size_t i = 0; i != commands.size(); ++i)
         this->getMessages(commands[i], client_socket);
-    return (0);
+    return (ret);
 }
 
 void Server::getMessages(const std::string &message, const int client_socket)
@@ -288,10 +291,10 @@ void Server::getMessages(const std::string &message, const int client_socket)
         }
         if (client->getIsConnected()) /* Process commands that don't require authentication */
             this->withoutAuthentication(command, client, args[0]);
-        if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
-            this->withAuthentication(command, client, args);
-        else if (client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
-            client->sendToFD(this->err_notregistered_451(client->getNickname()));
+        // if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
+        //     this->withAuthentication(command, client, args);
+        // else if (client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
+        //     client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
     else if (command.getType() == UNKNOW) /* If the command type is unknown */
         Utils::debug_message("Unknow command");
@@ -500,7 +503,7 @@ std::vector<std::string> Server::splitCommands(const std::string &message, const
 void Server::setServerSocket(int serverSocket) { this->serverSocket = serverSocket; }
 void Server::setPassword(std::string password) { this->password = password; }
 void Server::setFd(struct pollfd fd) { this->fds.push_back(fd); }
-void Server::setFds(std::list<struct pollfd> fds) { this->fds = fds; }
+void Server::setFds(std::vector<struct pollfd> fds) { this->fds = fds; }
 void Server::setClient(const int &fd, Client *client) { this->clientsList.insert(std::make_pair(fd, client)); }
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
@@ -517,11 +520,10 @@ void Server::removeChannel(Channel *channel)
 /* Getters */
 int Server::getServerSocket() const { return (this->serverSocket); }
 std::string Server::getPassword() const { return (this->password); }
-std::list<struct pollfd> Server::getFds() const { return (this->fds); }
+std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
 std::string Server::getDate() const { return (this->date); }
-
 std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
 std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }
 
