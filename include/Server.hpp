@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/26 23:34:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:35:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,16 @@ class Server: public Message
         std::vector<std::string>                        splitCommands(const std::string &message, const char delimiter);
 
         /* Setters */
+        /**
+        * Creates a server socket and binds it to the specified port. 
+        *
+        * @param port The port to which the server socket should be bound.
+        * @return 0 if successful, or one of the following error codes:
+        *     -1 if the creation of the server socket options failed
+        *     -2 if the server socket creation failed
+        *     -3 if binding the server socket to the port failed
+        *     -4 if listening on the server socket failed
+        */
         void                                            setServerSocket(int serverSocket);
         void                                            setPassword(std::string password);
         void                                            setFd(struct pollfd fd);
