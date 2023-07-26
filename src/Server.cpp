@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:49:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:50:05 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -502,10 +502,9 @@ Client* Server::findClient(const int &fd) const
 
 Channel* Server::findChannel(const std::string &name) const
 {
-    const std::map<std::string, Channel*>           &map = this->channelsList;
-    std::map<std::string, Channel*>::const_iterator it = map.find(name);
+    std::map<std::string, Channel*>::const_iterator it = this->channelsList.find(name);
     
-    if (it != map.end())
+    if (it != this->channelsList.end())
         return (it->second);
     return (NULL);
 }
