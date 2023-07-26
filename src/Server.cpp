@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:50:05 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:54:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,8 @@ int Server::pollChecking()
         return (1);
     if (ready == -1 && !Utils::stop(1))
     {
-        if (errno == EINTR)
+        int savedErrno = errno;
+        if (savedErrno == EINTR)
             Utils::error_message("poll() interrupted by a signal");
         else
             Utils::error_message("Error in poll()");
@@ -131,7 +132,7 @@ int Server::pollChecking()
 
 int Server::checkForNewConnection()
 {
-    int new_socket;
+    int new_socket = 0;
     
     if (this->fds.begin()->revents & POLLIN)
     {
@@ -157,14 +158,16 @@ void Server::browseClients(time_t currentTime)
     {
         Client              *client = this->findClient(it->fd);
 
-        /* Used for messages */
-        const std::string   &username = client->getUsername();
-
         if (!client)
         {
             Utils::error_message("Can't find client on iteration");
+            it = this->fds.erase(it);
             continue ;
         }
+
+        /* Used for messages */
+        const std::string   &username = client->getUsername();
+
         if (it->revents & POLLIN) /* Check if a new message is in waiting */
         {
             Utils::debug_message("Incoming event for " + username);
@@ -175,6 +178,7 @@ void Server::browseClients(time_t currentTime)
             Utils::debug_message(username + " leaving on revents");
             this->handleDisconnection(it->fd, "leaving");
             it = this->fds.erase(it);
+            ret = 1;
             continue ;
         }
         else if ((client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime)) /* Time out */
