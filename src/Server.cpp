@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:08:09 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:10:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,8 +226,8 @@ Client* Server::addNewClient(const int client_socket)
     Client          *new_client;
 
     /* Add new client to the list */
-    std::string nickname = "Guest" + Utils::intToString(client_socket);
-    std::string username = "User" + Utils::intToString(client_socket);
+    std::string nickname = "ft_Guest" + Utils::intToString(client_socket);
+    std::string username = "ft_User" + Utils::intToString(client_socket);
 
     try
     {
