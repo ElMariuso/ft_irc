@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:10:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:16:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,28 +251,24 @@ int Server::handleEvent(const int client_socket)
     char		                buffer[BUFFER_SIZE + 1];
     std::string                 msg;
     std::vector<std::string>    commands;
-
-    msg.clear();
+    
     ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
     if (ret <= 0)
     {
         if (ret < 0)
-        {
             Utils::error_message("Error in recv() on client socket: " + Utils::intToString(client_socket));
-            return (ret);
-        }
-        return (ret);
+        return (-1);
     }
     
     /* Processing of data received from the client */
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
-    Utils::debug_message(Utils::intToString(client_socket) + " send a message: " + msg);
+    Utils::debug_message(Utils::intToString(client_socket) + " send a message - " + msg);
 
     commands = this->splitCommands(msg, '\n');
     for (std::size_t i = 0; i != commands.size(); ++i)
-        this->getMessages(commands.at(i), client_socket);
-    return (ret);
+        this->getMessages(commands[i], client_socket);
+    return (0);
 }
 
 void Server::getMessages(const std::string &message, const int client_socket)
