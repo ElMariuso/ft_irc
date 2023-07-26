@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:54:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:08:09 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,20 @@ int Server::processServer()
         
         /* Check if a new connection is in waiting */
         ret = this->checkForNewConnection();
-        if (ret < 0)
+        if (ret == -1)
         {
             Utils::error_message("Error in accept()!");
             continue ;
+        }
+        else if (ret == -2)
+        {
+            Utils::error_message("Can't set socket to non-blocking!");
+            break ;
+        }
+        else if (ret == -3)
+        {
+            Utils::error_message("Failed to allocate memory for new client");
+            break ;
         }
         
         /* Browse existing clients sockets */
@@ -132,19 +142,21 @@ int Server::pollChecking()
 
 int Server::checkForNewConnection()
 {
-    int new_socket = 0;
+    int     new_socket = 0;
+    Client  *client;
     
     if (this->fds.begin()->revents & POLLIN)
     {
         Utils::debug_message("New connection detected!");
         new_socket = this->acceptNewConnection();
-        if (new_socket == -1)
+        if (new_socket < 0)
             return (new_socket);
-        this->addNewClient(new_socket);
+        client = this->addNewClient(new_socket);
+        if (!client)
+            return (-3);
         Utils::debug_message("New connection accepted. Client socket: " + Utils::intToString(new_socket));
 
         /* Ask for authentification */
-        Client *client = this->findClient(new_socket);
         client->sendToFD(this->connection(client->getNickname()));
     }
     return (new_socket);
@@ -201,23 +213,35 @@ int Server::acceptNewConnection()
     /* Accept new connection */
     client_addr_len = sizeof(client_addr);
     client_socket = accept(this->serverSocket, (struct sockaddr*)&client_addr, &client_addr_len);
-    fcntl(client_socket, F_SETFL, O_NONBLOCK);
+    if (client_socket == -1)
+        return (client_socket);
+    if (fcntl(client_socket, F_SETFL, O_NONBLOCK) == -1)
+        return (-2);
     return (client_socket);
 }
 
-void Server::addNewClient(const int client_socket)
+Client* Server::addNewClient(const int client_socket)
 {
     struct pollfd   clientPfd;
+    Client          *new_client;
 
     /* Add new client to the list */
     std::string nickname = "Guest" + Utils::intToString(client_socket);
     std::string username = "User" + Utils::intToString(client_socket);
 
-    Client *new_client = new Client(nickname, username, client_socket, true);
-    clientsList.insert(std::make_pair(client_socket, new_client));
-    clientPfd.fd = client_socket;
-    clientPfd.events = POLLIN;
-    this->fds.push_back(clientPfd);
+    try
+    {
+        new_client = new Client(nickname, username, client_socket, true);
+        clientsList.insert(std::make_pair(client_socket, new_client));
+        clientPfd.fd = client_socket;
+        clientPfd.events = POLLIN;
+        this->fds.push_back(clientPfd);
+    }
+    catch (std::bad_alloc &ba)
+    {
+        return (NULL);
+    }
+    return (new_client);
 }
 
 /* Commands */
