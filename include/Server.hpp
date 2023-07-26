@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/26 23:35:31 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:35:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,6 @@ class Server: public Message
         void                                            handleDisconnection(const int client_socket, const std::string &message);
         
         /* Utils */
-        int                                             createServerSocket(const int port);
-        std::vector<std::string>                        splitCommands(const std::string &message, const char delimiter);
-
-        /* Setters */
         /**
         * Creates a server socket and binds it to the specified port. 
         *
@@ -60,6 +56,10 @@ class Server: public Message
         *     -3 if binding the server socket to the port failed
         *     -4 if listening on the server socket failed
         */
+        int                                             createServerSocket(const int port);
+        std::vector<std::string>                        splitCommands(const std::string &message, const char delimiter);
+
+        /* Setters */
         void                                            setServerSocket(int serverSocket);
         void                                            setPassword(std::string password);
         void                                            setFd(struct pollfd fd);
