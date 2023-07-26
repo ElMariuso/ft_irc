@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:16:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:23:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -383,30 +383,29 @@ void Server::withAuthentification(const Command &command, Client *client, const 
 /* Logout */
 void Server::handleDisconnection(const int client_socket, const std::string &message)
 {
-    if (this->clientsList.size() == 0)
-    {
-        Utils::debug_message("No clients connected to the server");
-        return ;
-    }
-    
     /* Manage logout */
     std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
-    Client                              *client = this->findClient(client_socket);
-    int                                 fd;
 
-    if (!client && client->getIsConnected())
+    if (it == this->clientsList.end())
     {
-        fd = client->getFd();
+        Utils::debug_message("Client not found");
+        return ;
+    }
+
+    Client                              *client = it->second;
+    int                                 fd = client->getFd();
+
+    if (client && client->getIsConnected())
+    {
         client->setIsConnected(false);
         
         /* Clean channels */
         for (std::map<std::string, Channel*>::iterator it1 = this->channelsList.begin(); it1 != this->channelsList.end(); ++it1)
         {
-            Channel *channel = it1->second;
-
+            Channel                                 *channel = it1->second;
             const std::map<int, Client*>            &connected = channel->getConnected();
-
             std::map<int, Client*>::const_iterator  it2 = connected.find(client_socket);
+            
             if (it2 != connected.end())
             {
                 Command command;
