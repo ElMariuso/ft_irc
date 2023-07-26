@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:58:20 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 00:04:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,6 @@ void Server::pingSystem(time_t currentTime)
                 it->second->sendToFD(this->ping());
         }
     }
-    else
-        Utils::debug_message("No clients connected to the server");
 }
 
 int Server::pollChecking()
