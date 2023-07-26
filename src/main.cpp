@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 20:43:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/17 23:51:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:40:04 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,10 @@ int main(int argc, char **argv)
 		Utils::stop(0);
 		signal(SIGINT, ctrlcHandler);
         Server  ircserv(argv[1], argv[2], "ft_irc");
+
+        /* Start server processing */
+        if (ircserv.processServer() < 0)
+            throw (std::runtime_error("Problem during running the server!"));
     }
     catch (const std::exception& e)
     {

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:38:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:39:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,6 @@ Server::Server(const std::string &port_str, const std::string &password, const s
     if (ret < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;
-
-    /* Start server processing */
-    ret = this->processServer();
-    if (ret < 0)
-        throw (std::runtime_error("Problem during running the server!"));
 }
 
 Server::~Server()
@@ -53,13 +48,14 @@ Server::~Server()
 int Server::processServer()
 {
     int             ret;
+    time_t          currentTime;
 
     /* Initialization of the poll descriptor for the server socket */
     this->setServerPfd();
     /* Main loop */
     while (!Utils::stop(1))
     {
-        time_t  currentTime = time(NULL);
+        currentTime = time(NULL);
         
         /* PING system */
         this->pingSystem(currentTime);
