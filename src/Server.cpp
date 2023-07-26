@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:07:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:21:36 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ int Server::processServer()
     struct pollfd   serverPfd;
     int             ready;
     int             new_socket;
-    int             client_socket;
 
     /* Initialization of the poll descriptor for the server socket */
     serverPfd.fd = this->serverSocket;
@@ -66,7 +65,7 @@ int Server::processServer()
     /* Main loop */
     while (!Utils::stop(1))
     {
-        /* Check last PING */
+        /* PING system */
         time_t  currentTime = time(NULL);
         if (!this->clientsList.empty()) /* Send PING to all connected clients */
         {
@@ -82,7 +81,7 @@ int Server::processServer()
         /* Wait for events on sockets */
         std::vector<struct pollfd>  fds_vector(this->fds.begin(), this->fds.end());
 
-        Utils::waiting_message("Waiting for events with poll()");
+        // Utils::waiting_message("Waiting for events with poll()");
         ready = poll(fds_vector.data(), fds_vector.size(), 333);
 		if (Utils::stop(1))
 			break ;
@@ -111,41 +110,43 @@ int Server::processServer()
             Client *client = this->findClient(new_socket);
             client->sendToFD(this->connection(client->getNickname()));
         }
-
         /* Browse existing clients sockets */
-        for (std::list<struct pollfd>::iterator it = ++this->fds.begin(); it != this->fds.end();)
-        {
-            client_socket = it->fd;
-            if (it->revents & POLLIN) /* Check if a new message is in waiting */
-            {
-                Utils::debug_message("Incoming event on client socket: " + Utils::intToString(client_socket));
-                if (this->handleEvent(client_socket) == 0)
-                {
-                    Utils::debug_message(Utils::intToString(client_socket) + " leaving on POLLIN");
-                    this->handleDisconnection(client_socket, "leaving");
-                    this->fds.erase(it);
-                    continue ;
-                }
-            }
-	        if ((it->revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
-            {
-                Utils::debug_message(Utils::intToString(client_socket) + " leaving on POLLHUP | POLLERR | POLLNVAL");
-                this->handleDisconnection(client_socket, "leaving");
-                it = this->fds.erase(it);
-                continue ;
-            }
-            /* Time out */
-            Client  *client = this->findClient(it->fd);
-            if ((client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime))
-            {
-                this->handleDisconnection(client_socket, " timed out");
-                it = this->fds.erase(it);
-                continue ;
-            }
-            ++it;
-        }
+        this->browseClients(currentTime);
     }
     return (0);
+}
+
+void Server::browseClients(time_t currentTime)
+{
+    int ret = 1;
+    
+    for (std::list<struct pollfd>::iterator it = ++this->fds.begin(); it != this->fds.end();)
+    {
+        Client              *client = this->findClient(it->fd);
+
+        /* Used for messages */
+        const std::string   &username = client->getUsername();
+
+        if (it->revents & POLLIN) /* Check if a new message is in waiting */
+        {
+            Utils::debug_message("Incoming event for " + username);
+            ret = this->handleEvent(it->fd);
+        }
+        if (ret <= 0 || (it->revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
+        {
+            Utils::debug_message(username + " leaving on revents");
+            this->handleDisconnection(it->fd, "leaving");
+            it = this->fds.erase(it);
+            continue ;
+        }
+        else if ((client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime)) /* Time out */
+        {
+            this->handleDisconnection(it->fd, " timed out");
+            it = this->fds.erase(it);
+            continue ;
+        }
+        ++it;
+    }
 }
 
 /* New connection */
