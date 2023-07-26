@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/25 19:05:58 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 21:27:07 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,20 +84,22 @@ int Server::processServer()
         }
 
         /* Wait for events on sockets */
+        std::vector<struct pollfd>  fds_vector(this->fds.begin(), this->fds.end());
+
         Utils::waiting_message("Waiting for events with poll()");
-        ready = poll(this->fds.data(), this->fds.size(), 333);
+        ready = poll(fds_vector.data(), fds_vector.size(), 333);
 		if (Utils::stop(1))
 			break ;
-        if (ready == -1 && !Utils::stop(1))
+        else if (ready == -1 && !Utils::stop(1))
         {
             Utils::error_message("Error in poll()!");
             return (-1);
         }
-        if (ready != 0)
+        else if (ready != 0)
             Utils::debug_message("Event detected!");
         
         /* Check if a new connection is in waiting */
-        if (this->fds[0].revents & POLLIN)
+        if (this->fds.begin()->revents & POLLIN)
         {
             Utils::debug_message("New connection detected!");
             new_socket = this->acceptNewConnection();
@@ -115,10 +117,10 @@ int Server::processServer()
         }
 
         /* Browse existing clients sockets */
-        for (std::size_t i = 1; i < this->fds.size(); ++i)
+        for (std::list<struct pollfd>::iterator it = ++this->fds.begin(); it != this->fds.end();)
         {
-            client_socket = this->fds[i].fd;
-            if (this->fds[i].revents & POLLIN) /* Check if a new message is in waiting */
+            client_socket = it->fd;
+            if (it->revents & POLLIN) /* Check if a new message is in waiting */
             {
                 Utils::debug_message("Incoming event on client socket: " + Utils::intToString(client_socket));
                 if (this->handleEvent(client_socket) == 0)
@@ -127,21 +129,20 @@ int Server::processServer()
                     this->handleDisconnection(client_socket, "leaving");
                 
                     /* Remove from fds */
-                    this->fds.erase(this->fds.begin() + i);
-
-                    i--; /* Client disconnected */
+                    this->fds.erase(it);
+                    continue ;
                 }
             }
-	        if ((this->fds[i].revents & (POLLHUP | POLLERR | POLLNVAL)) || this->clientsList.find(client_socket)->second->getPingCount() == 4) /* Check for logout */
+	        if ((it->revents & (POLLHUP | POLLERR | POLLNVAL)) || this->clientsList.find(client_socket)->second->getPingCount() == 4) /* Check for logout */
             {
                 Utils::debug_message("Client disconnected on disconnection handling: " + Utils::intToString(client_socket));
                 this->handleDisconnection(client_socket, "leaving");
                 
                 /* Remove from fds */
-                this->fds.erase(this->fds.begin() + i);
-
-                i--; /* Client disconnected */
+                it = this->fds.erase(it);
+                continue ;
             }
+            ++it;
         }
     }
     return (0);
@@ -424,7 +425,7 @@ std::vector<std::string> Server::splitCommands(const std::string &message, const
 void Server::setServerSocket(int serverSocket) { this->serverSocket = serverSocket; }
 void Server::setPassword(std::string password) { this->password = password; }
 void Server::setFd(struct pollfd fd) { this->fds.push_back(fd); }
-void Server::setFds(std::vector<struct pollfd> fds) { this->fds = fds; }
+void Server::setFds(std::list<struct pollfd> fds) { this->fds = fds; }
 void Server::setClient(const int &fd, Client *client) { this->clientsList.insert(std::make_pair(fd, client)); }
 void Server::setClients(std::map<int, Client*> clients) { this->clientsList = clients; }
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
@@ -442,7 +443,7 @@ void Server::removeChannel(Channel *channel)
 /* Getters */
 int Server::getServerSocket() const { return (this->serverSocket); }
 std::string Server::getPassword() const { return (this->password); }
-std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
+std::list<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
 std::string Server::getDate() const { return (this->date); }

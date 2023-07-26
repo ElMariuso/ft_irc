@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:22:05 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 15:55:38 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 21:11:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@
 # include <algorithm>
 
 # include <vector>
+# include <list>
 # include <map>
 # include <string>
 
