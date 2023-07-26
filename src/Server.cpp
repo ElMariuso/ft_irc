@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:36:33 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:38:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,10 @@ Server::~Server()
 /* Main Process */
 int Server::processServer()
 {
-    struct pollfd   serverPfd;
     int             ret;
 
     /* Initialization of the poll descriptor for the server socket */
-    serverPfd.fd = this->serverSocket;
-    serverPfd.events = POLLIN;
-    this->fds.push_back(serverPfd);
+    this->setServerPfd();
     /* Main loop */
     while (!Utils::stop(1))
     {
@@ -89,6 +86,15 @@ int Server::processServer()
         this->browseClients(currentTime);
     }
     return (0);
+}
+
+void Server::setServerPfd()
+{
+    struct pollfd   serverPfd;
+    
+    serverPfd.fd = this->serverSocket;
+    serverPfd.events = POLLIN;
+    this->fds.push_back(serverPfd);
 }
 
 void Server::pingSystem(time_t currentTime)

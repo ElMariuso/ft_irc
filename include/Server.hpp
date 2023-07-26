@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 22:35:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 22:38:08 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class Server: public Message
 
         /* Main Process */
         int                                             processServer();
+        void                                            setServerPfd();
         void                                            pingSystem(time_t currentTime);
         int                                             pollChecking();
         int                                             checkForNewConnection();
