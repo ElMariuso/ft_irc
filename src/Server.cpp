@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:26:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:45:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,13 +275,9 @@ void Server::getMessages(const std::string &message, const int client_socket)
 {
     Command                                 command(message);
     Client                                  *client;
-    std::vector<std::string>                args = command.getArgs();
+    std::vector<std::string>                args = this->setArgsCommands(command);
     std::map<int, Client*>::const_iterator  it = this->clientsList.find(client_socket);
     
-    if (command.getArgs().size() <= 2)
-        args.push_back("");   
-    if (command.getArgs().size() == 1)
-        args.push_back("");
     if (it != this->clientsList.end() && command.getType() != UNKNOW)
     {
         client = it->second;
@@ -303,6 +299,16 @@ void Server::getMessages(const std::string &message, const int client_socket)
         Utils::debug_message("Unknow command");
     else
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
+}
+
+std::vector<std::string> Server::setArgsCommands(const Command &command)
+{
+    std::vector<std::string>    ret;
+
+    ret = command.getArgs();
+    while (ret.size() < 3)
+        ret.push_back("");
+    return (ret);
 }
 
 void Server::withoutAuthentification(const Command &command, Client *client, const std::string &arg0)

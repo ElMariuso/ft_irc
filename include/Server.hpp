@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/26 23:35:56 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:43:04 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Server: public Message
         /* Commands */
         int                                             handleEvent(const int client_socket);
         void                                            getMessages(const std::string &message, const int client_socket);
+        std::vector<std::string>                        setArgsCommands(const Command &command);
         void                                            withoutAuthentification(const Command &command, Client *client, const std::string &arg0);
         void                                            withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args);
 
