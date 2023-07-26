@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/26 23:54:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:55:24 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class Server: public Message
 
         /* Commands */
         int                                             handleEvent(const int client_socket);
+        void                                            getMessages(const std::string &message, const int client_socket);
         /**
         * @brief Handles incoming messages from a client. 
         * 
@@ -48,7 +49,8 @@ class Server: public Message
         * @param message The received message string to be processed.
         * @param client_socket The client socket from which the message was received.
         */
-        void                                            getMessages(const std::string &message, const int client_socket);
+
+        std::vector<std::string>                        setArgsCommands(const Command &command);
         /**
         * @brief Helper function to ensure that a command's argument vector has at least 3 elements.
         * If the given command's arguments are less than 3, the missing arguments are filled with empty strings.
@@ -56,7 +58,7 @@ class Server: public Message
         * @param command The command whose arguments are to be checked.
         * @return std::vector<std::string> Vector of at least 3 elements containing command arguments.
         */
-        std::vector<std::string>                        setArgsCommands(const Command &command);
+
         void                                            withoutAuthentification(const Command &command, Client *client, const std::string &arg0);
         void                                            withAuthentification(const Command &command, Client *client, const std::vector<std::string> &args);
 
@@ -64,6 +66,7 @@ class Server: public Message
         void                                            handleDisconnection(const int client_socket, const std::string &message);
         
         /* Utils */
+        int                                             createServerSocket(const int port);
         /**
         * Creates a server socket and binds it to the specified port. 
         *
@@ -74,7 +77,6 @@ class Server: public Message
         *     -3 if binding the server socket to the port failed
         *     -4 if listening on the server socket failed
         */
-        int                                             createServerSocket(const int port);
         std::vector<std::string>                        splitCommands(const std::string &message, const char delimiter);
 
         /* Setters */
