@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/26 23:45:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/26 23:53:43 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,26 +278,26 @@ void Server::getMessages(const std::string &message, const int client_socket)
     std::vector<std::string>                args = this->setArgsCommands(command);
     std::map<int, Client*>::const_iterator  it = this->clientsList.find(client_socket);
     
-    if (it != this->clientsList.end() && command.getType() != UNKNOW)
+    if (it != this->clientsList.end() && command.getType() != UNKNOW) /* If the client exists and the command type is known */
     {
         client = it->second;
         client->setLastActivityTime(time(NULL));
 
-        if (command.getType() == QUIT)
+        if (command.getType() == QUIT) /* Handling disconnection */
         {
             this->handleDisconnection(client_socket, args[0]);
             return ;
         }
-        if (client->getIsConnected())
+        if (client->getIsConnected()) /* Process commands that don't require authentication */
             this->withoutAuthentification(command, client, args[0]);
-        if (client->getIsConnected() && client->getIsAuthenticated())
+        if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
             this->withAuthentification(command, client, args);
-        else if (client->getIsConnected() && !client->getIsAuthenticated())
+        else if (client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
-    else if (command.getType() == UNKNOW)
+    else if (command.getType() == UNKNOW) /* If the command type is unknown */
         Utils::debug_message("Unknow command");
-    else
+    else /* If the client does not exist */
         Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
 }
 
