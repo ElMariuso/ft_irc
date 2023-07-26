@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 01:24:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 01:40:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,22 +175,22 @@ void Server::browseClients(time_t currentTime)
         }
 
         /* Used for messages */
-        const std::string   &username = client->getUsername();
+        const std::string   &nickname = client->getNickname();
 
-        if (it->revents & POLLIN) /* Check if a new message is in waiting */
+        if (client && (it->revents & POLLIN)) /* Check if a new message is in waiting */
         {
-            Utils::debug_message("Incoming event for " + username);
+            Utils::debug_message("Incoming event for " + nickname);
             ret = this->handleEvent(it->fd);
         }
-        if (ret < 0 || (it->revents & (POLLHUP | POLLERR | POLLNVAL))) /* Check for logout */
+        if (client && (ret < 0 || (it->revents & (POLLHUP | POLLERR | POLLNVAL)))) /* Check for logout */
         {
-            Utils::debug_message(username + " leaving on revents");
+            Utils::debug_message(nickname + " leaving on revents");
             this->handleDisconnection(it->fd, "leaving");
             it = this->fds.erase(it);
             ret = 1;
             continue ;
         }
-        else if ((client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime)) /* Time out */
+        else if (client && (client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime)) /* Time out */
         {
             this->handleDisconnection(it->fd, " timed out");
             it = this->fds.erase(it);
@@ -283,12 +283,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
     {
         client = it->second;
         client->setLastActivityTime(time(NULL));
-
-        if (command.getType() == QUIT) /* Handling disconnection */
-        {
-            this->handleDisconnection(client_socket, args[0]);
-            return ;
-        }
+        
         if (client->getIsConnected()) /* Process commands that don't require authentication */
             this->withoutAuthentication(command, client, args[0]);
         // if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
