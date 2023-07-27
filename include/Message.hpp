@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 03:30:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 04:05:53 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Message
         std::string privmsg(const std::string &srcName, const std::string &destName, const std::string &message) const;
         std::string nick(const std::string &nickname, const std::string &username, const std::string &hostname, const std::string &newNickname) const;
         std::string kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message) const;
-        std::string ping() const;
+        std::string ping(const std::string &name) const;
         std::string pong() const;
 
         /* RPL */

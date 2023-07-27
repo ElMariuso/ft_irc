@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 02:50:39 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 04:06:08 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void Server::pingSystem(time_t currentTime)
         for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
         {
             if (it->second->getLastActivityTime() + 120 < currentTime)
-                it->second->sendToFD(this->ping());
+                it->second->sendToFD(this->ping(this->name));
         }
     }
 }

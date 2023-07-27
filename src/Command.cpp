@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 03:33:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 04:07:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
             if (!channel->hasTopic()) /* RPL_NOTOPIC (331) */
                 stream << server->rpl_notopic_331(clientName, name);
             else /* RPL_TOPIC (332) */
-                stream << server->rpl_topic_332(clientName, name, channel->getTopic());
+                stream << server->rpl_topic_332(clientName, name, channel->getTopic()) << server->rpl_creationtime_329(clientName, name, channel->getDate());
             client->sendToFD(stream.str());
         }
     }
