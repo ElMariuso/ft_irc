@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 13:38:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 13:39:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,16 +282,16 @@ void Server::getMessages(const std::string &message, Client *client)
     {
         client->setLastActivityTime(time(NULL));
         
-        if (command.getType() == QUIT)
+        if (client && command.getType() == QUIT)
         {
             this->handleDisconnection(client, args[0]);
             return ;
         }
-        if (client->getIsConnected()) /* Process commands that don't require authentication */
+        if (client && client->getIsConnected()) /* Process commands that don't require authentication */
             this->withoutAuthentication(command, client, args[0]);
-        if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
+        if (client && client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
             this->withAuthentication(command, client, args);
-        else if (client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
+        else if (client && client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
     else if (command.getType() == UNKNOW) /* If the command type is unknown */
