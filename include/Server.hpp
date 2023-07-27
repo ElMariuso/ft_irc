@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 01:51:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 02:11:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class Server: public Message
         void                                            withAuthentication(const Command &command, Client *client, const std::vector<std::string> &args);
 
         /* Logout */
-        void                                            handleDisconnection(const int client_socket, const std::string &message);
+        void                                            handleDisconnection(Client *client, const std::string &message);
         
         /* Utils */
         int                                             createServerSocket(const int port);

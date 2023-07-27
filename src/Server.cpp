@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 01:51:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 02:14:30 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,14 +185,14 @@ void Server::browseClients(time_t currentTime)
         if (client && (ret < 0 || (it->revents & (POLLHUP | POLLERR | POLLNVAL)))) /* Check for logout */
         {
             Utils::debug_message(nickname + " leaving on revents");
-            this->handleDisconnection(it->fd, "leaving");
+            this->handleDisconnection(client, "leaving");
             it = this->fds.erase(it);
             ret = 1;
             continue ;
         }
         else if (client && (client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime)) /* Time out */
         {
-            this->handleDisconnection(it->fd, " timed out");
+            this->handleDisconnection(client, " timed out");
             it = this->fds.erase(it);
             continue ;
         }
@@ -383,20 +383,11 @@ void Server::withAuthentication(const Command &command, Client *client, const st
 }
 
 /* Logout */
-void Server::handleDisconnection(const int client_socket, const std::string &message)
+void Server::handleDisconnection(Client *client, const std::string &message)
 {
-    /* Manage logout */
-    std::map<int, Client*>::iterator    it = this->clientsList.find(client_socket);
-
-    if (it == this->clientsList.end())
-    {
-        Utils::debug_message("Client not found");
-        return ;
-    }
-
-    Client                              *client = it->second;
-    int                                 fd = client->getFd();
-
+    int fd;
+    
+    fd = client->getFd();
     if (client && client->getIsConnected())
     {
         client->setIsConnected(false);
@@ -406,15 +397,15 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
         {
             Channel                                 *channel = it1->second;
             const std::map<int, Client*>            &connected = channel->getConnected();
-            std::map<int, Client*>::const_iterator  it2 = connected.find(client_socket);
+            std::map<int, Client*>::const_iterator  it2 = connected.find(fd);
             
             if (it2 != connected.end())
             {
                 Command command;
                 const std::string   &channelName = channel->getName();
                 
-                command.part(this, *(it->second), this->findChannel(channelName), channelName, message);
-                channel->rmOp(*it->second);
+                command.part(this, *client, this->findChannel(channelName), channelName, message);
+                channel->rmOp(*client);
             }
             if (this->channelsList.empty())
                 break ;
@@ -423,7 +414,7 @@ void Server::handleDisconnection(const int client_socket, const std::string &mes
         /* Clean clientsList map */
         close(fd);
         delete client;
-        this->clientsList.erase(it);
+        this->clientsList.erase(this->clientsList.find(fd));
         
         Utils::debug_message("Logout done");
     }
