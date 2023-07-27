@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/27 03:31:10 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:42:40 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Channel::Channel(const std::string &name)
 	this->setTopic("");
 	this->setPassword("");
 	this->setLimit(0);
-	this->setDate(Utils::getDate());
+	this->setDate(Utils::getDateUNIX());
 }
 Channel::~Channel() {}
 

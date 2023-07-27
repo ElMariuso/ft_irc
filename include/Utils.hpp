@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:55:29 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 13:23:26 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:42:25 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class Utils
 		static bool			stop(int indicator); // Send 0 to initialise, 1 to get the return and 2 to stop the program
         static char*        ft_strncpy(char* dest, const char* src, size_t n);
         static std::string  getDate();
+        static std::string  getDateUNIX();
         static std::string  displayBox(const std::string &message, int minWidth);
 };
 
