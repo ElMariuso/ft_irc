@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 10:22:37 by bvernimm          #+#    #+#             */
-/*   Updated: 2023/07/23 17:06:46 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:31:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Channel::Channel(const std::string &name)
 	this->setTopic("");
 	this->setPassword("");
 	this->setLimit(0);
+	this->setDate(Utils::getDate());
 }
 Channel::~Channel() {}
 
@@ -124,6 +125,7 @@ void Channel::setPassword(const std::string &password) { this->password = passwo
 void Channel::setLimit(std::size_t limit)  { this->limit = limit; }
 void Channel::setInvited(const std::string &name) { this->invited.insert(std::make_pair(name, true)); }
 void Channel::setInvitedList(std::map<std::string, bool> &invited) { this->invited = invited; }
+void Channel::setDate(const std::string &date) { this->date = date; }
 
 /* Removers */
 void Channel::removeConnected(const int &fd) { this->_connected.erase(fd); }
@@ -137,8 +139,7 @@ std::string Channel::getTopic() const { return (this->_topic); }
 std::string	Channel::getPassword() const { return (this->password); }
 std::size_t Channel::getLimit() const  { return (this->limit); }
 std::map<std::string, bool>	Channel::getInvited() const { return (this->invited); }
-
-
+std::string Channel::getDate() const { return (this->date); }
 std::map<int, Client*>::const_iterator Channel::getConnectedEnd() const { return (this->_connected.end()); }
 std::vector<int>::iterator Channel::getOperatorsEnd() { return (this->_operators.end()); }
 std::map<std::string, bool>::const_iterator	Channel::getInvitedEnd() const { return (this->invited.end()); }

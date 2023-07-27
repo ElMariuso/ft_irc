@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 03:14:04 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:33:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,12 +107,14 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
         server->setChannel(name, channel);
 
         /* Send a message for the new user */
-        const std::string   &msg331 = server->rpl_notopic_331(clientName, name);
-        const std::string   &msg353 = server->rpl_namreplay_353(clientName, name, *channel);
-        const std::string   &msg366 = server->rpl_endofnames_366(clientName, name);
+        std::ostringstream  stream;
+
+        stream << server->join(clientName, clientUser, clientHost, name) << server->rpl_notopic_331(clientName, name) \
+            << server->rpl_namreplay_353(clientName, name, *channel) << server->rpl_endofnames_366(clientName, name) \
+            << server->rpl_creationtime_329(clientName, name, channel->getDate());
 
         /* Send confirmation message */
-        client->sendToFD(server->join(clientName, clientUser, clientHost, name) + msg331 + msg353 + msg366);
+        client->sendToFD(stream.str());
     }
 }
 

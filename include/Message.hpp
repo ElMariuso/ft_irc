@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 03:05:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:30:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class Message
         std::string rpl_list_322(const std::string &nickname, const std::string &channelName, const std::string &topic) const;
         std::string rpl_listend_323(const std::string &nickname) const;
         std::string rpl_channelmodesis_324(const std::string &clientNickname, const std::string &channelName, const std::string &modes) const;
+        std::string rpl_creationtime_329(const std::string &nickname, const std::string &channelName, const std::string &creationdate) const;
         std::string rpl_notopic_331(const std::string &clientNickname, const std::string &channelName) const;
         std::string rpl_topic_332(const std::string &clientNickname, const std::string &channelName, const std::string &topic) const;
         std::string rpl_inviting_341(const std::string &srcNickname, const std::string &channelName, const std::string &destNickname) const;

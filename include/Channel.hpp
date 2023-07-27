@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:24:42 by root              #+#    #+#             */
-/*   Updated: 2023/07/23 17:06:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:24:53 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Channel
 		void										setLimit(std::size_t limit);
 		void										setInvited(const std::string &name);
 		void										setInvitedList(std::map<std::string, bool> &invited);
+		void										setDate(const std::string &date);
 
 		/* Removers */
 		void										removeConnected(const int &fd);
@@ -57,7 +58,7 @@ class Channel
 		std::string									getPassword() const;
 		std::size_t									getLimit() const;
 		std::map<std::string, bool>					getInvited() const;
-
+		std::string									getDate() const;
 		std::map<int, Client*>::const_iterator		getConnectedEnd() const;
 		std::vector<int>::iterator					getOperatorsEnd();
 		std::map<std::string, bool>::const_iterator	getInvitedEnd() const;
@@ -81,6 +82,7 @@ class Channel
 		std::string					password;
 		std::size_t					limit;
 		std::map<std::string, bool>	invited;
+		std::string					date;
 };
 
 /* all channel modes currently added : 

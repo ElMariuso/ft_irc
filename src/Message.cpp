@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 03:05:26 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:35:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,14 @@ std::string Message::rpl_channelmodesis_324(const std::string &clientNickname, c
 
     stream << ":" << this->name << " 324 " << clientNickname << " " \
         << channelName << " " << modes << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_creationtime_329(const std::string &nickname, const std::string &channelName, const std::string &creationdate) const
+{
+    std::ostringstream stream;
+    
+    stream << ":" << this->name << " 329 " << nickname << " " << channelName << " " << creationdate << "\r\n";
     return (stream.str());
 }
 
