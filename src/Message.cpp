@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 03:35:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:48:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ std::string Message::rpl_namreplay_353(const std::string &clientNickname, const 
         for (std::map<int, Client*>::const_iterator it = userList.begin(); it != userList.end(); ++it)
         {
             const Client &client = *(it->second);
-            prefix = (channel.isOp(client)) ? '@' : '+';
+            prefix = (channel.isOp(client)) ? '@' : ' ';
             userListStr += prefix;
             userListStr += client.getNickname();
             userListStr += ' ';
