@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 16:30:05 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 21:19:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -417,6 +417,11 @@ void Command::kick(const Server &server, const Client &src, Client *dest, const 
         channel->removeConnected(dest->getFd());
     }
 }
+
+// void Command::whois(const Server &server, const Client &src, const std::string &destName) const
+// {
+
+// }
 
 void Command::invite(const Server &server, const Client &src, const std::string &destName, const std::string &channelName) const
 {

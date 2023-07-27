@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 14:00:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 21:11:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,12 @@ class Message
 
         /* RPL */
         std::string rpl_umodeis_221(const std::string &nickname, const std::string &modes) const;
+        std::string rpl_whoisuser_311(const std::string &nickname, const std::string &srcNickname, const std::string &srcUsername, const std::string &srcHostname, const std::string &srcRealname) const;
+        std::string rpl_whoisserver_312(const std::string &nickname, const std::string &destNickname, const std::string &serverName, const std::string &serverInfo) const;
+        std::string rpl_whoisoperator_313(const std::string &nickname, const std::string &destNickname) const;
+        std::string rpl_whoisidle_317(const std::string &nickname, const std::string &destNickname, int idleTime, int signonTime) const;
+        std::string rpl_endofwhois_318(const std::string &nickname, const std::string &destNickname) const;
+        std::string rpl_whoischannels_319(const std::string &nickname, const std::string &destNickname, const Server &server) const;
         std::string rpl_list_322(const std::string &nickname, const std::string &channelName, const std::string &topic) const;
         std::string rpl_listend_323(const std::string &nickname) const;
         std::string rpl_channelmodesis_324(const std::string &clientNickname, const std::string &channelName, const std::string &modes) const;

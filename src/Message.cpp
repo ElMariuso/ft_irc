@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 14:00:32 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 21:22:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,70 @@ std::string Message::rpl_umodeis_221(const std::string &nickname, const std::str
 
     stream << ":" << this->name << " 221 " << nickname << " " \
         << modes << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_whoisuser_311(const std::string &nickname, const std::string &srcNickname, const std::string &srcUsername, const std::string &srcHostname, const std::string &srcRealname) const
+{
+    std::ostringstream  stream;
+    
+    stream << ":" << this->name << " 311 " << nickname << " " << srcNickname \
+        << " " << srcUsername << " " << srcHostname << " * :" << srcRealname << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_whoisserver_312(const std::string &nickname, const std::string &destNickname, const std::string &serverName, const std::string &serverInfo) const
+{
+    std::ostringstream  stream;
+    
+    stream << ":" << this->name << " 312 " << nickname << " " << destNickname \
+        << " " << serverName << " :" << serverInfo << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_whoisoperator_313(const std::string &nickname, const std::string &destNickname) const
+{
+    std::ostringstream  stream;
+    
+    stream << ":" << this->name << " 313 " << nickname << " " << destNickname \
+        << " :is an IRC operator" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_whoisidle_317(const std::string &nickname, const std::string &destNickname, int idleTime, int signonTime) const
+{
+    std::ostringstream  stream;
+    
+    stream << ":" << this->name << " 317 " << nickname << " " << destNickname \
+        << " " << idleTime << " " << signonTime << " :seconds idle, signon time" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_endofwhois_318(const std::string &nickname, const std::string &destNickname) const
+{
+    std::ostringstream  stream;
+    
+    stream << ":" << this->name << " 318 " << nickname << " " << destNickname << " :End of /WHOIS list." << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_whoischannels_319(const std::string &nickname, const std::string &destNickname, const Server &server) const
+{
+    std::ostringstream                      stream;
+    const std::map<std::string, Channel*>   &channels = server.getChannelsList();
+    std::string                             channelListStr;
+
+    for (std::map<std::string, Channel*>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+        Channel                                 *channel = it->second;
+        std::map<int, Client*>::const_iterator  cit = channel->findConnectedByName(destNickname);
+        if (cit != channel->getConnectedEnd())
+        {
+            channelListStr += channel->getName();
+            channelListStr += ' ';
+        }
+    }
+    stream << ":" << this->name << " 319 " << nickname << " " << destNickname << " :" << channelListStr << "\r\n";
     return (stream.str());
 }
 
