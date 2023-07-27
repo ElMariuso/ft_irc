@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 13:39:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:40:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ Server::Server(const std::string &port_str, const std::string &password, const s
     if (ret < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;
+    this->setMessageOfTheDay("Hello, Welcome to " + this->name + "!\nProject by mthiry and bvernimm.\nSome documentations can be found in the source code.");
 }
 
 Server::~Server()
@@ -326,6 +327,7 @@ void Server::withoutAuthentication(const Command &command, Client *client, const
                 if (this->password == arg0) /* Ok */
                 {
                     client->sendToFD(this->welcome(nickname, username, hostname, this->date));
+                    client->sendToFD(this->rpl_motdstart_375(nickname) + this->rpl_motd_372(nickname, this->messageOfTheDay) + this->rpl_endofmotd_376(nickname));
                     client->setIsAuthenticated(true);
                 }
                 else /* No */
@@ -501,6 +503,20 @@ void Server::setClients(std::map<int, Client*> clients) { this->clientsList = cl
 void Server::setChannel(std::string name, Channel *channel) { this->channelsList.insert(std::make_pair(name, channel)); }
 void Server::setChannels(std::map<std::string, Channel*> channels) { this->channelsList = channels; }
 void Server::setDate(const std::string &date) { this->date = date; }
+void Server::setMessageOfTheDay(const std::string &message)
+{
+    std::string message_42;
+
+    message_42 = std::string("            :::      ::::::::     \n") \
+               + "          :+:      :+:    :+:     \n" \
+               + "        +:+ +:+         +:+       \n" \
+               + "      +#+  +:+       +#+          \n" \
+               + "    +#+#+#+#+#+   +#+             \n" \
+               + "         #+#    #+#               \n" \
+               + "        ###   ########.fr         \n";
+
+    this->messageOfTheDay = "---------------------------------------------\n" + message + "\n \n" + message_42 + "\n ";
+}
 
 /* Removers */
 void Server::removeChannel(Channel *channel)
@@ -516,6 +532,7 @@ std::vector<struct pollfd> Server::getFds() const { return (this->fds); }
 std::map<int, Client*> Server::getClientsList() const { return (this->clientsList); }
 std::map<std::string, Channel*> Server::getChannelsList() const { return (this->channelsList); }
 std::string Server::getDate() const { return (this->date); }
+std::string Server::getMessageOfTheDay() const { return (this->messageOfTheDay); }
 std::map<int, Client*>::const_iterator Server::getClientsListEnd() const { return (this->clientsList.end()); }
 std::map<std::string, Channel*>::const_iterator Server::getChannelsListEnd() const { return (this->channelsList.end()); }
 

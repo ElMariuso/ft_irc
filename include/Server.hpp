@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 13:40:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:06:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ class Server: public Message
         void                                            setChannel(std::string name, Channel *channel);
         void                                            setChannels(std::map<std::string, Channel*> channels);
         void                                            setDate(const std::string &date);
+        void                                            setMessageOfTheDay(const std::string &message);
 
         /* Removers */
 	    void                                            removeChannel(Channel *channel);
@@ -90,6 +91,7 @@ class Server: public Message
         std::map<int, Client*>                          getClientsList() const;
         std::map<std::string, Channel*>                 getChannelsList() const;
         std::string                                     getDate() const;
+        std::string                                     getMessageOfTheDay() const;
         std::map<int, Client*>::const_iterator          getClientsListEnd() const;
         std::map<std::string, Channel*>::const_iterator getChannelsListEnd() const;
 
@@ -108,6 +110,7 @@ class Server: public Message
         std::map<int, Client*>          clientsList;
         std::map<std::string, Channel*> channelsList;
         std::string                     date;
+        std::string                     messageOfTheDay;
 };
 
 #endif

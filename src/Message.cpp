@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 04:31:04 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:00:32 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,6 +230,33 @@ std::string Message::rpl_endofnames_366(const std::string &clientNickname, const
 
     stream << ":" << this->name << " 366 " << clientNickname << " " << channelName \
         << " :End of NAMES list" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_motd_372(const std::string &nickname, const std::string &message) const
+{
+    std::ostringstream  stream;
+
+    stream << ":" << this->name << " 372 " << nickname \
+        << " :- " << message << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_motdstart_375(const std::string &nickname) const
+{
+    std::ostringstream  stream;
+
+    stream << ":" << this->name << " 375 " << nickname \
+        << " :- " << this->name << " Message of the day - " << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_endofmotd_376(const std::string &nickname) const
+{
+    std::ostringstream  stream;
+
+    stream << ":" << this->name << " 376 " << nickname \
+        << " :End of MOTD command" << "\r\n";
     return (stream.str());
 }
 

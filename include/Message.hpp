@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 04:31:18 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:00:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ class Message
         std::string rpl_inviting_341(const std::string &srcNickname, const std::string &channelName, const std::string &destNickname) const;
         std::string rpl_namreplay_353(const std::string &clientNickname, const std::string &channelName, const Channel &channel) const;
         std::string rpl_endofnames_366(const std::string &clientNickname, const std::string &channelName) const;
+        std::string rpl_motd_372(const std::string &nickname, const std::string &message) const;
+        std::string rpl_motdstart_375(const std::string &nickname) const;
+        std::string rpl_endofmotd_376(const std::string &nickname) const;
 
         /* Errors */
         std::string err_nosuchnick_401(const std::string &nickname) const;
