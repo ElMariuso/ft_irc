@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 04:15:17 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 04:31:04 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,15 @@ std::string Message::privmsg(const std::string &srcName, const std::string &dest
 
     stream << ":" << srcName << " PRIVMSG " \
         << destName << " " << message << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::mode(const std::string &nickname, const std::string &username, const std::string &hostname, const std::string &channelName, const std::string &modes, const std::string &args) const
+{
+    std::ostringstream  stream;
+
+    stream << ":" << nickname << "!" << username << "@" << hostname << " MODE " \
+        << channelName << " " << modes << " " << args << "\r\n";
     return (stream.str());
 }
 

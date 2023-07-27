@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 04:10:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 04:41:11 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -558,6 +558,8 @@ void Command::changeRestriction(const Server &server, Channel *channel, const Cl
 {
     Client              *client;
     const std::string   &srcName = src.getNickname();
+    const std::string   &srcUsername = src.getUsername();
+    const std::string   &srcHostname = src.getHostname();
     
     switch (mode)
     {
@@ -593,11 +595,11 @@ void Command::changeRestriction(const Server &server, Channel *channel, const Cl
             else
             {
                 if (channel->addOp(*client) == 0)
-                    channel->sendToAll(server.rpl_channelmodesis_324(srcName, channel->getName(), args + " is now operator on this channel"), srcName, true);
+                    channel->sendToAll(server.mode(srcName, srcUsername, srcHostname, channel->getName(), "+o " + channel->getModesList(), args), srcName, true);
                 else
                 {
                     channel->rmOp(*client);
-                    channel->sendToAll(server.rpl_channelmodesis_324(srcName, channel->getName(), args + " is no longer operator on this channel"), srcName, true);
+                    channel->sendToAll(server.mode(srcName, srcUsername, srcHostname, channel->getName(), "-o " + channel->getModesList(), args), srcName, true);
                 }
             }
             break ;
