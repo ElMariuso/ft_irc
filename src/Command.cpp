@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 22:24:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 22:29:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -508,6 +508,8 @@ void Command::user(const Server &server, Client *client) const
         client->addMode('i');
     for (std::size_t i = 3; i < this->args.size(); i++)
         realname = realname + this->args.at(i);
+    if (realname[0] == ':')
+        realname.erase(0, 1);
     client->setRealname(realname);
 }
 
