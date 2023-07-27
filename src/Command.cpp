@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 04:41:11 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 04:50:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,9 +207,9 @@ void Command::modeCheck(const std::string &srcName, const std::string &destName,
         if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
             client.sendToFD(server.err_notonchannel_442(srcName, destName));
         else if (modes.empty()) /* Send there is no modes */
-            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, "No mode is set up"));
+            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, ""));
         else /* Send mode list */
-            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, "Actual modes: " + modes));
+            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, "+" + modes));
     }
     else /* Client */
     {
@@ -217,7 +217,7 @@ void Command::modeCheck(const std::string &srcName, const std::string &destName,
         const std::string               &modes = client.getModesList();
 
         if (modes.empty()) /* Send there is no modes */
-            client.sendToFD(server.rpl_umodeis_221(srcName, "Nothing"));
+            client.sendToFD(server.rpl_umodeis_221(srcName, ""));
         else /* Send mode list */
             client.sendToFD(server.rpl_umodeis_221(srcName, modes));
     }
