@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 02:03:28 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 02:18:02 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
     }
 }
 
-void Command::part(Server *server, const Client &client, Channel *channel, const std::string &name, const std::string &message) const
+void Command::part(Server *server, const Client &client, Channel *channel, const std::string &name, const std::string &message, bool isQuit) const
 {
     /* Used for messages */
     const std::string               &clientName = client.getNickname();
@@ -130,7 +130,10 @@ void Command::part(Server *server, const Client &client, Channel *channel, const
     else if (channel) /* PART */
     {
         /* Send to all users and Remove the user from the connected list */
-        channel->sendToAll(server->part(clientName, clientUser, clientHost, name, message), clientName, true);
+        if (isQuit)
+            channel->sendToAll(server->part(clientName, clientUser, clientHost, name, message), clientName, false);
+        else
+            channel->sendToAll(server->part(clientName, clientUser, clientHost, name, message), clientName, true);
         channel->removeConnected(client.getFd());
         if (channel->getConnected().empty()) /* Delete the channel if there is no user left */
             server->removeChannel(channel);

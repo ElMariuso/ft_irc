@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 02:14:30 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 02:18:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -360,7 +360,7 @@ void Server::withAuthentication(const Command &command, Client *client, const st
             command.join(this, client, args[0], args[1]);
             break ;
         case PART:
-            command.part(this, *client, this->findChannel(args[0]), args[0], args[1]);
+            command.part(this, *client, this->findChannel(args[0]), args[0], args[1], false);
             break ;
         case PRIVMSG:
             command.privmsg(*this, *client, args[0], args[1]);
@@ -403,8 +403,8 @@ void Server::handleDisconnection(Client *client, const std::string &message)
             {
                 Command command;
                 const std::string   &channelName = channel->getName();
-                
-                command.part(this, *client, this->findChannel(channelName), channelName, message);
+
+                command.part(this, *client, this->findChannel(channelName), channelName, message, true);
                 channel->rmOp(*client);
             }
             if (this->channelsList.empty())
