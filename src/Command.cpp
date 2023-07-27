@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 04:50:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:52:13 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -632,6 +632,7 @@ void Command::setType()
 
     type = this->message.substr(0, this->message.find(' '));
     this->message.erase(0, this->message.find(' ') + 1);
+
     if (type == "PASS") /* Authentification */
         this->type = PASS;
     else if (type == "NICK") /* Change your nickname */
@@ -662,6 +663,8 @@ void Command::setType()
         this->type = WHOIS;
     else if (type == "INVITE")
         this->type = INVITE;
+    else if (type == "motd\r")
+        this->type = MOTD;
     else if (type == "PING")
 	    this->type = PING;
     else if (type == "PONG")

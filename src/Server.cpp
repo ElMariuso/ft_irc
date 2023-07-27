@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 14:40:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:47:41 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,6 +384,9 @@ void Server::withAuthentication(const Command &command, Client *client, const st
             break ;
         case INVITE:
             command.invite(*this, *client, args[0], args[1]);
+            break ;
+        case MOTD:
+            client->sendToFD(this->rpl_motdstart_375(client->getNickname()) + this->rpl_motd_372(client->getNickname(), this->getMessageOfTheDay()) + this->rpl_endofmotd_376(client->getNickname()));
             break ;
         default:
             break ;

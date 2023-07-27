@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 02:39:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 14:47:24 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ enum MessageType
     KICK,
     WHOIS,
     INVITE,
+    MOTD,
     PING,
     PONG
 };
