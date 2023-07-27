@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 04:05:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 04:15:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ std::string Message::welcome(const std::string &clientNickname, const std::strin
     std::ostringstream  client;
 
     client << "Welcome to " << clientNickname << "!" << clientUsername << "@" << clientHostname << "!";
-    stream << ":" << this->name << " 001 " << clientNickname << " :" << Utils::displayBox(client.str(), 32) << "\r\n" \
+    stream << ":" << this->name << " 002 " << clientNickname << " :" << Utils::displayBox(client.str(), 32) << "\r\n" \
         << ":" << this->name << " 002 " << clientNickname << " :Your host is " << this->name \
         << ", running version 0.1" << "\r\n" \
         << ":" << this->name << " 003 " << clientNickname \
