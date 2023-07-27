@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/24 19:43:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 01:50:38 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,11 @@ std::string Message::privmsg(const std::string &srcName, const std::string &dest
     return (stream.str());
 }
 
-std::string Message::nick(const std::string &newNickname) const
+std::string Message::nick(const std::string &nickname, const std::string &username, const std::string &hostname, const std::string &newNickname) const
 {
     std::ostringstream  stream;
 
-    stream << ":" << this->name << " 001 " << newNickname \
-        << " :You're now known as " << newNickname << "\r\n";
+    stream << ":" << nickname << "!" << username << "@" << hostname << " NICK " << newNickname << "\r\n";
     return (stream.str());
 }
 

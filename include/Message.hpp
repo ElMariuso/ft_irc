@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/23 17:20:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 01:47:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class Message
         std::string join(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName) const;
         std::string part(const std::string &clientNickname, const std::string &clientUsername, const std::string &clientHostname, const std::string &channelName, const std::string &message) const;
         std::string privmsg(const std::string &srcName, const std::string &destName, const std::string &message) const;
-        std::string nick(const std::string &newNickname) const;
+        std::string nick(const std::string &nickname, const std::string &username, const std::string &hostname, const std::string &newNickname) const;
         std::string kick(const std::string &srcName, const std::string &destName, const std::string &channelName, const std::string &message) const;
         std::string ping() const;
         std::string pong() const;

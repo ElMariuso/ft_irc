@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/24 19:33:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 02:03:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@ Command::~Command() {}
 /* Commands */
 void Command::nick(const Server &server, Client *client, const std::string &name) const
 {
+    /* Used for messages */
+    const std::string   &nickname = client->getNickname();
+    const std::string   &username = client->getUsername();
+    const std::string   &hostname = client->getHostname();
+
     if (name.empty()) /* ERR_NONICKNAMEGIVEN (431) */
         client->sendToFD(server.err_nonicknamegiven_431());
     else if (this->isNotRightNickname(server.getName(), name)) /* ERR_ERRONEUSNICKNAME (432) */
@@ -33,7 +38,14 @@ void Command::nick(const Server &server, Client *client, const std::string &name
         client->sendToFD(server.err_nicknameinuse_433(name));
     else /* NICK */
     {
-        client->sendToFD(server.nick(name));
+        const std::map<std::string, Channel*>   &channels = server.getChannelsList();
+        for (std::map<std::string, Channel*>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+        {
+            Channel *channel = it->second;
+            if (channel->findConnected(client->getFd()))
+                channel->sendToAll(server.nick(nickname, username, hostname, name), nickname, false);
+        }
+        client->sendToFD(server.nick(nickname, username, hostname, name));
         client->setNickname(name);
     }
 }

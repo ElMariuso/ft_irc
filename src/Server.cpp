@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 01:40:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 01:51:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,10 +286,10 @@ void Server::getMessages(const std::string &message, const int client_socket)
         
         if (client->getIsConnected()) /* Process commands that don't require authentication */
             this->withoutAuthentication(command, client, args[0]);
-        // if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
-        //     this->withAuthentication(command, client, args);
-        // else if (client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
-        //     client->sendToFD(this->err_notregistered_451(client->getNickname()));
+        if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
+            this->withAuthentication(command, client, args);
+        else if (client->getIsConnected() && !client->getIsAuthenticated()) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
+            client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
     else if (command.getType() == UNKNOW) /* If the command type is unknown */
         Utils::debug_message("Unknow command");
@@ -552,11 +552,9 @@ std::map<int, Client*>::const_iterator Server::findClientByName(const std::strin
 }
 
 /* Senders */
-void Server::sendToAll(const std::string &message)
-{
-    const std::map<int, Client*>	&clients = this->clientsList;
-    
-	for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+void Server::sendToAll(const std::string &message) const
+{   
+	for (std::map<int, Client*>::const_iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
 	{
 		const Client &client = *(it->second);
 
