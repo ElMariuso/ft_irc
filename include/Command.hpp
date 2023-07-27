@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 16:14:16 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 21:24:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ class Command
         void                        list(const Server &server, const Client &src, const std::string &destName) const;
         void                        names(const Server &server, const Client &src, const std::vector<std::string> &args) const;
         void                        kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const;
+        void                        whois(const Server &server, const Client &src, const std::string &destName) const;
         void                        invite(const Server &server, const Client &src, const std::string &destName, const std::string &channelName) const;
         void                        user(const Server &server, Client *client) const;
 
