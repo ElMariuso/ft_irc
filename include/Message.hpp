@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:46:41 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 21:11:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 22:00:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ class Message
         std::string rpl_endofmotd_376(const std::string &nickname) const;
 
         /* Errors */
-        std::string err_nosuchnick_401(const std::string &nickname) const;
+        std::string err_nosuchnick_401(const std::string &nickname, const std::string &destName) const;
         std::string err_nosuchserver_402(const std::string &nickname, const std::string &destName) const;
         std::string err_nosuchchannel_403(const std::string &clientNickname, const std::string &channelName) const;
         std::string err_cannotsendtochan_404(const std::string &nickname) const;

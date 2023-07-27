@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 21:22:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 21:59:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,11 +325,11 @@ std::string Message::rpl_endofmotd_376(const std::string &nickname) const
 }
 
 /* Errors */
-std::string Message::err_nosuchnick_401(const std::string &nickname) const
+std::string Message::err_nosuchnick_401(const std::string &nickname, const std::string &destName) const
 {
     std::ostringstream  stream;
 
-    stream << ":" << this->name << " 401 " << nickname \
+    stream << ":" << this->name << " 401 " << nickname << " " << destName \
         << " :No such nick/channel" << "\r\n";
     return (stream.str());
 }

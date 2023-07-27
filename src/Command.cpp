@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 21:24:44 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 22:00:47 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,12 +162,11 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
     }
     else
     {
-        const std::map<int, Client*>            &clients = server.getClientsList();
         std::map<int, Client*>::const_iterator  it = server.findClientByName(destName);
-
+        
         /* Check if the user exists */
-        if (it == clients.end()) /* ERR_NOSUCHNICK (401) */
-            src.sendToFD(server.err_nosuchnick_401(destName));
+        if (it == server.getClientsListEnd()) /* ERR_NOSUCHNICK (401) */
+            src.sendToFD(server.err_nosuchnick_401(srcName, destName));
         else
         {
             client = it->second;
@@ -398,7 +397,7 @@ void Command::kick(const Server &server, const Client &src, Client *dest, const 
     }
     else if (dest == NULL) /* ERR_NOSUCHNICK (401) */
     {
-        src.sendToFD(server.err_nosuchnick_401(destName));
+        src.sendToFD(server.err_nosuchnick_401(srcName, destName));
         return ;
     }
 
@@ -420,9 +419,18 @@ void Command::kick(const Server &server, const Client &src, Client *dest, const 
 
 void Command::whois(const Server &server, const Client &src, const std::string &destName) const
 {
-    (void)server;
-    (void)src;
-    (void)destName;
+    std::map<int, Client*>::const_iterator  it = server.findClientByName(destName);
+
+    /* Used for messages */
+    const std::string   &srcNickname = src.getNickname();
+    
+    (void)it;
+    // if (!client) /* ERR_NOSUCHNICK (401) */
+    //     // src.sendToFD(server.err_nosuchnick_401(srcNickname, destName));
+    // else
+    // {
+        
+    // }
 }
 
 void Command::invite(const Server &server, const Client &src, const std::string &destName, const std::string &channelName) const
@@ -440,7 +448,7 @@ void Command::invite(const Server &server, const Client &src, const std::string 
     }
     else if (itClient == server.getClientsListEnd()) /* ERR_NOSUCHNICK (401) */
     {
-        src.sendToFD(server.err_nosuchnick_401(destName));
+        src.sendToFD(server.err_nosuchnick_401(srcName, destName));
         return ;
     }
     dest = itClient->second;
@@ -623,7 +631,7 @@ void Command::changeRestriction(const Server &server, Channel *channel, const Cl
             else
                 client = itServer->second;
             if (client == NULL)
-                src.sendToFD(server.err_nosuchnick_401(args));
+                src.sendToFD(server.err_nosuchnick_401(srcName, args));
             else if (channel->findConnectedByName(args) == channel->getConnectedEnd()) /* ERR_USERNOTINCHANNEL (441) */
                 src.sendToFD(server.err_usernotinchannel_441(args, channel->getName()));
             else
