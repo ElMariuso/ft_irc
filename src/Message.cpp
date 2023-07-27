@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 01:50:38 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:05:26 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,24 @@ std::string Message::rpl_umodeis_221(const std::string &nickname, const std::str
     return (stream.str());
 }
 
+std::string Message::rpl_list_322(const std::string &nickname, const std::string &channelName, const std::string &topic) const
+{
+    std::ostringstream  stream;
+
+    stream << ":" << this->name << " 322 " << nickname << " " << channelName \
+        << " :" << topic << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::rpl_listend_323(const std::string &nickname) const
+{
+    std::ostringstream  stream;
+
+    stream << ":" << this->name << " 323 " << nickname << " " \
+        << ":End of LIST" << "\r\n";
+    return (stream.str());
+}
+
 std::string Message::rpl_channelmodesis_324(const std::string &clientNickname, const std::string &channelName, const std::string &modes) const
 {
     std::ostringstream  stream;
@@ -232,6 +250,15 @@ std::string Message::err_cannotsendtochan_404(const std::string &nickname) const
     
     stream << ":" << this->name << " 404 " << nickname \
         << " :Cannot send to channel" << "\r\n";
+    return (stream.str());
+}
+
+std::string Message::err_toomanymatches_416(const std::string &nickname) const
+{
+    std::ostringstream  stream;
+    
+    stream << ":" << this->name << " 416 " << nickname \
+        << " :Too many matches" << "\r\n";
     return (stream.str());
 }
 

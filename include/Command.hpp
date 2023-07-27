@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 02:17:11 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 02:39:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class Command
         void                        modeCheck(const std::string &srcName, const std::string &destName, const Client &client, const Server &server) const;
         void                        modeAdd(const std::string &srcName, const std::string &destName, Client *src, const Server &server, const std::string &modes, const std::string &args) const;
         void                        topic(const Server &server, const Client &src, const std::string &destName, const std::string &topic) const;
+        void                        list(const Server &server, const Client &src, const std::string &destName) const;
         void                        kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const;
         void                        invite(const Server &server, const Client &src, const std::string &destName, const std::string &channelName) const;
         void                        user(const Server &server, Client *client) const;

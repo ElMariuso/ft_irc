@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 02:18:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 03:14:04 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,6 +322,35 @@ void Command::topic(const Server &server, const Client &src, const std::string &
                 src.sendToFD(server.rpl_topic_332(srcName, channelName, newTopic));
             }
         }
+    }
+}
+
+void Command::list(const Server &server, const Client &src, const std::string &destName) const
+{
+    const std::map<std::string, Channel*>   &map = server.getChannelsList();
+    /* Used for messages */
+    const std::string                       &srcName = src.getNickname();
+    
+    if (destName.empty()) /* All channels*/
+    {
+        
+        if (map.size() > 100) /* ERR_TOMANYMATCHES (416) */
+            src.sendToFD(server.err_toomanymatches_416(srcName));
+        else /* LIST */
+        {
+            for (std::map<std::string, Channel*>::const_iterator it = map.begin(); it != map.end(); ++it)
+                src.sendToFD(server.rpl_list_322(srcName, it->second->getName(), it->second->getTopic()));
+            src.sendToFD(server.rpl_listend_323(srcName));
+        }
+    }
+    else /* Specific informations */
+    {
+        Channel *channel = server.findChannel(destName);
+        
+        if (!channel) /* ERR_NOSUCHCHANNEL (403) */
+            src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
+        else
+            src.sendToFD(server.rpl_list_322(srcName, channel->getName(), channel->getTopic()));
     }
 }
 
@@ -645,6 +674,11 @@ void Command::setArgs()
     std::stringstream   rest;
 
     breakReached = false;
+    if (this->message[0] == '\r')
+    {
+        this->args.push_back("");
+        return ;
+    }
     while (std::getline(iss, member, ' '))
     {
         if (member[0] == ':')

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 02:18:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 02:50:39 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,6 +284,11 @@ void Server::getMessages(const std::string &message, const int client_socket)
         client = it->second;
         client->setLastActivityTime(time(NULL));
         
+        if (command.getType() == QUIT)
+        {
+            this->handleDisconnection(client, args[0]);
+            return ;
+        }
         if (client->getIsConnected()) /* Process commands that don't require authentication */
             this->withoutAuthentication(command, client, args[0]);
         if (client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
@@ -370,6 +375,9 @@ void Server::withAuthentication(const Command &command, Client *client, const st
             break ;
         case TOPIC:
             command.topic(*this, *client, args[0], args[1]);
+            break ;
+        case LIST:
+            command.list(*this, *client, args[0]);
             break ;
         case KICK:
             command.kick(*this, *client, this->findClientByName(args[1])->second, args[2], this->findChannel(args[0]));
