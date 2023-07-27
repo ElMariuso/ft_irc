@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 04:10:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 13:38:17 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ void Server::browseClients(time_t currentTime)
         if (client && (it->revents & POLLIN)) /* Check if a new message is in waiting */
         {
             Utils::debug_message("Incoming event for " + nickname);
-            ret = this->handleEvent(it->fd);
+            ret = this->handleEvent(client);
         }
         if (client && (ret < 0 || (it->revents & (POLLHUP | POLLERR | POLLNVAL)))) /* Check for logout */
         {
@@ -242,19 +242,20 @@ Client* Server::addNewClient(const int client_socket)
 }
 
 /* Commands */
-int Server::handleEvent(const int client_socket)
+int Server::handleEvent(Client *client)
 {
     ssize_t		                ret;
     char		                buffer[BUFFER_SIZE + 1];
     std::string                 msg;
     std::string	                debug;
     std::vector<std::string>    commands;
+    const std::string           &nickname = client->getNickname();
     
-    ret = recv(client_socket, buffer, BUFFER_SIZE, 0);
+    ret = recv(client->getFd(), buffer, BUFFER_SIZE, 0);
     if (ret <= 0)
     {
         if (ret < 0)
-            Utils::error_message("Error in recv() on client socket: " + Utils::intToString(client_socket));
+            Utils::error_message("Error in recv() on client socket - " + nickname);
         return (-1);
     }
     
@@ -264,24 +265,21 @@ int Server::handleEvent(const int client_socket)
     debug = msg;
     if (msg.size() >= 2 && msg.substr(msg.size() - 2) == "\r\n")
 		debug.erase(msg.size() - 2);
-    Utils::debug_message(Utils::intToString(client_socket) + " send a message - " + debug);
+    Utils::debug_message(nickname + " send a message - " + debug);
 
     commands = this->splitCommands(msg, '\n');
     for (std::size_t i = 0; i != commands.size(); ++i)
-        this->getMessages(commands[i], client_socket);
+        this->getMessages(commands[i], client);
     return (ret);
 }
 
-void Server::getMessages(const std::string &message, const int client_socket)
+void Server::getMessages(const std::string &message, Client *client)
 {
     Command                                 command(message);
-    Client                                  *client;
     std::vector<std::string>                args = this->setArgsCommands(command);
-    std::map<int, Client*>::const_iterator  it = this->clientsList.find(client_socket);
     
-    if (it != this->clientsList.end() && command.getType() != UNKNOW) /* If the client exists and the command type is known */
+    if (client && command.getType() != UNKNOW) /* If the client exists and the command type is known */
     {
-        client = it->second;
         client->setLastActivityTime(time(NULL));
         
         if (command.getType() == QUIT)
@@ -299,7 +297,7 @@ void Server::getMessages(const std::string &message, const int client_socket)
     else if (command.getType() == UNKNOW) /* If the command type is unknown */
         Utils::debug_message("Unknow command");
     else /* If the client does not exist */
-        Utils::error_message("Client not found from socket: " + Utils::intToString(client_socket));
+        Utils::error_message("Client not found");
 }
 
 std::vector<std::string> Server::setArgsCommands(const Command &command)

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 01:40:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 13:30:56 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void Client::sendToFD(const std::string &str) const
 	toSend = str;
 	if (str.size() >= 2 && str.substr(str.size() - 2) == "\r\n")
 		toSend.erase(str.size() - 2);
-	Utils::debug_message(this->_nickname + " get a message " + toSend);
+	Utils::debug_message(this->_nickname + " get a message - " + toSend);
 }
 
 std::string	Client::receiveFromFD()
