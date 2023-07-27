@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 14:47:41 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 16:25:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -378,6 +378,9 @@ void Server::withAuthentication(const Command &command, Client *client, const st
             break ;
         case LIST:
             command.list(*this, *client, args[0]);
+            break ;
+        case NAMES:
+            command.names(*this, *client, args);
             break ;
         case KICK:
             command.kick(*this, *client, this->findClientByName(args[1])->second, args[2], this->findChannel(args[0]));

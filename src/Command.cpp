@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 14:52:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 16:30:05 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -353,6 +353,33 @@ void Command::list(const Server &server, const Client &src, const std::string &d
             src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
         else
             src.sendToFD(server.rpl_list_322(srcName, channel->getName(), channel->getTopic()));
+    }
+}
+
+void Command::names(const Server &server, const Client &src, const std::vector<std::string> &args) const
+{
+    Channel *channel;
+    /* Used for messages */
+    const std::string                       &srcName = src.getNickname();
+
+
+    for (std::size_t i = 0; i != args.size(); ++i)
+    {
+        if (args[i].empty())
+            continue ;
+        channel = server.findChannel(args[i]);
+        if (!channel) /* ERR_NOSUCHCHANNEL (403) */
+        {
+            src.sendToFD(server.err_nosuchchannel_403(srcName, args[i]));
+            continue ;
+        }
+
+        const std::map<int, Client*>    &connected = channel->getConnected();
+
+        if (connected.size() > 100) /* ERR_TOMANYMATCHES (416) */
+            src.sendToFD(server.err_toomanymatches_416(srcName));
+        else /* NAMES */
+            src.sendToFD(server.rpl_namreplay_353(srcName, args[i], *channel) + server.rpl_endofnames_366(srcName, args[i]));
     }
 }
 
