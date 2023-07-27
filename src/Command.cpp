@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 22:00:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/07/27 22:24:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,13 +424,24 @@ void Command::whois(const Server &server, const Client &src, const std::string &
     /* Used for messages */
     const std::string   &srcNickname = src.getNickname();
     
-    (void)it;
-    // if (!client) /* ERR_NOSUCHNICK (401) */
-    //     // src.sendToFD(server.err_nosuchnick_401(srcNickname, destName));
-    // else
-    // {
-        
-    // }
+    if (it == server.getClientsListEnd()) /* ERR_NOSUCHNICK (401) */
+        src.sendToFD(server.err_nosuchnick_401(srcNickname, destName));
+    else
+    {
+        /* Used for messages */
+        std::ostringstream  stream;
+        const std::string   &destNickname = it->second->getNickname();
+        const std::string   &destUsername = it->second->getUsername();
+        const std::string   &destHostname = it->second->getHostname();
+        const std::string   &destRealname = it->second->getRealname();
+
+        stream << server.rpl_whoisuser_311(srcNickname, destNickname, destUsername, destHostname, destRealname) \
+            << server.rpl_whoisserver_312(srcNickname, destNickname, server.getName(), "Informations") \
+            << server.rpl_whoischannels_319(srcNickname, destNickname, server) \
+            << server.rpl_whoisidle_317(srcNickname, destNickname, 0, 0) \
+            << server.rpl_endofwhois_318(srcNickname, destName);
+        src.sendToFD(stream.str());
+    }
 }
 
 void Command::invite(const Server &server, const Client &src, const std::string &destName, const std::string &channelName) const
