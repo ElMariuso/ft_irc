@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/01 22:06:15 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/01 22:52:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,13 +162,22 @@ int Server::checkForNewConnection()
 
 void Server::browseClients(time_t currentTime)
 {
-    int ret = 1;
+    int     ret = 1;
+    char    buf;
+    int     res;
     
     for (std::vector<struct pollfd>::iterator it = ++this->fds.begin(); it != this->fds.end();)
     {
         Client              *client = this->findClient(it->fd);
 
-        if (!client)
+        res = recv(it->fd, &buf, 0, MSG_PEEK);
+        if (res == -1 && errno != EAGAIN && errno != EWOULDBLOCK)
+        {
+            Utils::debug_message(Utils::intToString(it->fd) + " is closed!");
+            it = this->fds.erase(it);
+            continue ;
+        }
+        else if (!client)
         {
             Utils::error_message("Can't find client on iteration");
             it = this->fds.erase(it);

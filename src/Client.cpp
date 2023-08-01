@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/08/01 21:31:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/01 22:38:37 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,17 @@ Client::Client() {}
 
 Client::Client(const std::string &nickname, const std::string &username, int fd, bool isConnected)
 {	
+	Command	command;
+	
 	/* Arguments */
 	this->setNickname(nickname);
 	this->setDefaultNickname(nickname);
 	this->setUsername(username);
 	this->setDefaultUsername(username);
+
+	/* Nickname and Username */
+	
+
 	this->setFd(fd);
 	this->setIsConnected(isConnected);
 	this->setIsAuthenticated(false);
