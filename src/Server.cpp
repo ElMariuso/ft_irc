@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/01 22:52:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 00:25:57 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,9 +277,17 @@ int Server::handleEvent(Client *client)
 		debug.erase(msg.size() - 2);
     Utils::debug_message(nickname + " send a message - " + debug);
 
-    commands = this->splitCommands(msg, '\n');
-    for (std::size_t i = 0; i != commands.size(); ++i)
-        this->getMessages(commands[i], client);
+    /* Parsing message */
+    msg = client->getSavedCommand() + msg;
+    client->setSavedCommand(msg);
+
+    const std::string &savedCommand = client->getSavedCommand();
+    if (!savedCommand.empty() && savedCommand[savedCommand.size() - 1] == '\n')
+    {
+        commands = this->splitCommands(msg, '\n');
+        for (std::size_t i = 0; i != commands.size(); ++i)
+            this->getMessages(commands[i], client);
+    }
     return (ret);
 }
 

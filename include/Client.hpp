@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/08/01 21:29:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 00:08:16 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class Client
 		void		setRealname(std::string realName);
 		void		setLastActivityTime(std::time_t time);
 		void		setLastPingTime(std::time_t time);
+		void		setSavedCommand(std::string savedCommand);
 		
 		/* Getters */
 		int			getFd() const;
@@ -62,6 +63,7 @@ class Client
 		std::string	getModesList() const;
 		std::time_t	getLastActivityTime() const;
 		std::time_t	getLastPingTime() const;
+		std::string	getSavedCommand() const;
         
     private:
         int         _fd;
@@ -77,6 +79,7 @@ class Client
 		std::string _modesList;
 		std::time_t	lastActivityTime;
 		std::time_t	lastPingTime;
+		std::string	savedCommand;
 };
 
 /* all user modes currently added : 

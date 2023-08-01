@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/08/01 22:38:37 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 00:09:22 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,6 +196,7 @@ void Client::setHostname()
 void Client::setRealname(std::string realName) {this->_realname = realName; }
 void Client::setLastActivityTime(time_t time) { this->lastActivityTime = time; }
 void Client::setLastPingTime(time_t time) { this->lastPingTime = time; }
+void Client::setSavedCommand(std::string savedCommand) { this->savedCommand = savedCommand; }
 
 /* getters */
 int Client::getFd() const { return (this->_fd); }
@@ -210,4 +211,5 @@ std::string	Client::getHostname() const { return (this->_hostname); }
 std::string	Client::getRealname() const { return (this->_realname); }
 std::string	Client::getModesList() const { return (this->_modesList); }
 time_t Client::getLastActivityTime() const { return (this->lastActivityTime); }
-time_t Client::getLastPingTime() const { return (this->lastPingTime); };
+time_t Client::getLastPingTime() const { return (this->lastPingTime); }
+std::string	Client::getSavedCommand() const { return (this->savedCommand); }
