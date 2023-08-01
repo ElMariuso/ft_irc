@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 22:25:55 by root              #+#    #+#             */
-/*   Updated: 2023/07/28 15:18:50 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/01 21:29:29 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,9 @@ class Client
 		void		setIsConnected(bool isConnected);
 		void		setIsRegistered(bool Registered);
 		void		setNickname(std::string nickName);
+		void		setDefaultNickname(std::string nickname);
 		void		setUsername(std::string userName);
+		void		setDefaultUsername(std::string userName);
 		void		setHostname();
 		void		setRealname(std::string realName);
 		void		setLastActivityTime(std::time_t time);
@@ -52,7 +54,9 @@ class Client
 		bool		getIsConnected() const;
 		bool		getIsRegistered() const;
 		std::string	getNickname() const;
+		std::string	getDefaultNickname() const;
 		std::string	getUsername() const;
+		std::string	getDefaultUsername() const;
 		std::string	getHostname() const;
 		std::string	getRealname() const;
 		std::string	getModesList() const;
@@ -64,7 +68,9 @@ class Client
 		bool		isAuthenticated;
 		bool		isConnected;
 		bool		isRegistered;
+		std::string	_defaultNickname;
         std::string _nickname;
+		std::string	_defaultUsername;
         std::string _username;
 		std::string	_hostname;
 		std::string	_realname;
