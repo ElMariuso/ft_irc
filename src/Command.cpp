@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 22:29:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/01 21:39:19 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,9 @@ void Command::modeAdd(const std::string &srcName, const std::string &destName, C
     }
     else /* Client */
     {
-        if (srcName != destName) /* ERR_USERSDONTMATCH (502) */
+        const std::string   &defaultNickname = src->getDefaultNickname();
+        
+        if (srcName != destName && defaultNickname != destName) /* ERR_USERSDONTMATCH (502) */
         {
             src->sendToFD(server.err_usersdontmatch_502(srcName));
             return ;
