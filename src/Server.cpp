@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 00:25:57 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 01:01:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,9 +284,10 @@ int Server::handleEvent(Client *client)
     const std::string &savedCommand = client->getSavedCommand();
     if (!savedCommand.empty() && savedCommand[savedCommand.size() - 1] == '\n')
     {
-        commands = this->splitCommands(msg, '\n');
+        commands = this->splitCommands(savedCommand, '\n');
         for (std::size_t i = 0; i != commands.size(); ++i)
             this->getMessages(commands[i], client);
+        client->setSavedCommand("");
     }
     return (ret);
 }
