@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 18:20:06 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 19:31:18 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,7 +312,8 @@ void Server::getMessages(const std::string &message, Client *client)
         if (client && client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
             this->withAuthentication(command, client, args);
         else if (client && client->getIsConnected() && !client->getIsAuthenticated()
-            && (command.getType() != PING && command.getType() != PONG && command.getType() != PASS )) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
+            && (command.getType() != PING && command.getType() != PONG && command.getType() != PASS && command.getType() != NICK
+            && command.getType() != USER)) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
     else if (command.getType() == UNKNOW) /* If the command type is unknown */
@@ -373,6 +374,12 @@ void Server::withoutAuthentication(const Command &command, Client *client, const
             }
             break ;
         }
+        case NICK:
+            command.nick(*this, client, arg0);
+            break ;
+        case USER:
+            command.user(*this, client);
+            break ;
         default:
             break ;
     }
@@ -382,12 +389,6 @@ void Server::withAuthentication(const Command &command, Client *client, const st
 {
     switch (command.getType())
     {
-        case NICK:
-            command.nick(*this, client, args[0]);
-            break ;
-        case USER:
-            command.user(*this, client);
-            break ;
         case JOIN:
             command.join(this, client, args[0], args[1]);
             break ;
