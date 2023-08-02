@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 03:17:10 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 18:20:06 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,7 +311,8 @@ void Server::getMessages(const std::string &message, Client *client)
             this->withoutAuthentication(command, client, args[0]);
         if (client && client->getIsConnected() && client->getIsAuthenticated()) /* Process commands that require authentication */
             this->withAuthentication(command, client, args);
-        else if (client && client->getIsConnected() && !client->getIsAuthenticated() && command.getType() != PING) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
+        else if (client && client->getIsConnected() && !client->getIsAuthenticated()
+            && (command.getType() != PING && command.getType() != PONG && command.getType() != PASS )) /* If the client is connected but not authenticated, send ERR_NOTREGISTERED(451) to the client */
             client->sendToFD(this->err_notregistered_451(client->getNickname()));
     }
     else if (command.getType() == UNKNOW) /* If the command type is unknown */
