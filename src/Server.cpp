@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 01:01:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 02:33:31 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -340,6 +340,8 @@ void Server::withoutAuthentication(const Command &command, Client *client, const
         case PASS:
             if (client->getIsAuthenticated()) /* Already registered */
                 client->sendToFD(this->err_alreadyregistered_462(nickname));
+            else if (arg0.empty())
+                client->sendToFD(this->err_needmoreparams_461(nickname));
             else
             {
                 if (this->password == arg0) /* Ok */
@@ -357,11 +359,16 @@ void Server::withoutAuthentication(const Command &command, Client *client, const
             break ;
         case PONG:
         {
-            const std::string &arg = arg0.substr(1);
-            if (arg == this->name)
-                client->setLastPingTime(time(NULL));
+            if (arg0.empty())
+                client->sendToFD(this->err_needmoreparams_461(nickname));
             else
-                client->sendToFD(this->err_nosuchserver_402(client->getNickname(), arg));
+            {
+                const std::string &arg = arg0.substr(1);
+                if (arg == this->name)
+                    client->setLastPingTime(time(NULL));
+                else
+                    client->sendToFD(this->err_nosuchserver_402(client->getNickname(), arg));
+            }
             break ;
         }
         default:

@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/02 00:48:38 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 02:31:23 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ Command::Command(const std::string &message)
 {
     this->setMessage(message);
     this->setType();
-    this->setArgs();
+    if (this->args.empty())
+        this->setArgs();
+    else
+        this->args.pop_back();
 }
 Command::~Command() {}
 
@@ -683,9 +686,15 @@ void Command::setMessage(const std::string &message) { this->message = message; 
 void Command::setType()
 {
     std::string type;
+    size_t      pos;
 
     type = this->message.substr(0, this->message.find(' '));
-    this->message.erase(0, this->message.find(' ') + 1);
+    pos = this->message.find(' ');
+
+    if (pos == std::string::npos)
+        this->args.push_back("no");
+    else
+        this->message.erase(0, pos + 1);
 
     if (type == "PASS") /* Authentification */
         this->type = PASS;
