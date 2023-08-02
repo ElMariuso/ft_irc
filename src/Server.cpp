@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 02:33:31 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 02:43:00 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,7 +390,7 @@ void Server::withAuthentication(const Command &command, Client *client, const st
             command.join(this, client, args[0], args[1]);
             break ;
         case PART:
-            command.part(this, *client, this->findChannel(args[0]), args[0], args[1], false);
+            command.part(this, *client, this->findChannel(args[0]), args[0], args[1], false); // Need fix for not enough params
             break ;
         case PRIVMSG:
             command.privmsg(*this, *client, args[0], args[1]);
@@ -408,7 +408,7 @@ void Server::withAuthentication(const Command &command, Client *client, const st
             command.names(*this, *client, args);
             break ;
         case KICK:
-            command.kick(*this, *client, this->findClientByName(args[1])->second, args[2], this->findChannel(args[0]));
+            command.kick(*this, *client, this->findClientByName(args[1])->second, args[2], this->findChannel(args[0])); // Need fix for not enough params
             break ;
         case WHOIS:
             command.whois(*this, *client, args[0]);

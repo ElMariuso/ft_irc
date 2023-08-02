@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/02 02:31:23 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 02:49:21 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
     const std::string                       &clientUser = client->getUsername();
     const std::string                       &clientHost = client->getHostname();
 
+    if (name.empty())
+    {
+        client->sendToFD(server->err_needmoreparams_461(clientName));
+        return ;
+    }
     channel = server->findChannel(name);
     if (channel != NULL) /* JOIN with channel */
     {
@@ -152,7 +157,9 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
     /* Used for messages */
     const std::string   &srcName = src.getNickname();
     
-    if (destName[0] == '#')
+    if (destName.empty() || message.empty())
+        src.sendToFD(server.err_needmoreparams_461(srcName));
+    else if (destName[0] == '#')
     {
         /* Check if the channel exists */
         channel = server.findChannel(destName);
@@ -183,7 +190,9 @@ void Command::mode(const Server &server, Client *src, const std::string &destNam
     /* Used for messages */
     const std::string   &srcName = src->getNickname();
 
-    if (modes.empty()) /* Check modes */
+    if (destName.empty())
+        src->sendToFD(server.err_needmoreparams_461(srcName));
+    else if (modes.empty()) /* Check modes */
         this->modeCheck(srcName, destName, *src, server);
     else /* Add modes */
         this->modeAdd(srcName, destName, src, server, modes, args);
@@ -288,6 +297,11 @@ void Command::topic(const Server &server, const Client &src, const std::string &
     /* Used for messages */
     const std::string               &srcName = src.getNickname();
     
+    if (destName.empty())
+    {
+        src.sendToFD(server.err_needmoreparams_461(srcName));
+        return ;
+    }
     if (destName[0] != '#') /* ERR_NOSUCHCHANNEL (403) */
     {
         src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
@@ -339,7 +353,6 @@ void Command::list(const Server &server, const Client &src, const std::string &d
     
     if (destName.empty()) /* All channels*/
     {
-        
         if (map.size() > 100) /* ERR_TOMANYMATCHES (416) */
             src.sendToFD(server.err_toomanymatches_416(srcName));
         else /* LIST */
@@ -363,9 +376,9 @@ void Command::list(const Server &server, const Client &src, const std::string &d
 void Command::names(const Server &server, const Client &src, const std::vector<std::string> &args) const
 {
     Channel *channel;
+    
     /* Used for messages */
     const std::string                       &srcName = src.getNickname();
-
 
     for (std::size_t i = 0; i != args.size(); ++i)
     {
@@ -429,7 +442,9 @@ void Command::whois(const Server &server, const Client &src, const std::string &
     /* Used for messages */
     const std::string   &srcNickname = src.getNickname();
     
-    if (it == server.getClientsListEnd()) /* ERR_NOSUCHNICK (401) */
+    if (destName.empty())
+        src.sendToFD(server.err_needmoreparams_461(srcNickname));
+    else if (it == server.getClientsListEnd()) /* ERR_NOSUCHNICK (401) */
         src.sendToFD(server.err_nosuchnick_401(srcNickname, destName));
     else
     {
@@ -451,11 +466,17 @@ void Command::whois(const Server &server, const Client &src, const std::string &
 
 void Command::invite(const Server &server, const Client &src, const std::string &destName, const std::string &channelName) const
 {
+    if (destName.empty() || channelName.empty())
+    {
+        src.sendToFD(server.err_needmoreparams_461(src.getNickname()));
+        return ;
+    }
+
     Client                                  *dest;
     Channel                                 *channel = server.findChannel(channelName);
     const std::string                       &srcName = src.getNickname();
     std::map<int, Client*>::const_iterator  itClient = server.findClientByName(destName);
-
+    
     /* Check if the channel and the user exists */
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
     {
