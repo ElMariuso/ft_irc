@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 00:53:38 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 18:27:27 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,7 @@ Client::Client(const std::string &nickname, const std::string &username, int fd,
 	this->setLastPingTime(std::time(NULL));
 }
 
-Client::~Client()
-{
-	close(_fd);
-}
+Client::~Client() {}
 
 /* function */
 void Client::sendToFD(const std::string &str) const
