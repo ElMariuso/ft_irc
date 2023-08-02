@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 02:43:00 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 03:17:10 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ void Server::browseClients(time_t currentTime)
             it = this->fds.erase(it);
             continue ;
         }
-        else if (!client)
+        if (!client)
         {
             Utils::error_message("Can't find client on iteration");
             it = this->fds.erase(it);
@@ -278,7 +278,8 @@ int Server::handleEvent(Client *client)
     Utils::debug_message(nickname + " send a message - " + debug);
 
     /* Parsing message */
-    msg = client->getSavedCommand() + msg;
+    if (!client->getSavedCommand().empty())
+        msg = client->getSavedCommand() + msg;
     client->setSavedCommand(msg);
 
     const std::string &savedCommand = client->getSavedCommand();
