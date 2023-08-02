@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/02 02:49:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/02 22:29:16 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,9 +218,20 @@ void Command::modeCheck(const std::string &srcName, const std::string &destName,
         if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
             client.sendToFD(server.err_notonchannel_442(srcName, destName));
         else if (modes.empty()) /* Send there is no modes */
-            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, ""));
+            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, "+"));
         else /* Send mode list */
-            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, "+" + modes));
+        {
+            std::ostringstream  stream;
+
+            std::string modesAndArgs = modes;
+            
+            stream << "+" << modes;
+            if (channel->hasMode('k') && !channel->getPassword().empty())
+                stream << " " << channel->getPassword();
+            if (channel->hasMode('l') && channel->getLimit() != 0)
+                stream << " " << channel->getLimit();
+            client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, stream.str()));
+        }
     }
     else /* Client */
     {
@@ -228,7 +239,7 @@ void Command::modeCheck(const std::string &srcName, const std::string &destName,
         const std::string               &modes = client.getModesList();
 
         if (modes.empty()) /* Send there is no modes */
-            client.sendToFD(server.rpl_umodeis_221(srcName, ""));
+            client.sendToFD(server.rpl_umodeis_221(srcName, "+"));
         else /* Send mode list */
             client.sendToFD(server.rpl_umodeis_221(srcName, modes));
     }
@@ -565,6 +576,7 @@ void Command::setModes(const Server &server, const std::string &srcName, const s
         if (modes2.find(letter) == std::string::npos)
             modes2 += letter;
     }
+    
     if (args.empty() && removing) /* Removing */
     {
         /* Removing all modes */
@@ -588,18 +600,15 @@ void Command::setModes(const Server &server, const std::string &srcName, const s
                     break ;
             }
         }
-        channel->sendToAll(server.rpl_channelmodesis_324(srcName, channelName, "Removing: " + modes2), srcName, true);
+        channel->sendToAll(server.mode(srcName, src.getUsername(), src.getHostname(), channelName, "+" + channel->getModesList(), ""), srcName, true);
     }
     else /* Adding */
     {
-        if (args.empty() || modes2.length() > 1)
-        {
-            /* Setting modes */
-            for (std::size_t i = 0; i < modes2.length(); ++i)
-                channel->addMode(modes2[i]);
-            channel->sendToAll(server.rpl_channelmodesis_324(srcName, channelName, "Adding: " + modes2), srcName, true);
-        }
-        else /* Change restrictions */
+        /* Setting modes */
+        for (std::size_t i = 0; i < modes2.length(); ++i)
+            channel->addMode(modes2[i]);
+        channel->sendToAll(server.mode(srcName, src.getUsername(), src.getHostname(), channelName, "+" + channel->getModesList(), ""), srcName, true);
+        if (!args.empty() && modes2.length() <= 1) /* Change restrictions */
             this->changeRestriction(server, channel, src, modes2[0], args);
     }
 }
@@ -644,16 +653,12 @@ void Command::changeRestriction(const Server &server, Channel *channel, const Cl
         case 'k':
         {
             channel->setPassword(args);
-            channel->sendToAll(server.rpl_channelmodesis_324(srcName, channel->getName(), "Changing the password of the channel (k)"), srcName, true);
             break ;
         }
         case 'l':
         {
             if (this->isInteger(args))
-            {
                 channel->setLimit(std::atoi(args.c_str()));
-                channel->sendToAll(server.rpl_channelmodesis_324(srcName, channel->getName(), "Changing the connection limit to: " + args + " (l)"), srcName, true);
-            }
             else
                 src.sendToFD(server.err_umodeunknowflag_501(srcName));
             break ;
