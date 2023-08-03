@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 15:26:05 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 15:29:33 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
     {
         /* Check if the channel exists */
         channel = server.findChannel(destName);
-        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+        if (!channel) /* ERR_NOSUCHCHANNEL (403) */
             src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
         else if (channel && (channel->findConnectedByName(srcName) == channel->getConnectedEnd())) /* ERR_NOTONCHANNEL (442) */
             src.sendToFD(server.err_notonchannel_442(srcName, destName));
@@ -180,7 +180,8 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
         else
         {
             client = it->second;
-            client->sendToFD(server.privmsg(srcName, destName, message));
+            if (client)
+                client->sendToFD(server.privmsg(srcName, destName, message));
         }
     }
 }
