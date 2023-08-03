@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 16:56:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 17:01:51 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,10 @@ Server::Server(const std::string &port_str, const std::string &password, const s
     int ret;
 	int port = std::atoi(port_str.c_str());
 
+    if (port < 1 || port > 65535 || !Utils::isInt(port_str.c_str()))
+		throw (std::runtime_error("Port invalid!"));
     this->setDate(Utils::getDate());
     /* Creating server socket */
-	if (port < 1 || port > 65535 || !Utils::isInt(port_str.c_str()))
-		throw (std::runtime_error("Port invalid!"));
     ret = this->createServerSocket(port);
     if (ret < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
