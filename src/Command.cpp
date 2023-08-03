@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/02 22:29:16 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 14:33:34 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,12 +411,12 @@ void Command::names(const Server &server, const Client &src, const std::vector<s
     }
 }
 
-void Command::kick(const Server &server, const Client &src, Client *dest, const std::string &message, Channel *channel) const
+void Command::kick(const Server &server, const Client &src, const std::string &destName, const std::string &message, const std::string &channelName) const
 {
+    Client  *dest = server.findClientByName(destName)->second;
+    Channel *channel = server.findChannel(channelName);
     /* Used for messages */
     const std::string               &srcName = src.getNickname();
-    const std::string               &destName = dest->getNickname();
-    const std::string               &channelName = channel->getName();
 
     /* Check if the channel and the user exists */
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
