@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 14:33:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 14:43:54 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,38 +411,40 @@ void Command::names(const Server &server, const Client &src, const std::vector<s
     }
 }
 
-void Command::kick(const Server &server, const Client &src, const std::string &destName, const std::string &message, const std::string &channelName) const
+void Command::kick(Server *server, const Client &src, const std::string &destName, const std::string &message, const std::string &channelName) const
 {
-    Client  *dest = server.findClientByName(destName)->second;
-    Channel *channel = server.findChannel(channelName);
+    Client  *dest = server->findClientByName(destName)->second;
+    Channel *channel = server->findChannel(channelName);
     /* Used for messages */
     const std::string               &srcName = src.getNickname();
 
     /* Check if the channel and the user exists */
     if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
     {
-        src.sendToFD(server.err_nosuchchannel_403(srcName, channelName));
+        src.sendToFD(server->err_nosuchchannel_403(srcName, channelName));
         return ;
     }
     else if (dest == NULL) /* ERR_NOSUCHNICK (401) */
     {
-        src.sendToFD(server.err_nosuchnick_401(srcName, destName));
+        src.sendToFD(server->err_nosuchnick_401(srcName, destName));
         return ;
     }
 
     if (channel->findConnectedByName(destName) == channel->getConnectedEnd()) /* ERR_USERNOTINCHANNEL (441) */
-        src.sendToFD(server.err_usernotinchannel_441(destName, channelName));
+        src.sendToFD(server->err_usernotinchannel_441(destName, channelName));
     else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
-        src.sendToFD(server.err_notonchannel_442(srcName, channelName));
+        src.sendToFD(server->err_notonchannel_442(srcName, channelName));
     else if (!channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
-        src.sendToFD(server.err_chanoprivsneeded_482(srcName, channelName));
+        src.sendToFD(server->err_chanoprivsneeded_482(srcName, channelName));
     else /* KICK */
     {
         /* Send to all users */
-        channel->sendToAll(server.kick(srcName, destName, channelName, message), srcName, true);
+        channel->sendToAll(server->kick(srcName, destName, channelName, message), srcName, true);
 
         /* Remove the user from the connected list */
         channel->removeConnected(dest->getFd());
+        if (channel->getConnected().empty()) /* Delete the channel if there is no user left */
+            server->removeChannel(channel);
     }
 }
 

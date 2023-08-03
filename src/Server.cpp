@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 14:32:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 14:43:34 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -411,7 +411,7 @@ void Server::withAuthentication(const Command &command, Client *client, const st
             command.names(*this, *client, args);
             break ;
         case KICK:
-            command.kick(*this, *client, args[1], args[2], args[0]); // Need fix for not enough params
+            command.kick(this, *client, args[1], args[2], args[0]); // Need fix for not enough params
             break ;
         case WHOIS:
             command.whois(*this, *client, args[0]);
