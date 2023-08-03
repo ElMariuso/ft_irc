@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 16:53:01 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 16:56:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,11 +455,13 @@ void Server::handleDisconnection(Client *client, const std::string &message)
                 Utils::debug_message(client->getNickname() + " leave " + channelName);
                 channel->rmOp(*client);
                 it1++;
+                
+                /* Send part to the channel and delete it if it's empty */
                 command.part(this, *client, this->findChannel(channelName), channelName, message, true);
+                if (this->channelsList.empty())
+                    break ;
                 continue ;
             }
-            if (this->channelsList.empty())
-                break ;
             it1++;
         }
 
