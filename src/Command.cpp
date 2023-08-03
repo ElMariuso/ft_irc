@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 15:06:30 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/08/03 15:26:05 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,9 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
         channel = server.findChannel(destName);
         if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
             src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
-        else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+        else if (channel && (channel->findConnectedByName(srcName) == channel->getConnectedEnd())) /* ERR_NOTONCHANNEL (442) */
             src.sendToFD(server.err_notonchannel_442(srcName, destName));
-        else /* PRIVMSG */
+        else if (channel) /* PRIVMSG */
             channel->sendToAll(server.privmsg(srcName, destName, message), srcName, false);
     }
     else
