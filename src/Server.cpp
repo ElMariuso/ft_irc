@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 15:06:54 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/08/03 16:08:42 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -452,8 +452,9 @@ void Server::handleDisconnection(Client *client, const std::string &message)
                 Command command;
                 const std::string   &channelName = channel->getName();
 
-                command.part(this, *client, this->findChannel(channelName), channelName, message, true);
+                Utils::debug_message(client->getNickname() + " leave " + channelName);
                 channel->rmOp(*client);
+                command.part(this, *client, this->findChannel(channelName), channelName, message, true);
             }
             if (this->channelsList.empty())
                 break ;
