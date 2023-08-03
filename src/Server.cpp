@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 16:08:42 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 16:44:02 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -433,6 +433,7 @@ void Server::withAuthentication(const Command &command, Client *client, const st
 /* Logout */
 void Server::handleDisconnection(Client *client, const std::string &message)
 {
+    (void)message;
     int fd;
     
     fd = client->getFd();
@@ -441,7 +442,7 @@ void Server::handleDisconnection(Client *client, const std::string &message)
         client->setIsConnected(false);
         
         /* Clean channels */
-        for (std::map<std::string, Channel*>::iterator it1 = this->channelsList.begin(); it1 != this->channelsList.end(); ++it1)
+        for (std::map<std::string, Channel*>::iterator it1 = this->channelsList.begin(); it1 != this->channelsList.end();)
         {
             Channel                                 *channel = it1->second;
             const std::map<int, Client*>            &connected = channel->getConnected();
@@ -454,10 +455,13 @@ void Server::handleDisconnection(Client *client, const std::string &message)
 
                 Utils::debug_message(client->getNickname() + " leave " + channelName);
                 channel->rmOp(*client);
+                it1++;
                 command.part(this, *client, this->findChannel(channelName), channelName, message, true);
+                continue ;
             }
             if (this->channelsList.empty())
                 break ;
+            it1++;
         }
 
         /* Clean clientsList map */
