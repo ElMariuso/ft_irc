@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 14:43:54 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 15:06:30 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -659,7 +659,7 @@ void Command::changeRestriction(const Server &server, Channel *channel, const Cl
         }
         case 'l':
         {
-            if (this->isInteger(args))
+			if (Utils::isInt(args))
                 channel->setLimit(std::atoi(args.c_str()));
             else
                 src.sendToFD(server.err_umodeunknowflag_501(srcName));
@@ -692,20 +692,6 @@ void Command::changeRestriction(const Server &server, Channel *channel, const Cl
         default:
             break ;
     }
-}
-
-bool Command::isInteger(const std::string &str) const
-{
-    if (str.empty())
-        return (false);
-    if (str.length() != 1 && str[0] == '0')
-        return (false);
-    for (std::size_t i = 0; i != str.length(); ++i)
-    {
-        if (!std::isdigit(str[i]))
-            return (false);
-    }
-    return (true);
 }
 
 /* Setters */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:57:10 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 03:42:13 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 15:06:14 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,18 @@ std::string Utils::displayBox(const std::string &message, int minWidth)
     stream << "*" << std::endl \
         << horizontalLine;
     return (stream.str());
+}
+
+bool Utils::isInt(const std::string str)
+{
+    if (str.empty())
+        return (false);
+    if (str.length() != 1 && str[0] == '0')
+        return (false);
+    for (std::size_t i = 0; i != str.length(); ++i)
+    {
+        if (!std::isdigit(str[i]))
+            return (false);
+    }
+    return (true);
 }

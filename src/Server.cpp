@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 14:43:34 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 15:06:54 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,13 @@
 Server::Server(const std::string &port_str, const std::string &password, const std::string &name): Message(name)
 {
     int ret;
+	int port = std::atoi(port_str.c_str());
 
     this->setDate(Utils::getDate());
     /* Creating server socket */
-    ret = this->createServerSocket(std::atoi(port_str.c_str()));
+	if (port < 1 || port > 65535 || !Utils::isInt(port_str.c_str()))
+		throw (std::runtime_error("Port invalid!"));
+    ret = this->createServerSocket(port);
     if (ret < 0)
         throw (std::runtime_error("Problem during creating server socket!"));
     this->password = password;

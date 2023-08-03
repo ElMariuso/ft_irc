@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 14:43:27 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 15:06:37 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ class Command
         void                        setModes(const Server &server, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const;
         void                        setModesClient(const Server& server, const std::string &srcName, Client *src, const std::string &modes) const;
         void                        changeRestriction(const Server &server, Channel *channel, const Client &src, const char &mode, const std::string &args) const;
-        bool                        isInteger(const std::string &str) const;
 
         /* Setters */
         void                        setMessage(const std::string &message);

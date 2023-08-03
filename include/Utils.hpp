@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 23:55:29 by root              #+#    #+#             */
-/*   Updated: 2023/07/27 03:42:25 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 15:06:07 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class Utils
         static std::string  getDate();
         static std::string  getDateUNIX();
         static std::string  displayBox(const std::string &message, int minWidth);
+		static bool			isInt(const std::string str);
 };
 
 #endif
