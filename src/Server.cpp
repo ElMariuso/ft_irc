@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 16:44:02 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 16:53:01 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -433,7 +433,6 @@ void Server::withAuthentication(const Command &command, Client *client, const st
 /* Logout */
 void Server::handleDisconnection(Client *client, const std::string &message)
 {
-    (void)message;
     int fd;
     
     fd = client->getFd();
