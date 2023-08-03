@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 15:29:33 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/03 15:51:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,59 +28,69 @@ Command::~Command() {}
 /* Commands */
 void Command::nick(const Server &server, Client *client, const std::string &name) const
 {
+    if (!client)
+        return ;
     /* Used for messages */
     const std::string   &nickname = client->getNickname();
     const std::string   &username = client->getUsername();
     const std::string   &hostname = client->getHostname();
 
-    if (name.empty()) /* ERR_NONICKNAMEGIVEN (431) */
+    if (client && name.empty()) /* ERR_NONICKNAMEGIVEN (431) */
         client->sendToFD(server.err_nonicknamegiven_431());
-    else if (this->isNotRightNickname(server.getName(), name)) /* ERR_ERRONEUSNICKNAME (432) */
+    else if (client && this->isNotRightNickname(server.getName(), name)) /* ERR_ERRONEUSNICKNAME (432) */
         client->sendToFD(server.err_erroneusnickname_432(name));
-    else if (server.findClientByName(name) != server.getClientsListEnd()) /* ERR_NICKNAMEINUSE (433) */
+    else if (client && server.findClientByName(name) != server.getClientsListEnd()) /* ERR_NICKNAMEINUSE (433) */
         client->sendToFD(server.err_nicknameinuse_433(name));
     else /* NICK */
     {
         const std::map<std::string, Channel*>   &channels = server.getChannelsList();
         for (std::map<std::string, Channel*>::const_iterator it = channels.begin(); it != channels.end(); ++it)
         {
-            Channel *channel = it->second;
-            if (channel->findConnected(client->getFd()))
+            Channel *channel = NULL;
+            if (it->second)
+                channel = it->second;
+            if (channel && channel->findConnected(client->getFd()))
                 channel->sendToAll(server.nick(nickname, username, hostname, name), nickname, false);
         }
-        client->sendToFD(server.nick(nickname, username, hostname, name));
-        client->setNickname(name);
+        if (client)
+        {
+            client->sendToFD(server.nick(nickname, username, hostname, name));
+            client->setNickname(name);   
+        }
     }
 }
 
 void Command::join(Server *server, Client *client, const std::string &name, const std::string &password) const
 {
+    if (!client)
+        return ;
+    
     Channel                                 *channel;
     /* Used for messages */
     const std::string                       &clientName = client->getNickname();
     const std::string                       &clientUser = client->getUsername();
     const std::string                       &clientHost = client->getHostname();
 
-    if (name.empty())
+    if (server && client && name.empty())
     {
         client->sendToFD(server->err_needmoreparams_461(clientName));
         return ;
     }
     channel = server->findChannel(name);
-    if (channel != NULL) /* JOIN with channel */
+    if (channel) /* JOIN with channel */
     {
         /* Get some lists */
         const std::map<int, Client*>        &connected = channel->getConnected();
         const std::map<std::string, bool>   &invited = channel->getInvited();
         const std::string                   &passwordChannel = channel->getPassword();
 
-        if (channel->hasMode('l') && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
+        if (client && channel && channel->hasMode('l') && connected.size() >= channel->getLimit()) /* ERR_CHANNELISFULL (471) */
             client->sendToFD(server->err_channelisfull_471(clientName, name));
-        else if (channel->hasMode('i') && invited.find(clientName) == invited.end()) /* ERR_INVITEONLYCHAN (473) */
+        else if (client && channel && channel->hasMode('i') && invited.find(clientName) == invited.end()) /* ERR_INVITEONLYCHAN (473) */
             client->sendToFD(server->err_inviteonlychan_473(clientName, name));
-        else if (channel->hasMode('k') && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
+        else if (client && channel && channel->hasMode('k') && password != passwordChannel) /* ERR_BADCHANNELKEY (475) */
             client->sendToFD(server->err_badchannelkey_475(clientName, name));
-        else if (channel->findConnectedByName(clientName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
+        else if (client && channel && channel->findConnectedByName(clientName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
             client->sendToFD(server->err_useronchannel_443(clientName, name));
         else /* JOIN */
         {
@@ -112,9 +122,13 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
         channel->addOp(*client);
 
         /* Add the new channel to the channel list on server */
+        if (!server)
+            return ;
         server->setChannel(name, channel);
 
         /* Send a message for the new user */
+        if (!server)
+            return ;
         std::ostringstream  stream;
 
         stream << server->join(clientName, clientUser, clientHost, name) << server->rpl_notopic_331(clientName, name) \
@@ -122,7 +136,8 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
             << server->rpl_creationtime_329(clientName, name, channel->getDate());
 
         /* Send confirmation message */
-        client->sendToFD(stream.str());
+        if (client)
+            client->sendToFD(stream.str());
     }
 }
 
@@ -140,12 +155,13 @@ void Command::part(Server *server, const Client &client, Channel *channel, const
     else if (channel) /* PART */
     {
         /* Send to all users and Remove the user from the connected list */
-        if (isQuit)
+        if (channel && isQuit)
             channel->sendToAll(server->part(clientName, clientUser, clientHost, name, message), clientName, false);
-        else
+        else if (channel)
             channel->sendToAll(server->part(clientName, clientUser, clientHost, name, message), clientName, true);
-        channel->removeConnected(client.getFd());
-        if (channel->getConnected().empty()) /* Delete the channel if there is no user left */
+        if (channel)
+            channel->removeConnected(client.getFd());
+        if (channel && channel->getConnected().empty()) /* Delete the channel if there is no user left */
             server->removeChannel(channel);
     }
 }
@@ -188,9 +204,11 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
 
 void Command::mode(const Server &server, Client *src, const std::string &destName, const std::string &modes, const std::string &args) const
 {
+    if (!src)
+        return ;
     /* Used for messages */
     const std::string   &srcName = src->getNickname();
-
+    
     if (destName.empty())
         src->sendToFD(server.err_needmoreparams_461(srcName));
     else if (modes.empty()) /* Check modes */
@@ -207,7 +225,7 @@ void Command::modeCheck(const std::string &srcName, const std::string &destName,
 
         /* Check if the channel exists */
         channel = server.findChannel(destName);
-        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+        if (!channel) /* ERR_NOSUCHCHANNEL (403) */
         {
             client.sendToFD(server.err_nosuchchannel_403(srcName, destName));
             return ;
@@ -216,7 +234,7 @@ void Command::modeCheck(const std::string &srcName, const std::string &destName,
         /* Get modes list */
         const std::string               &modes = channel->getModesList();
 
-        if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+        if (channel && channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
             client.sendToFD(server.err_notonchannel_442(srcName, destName));
         else if (modes.empty()) /* Send there is no modes */
             client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, "+"));
@@ -227,9 +245,9 @@ void Command::modeCheck(const std::string &srcName, const std::string &destName,
             std::string modesAndArgs = modes;
             
             stream << "+" << modes;
-            if (channel->hasMode('k') && !channel->getPassword().empty())
+            if (channel && channel->hasMode('k') && !channel->getPassword().empty())
                 stream << " " << channel->getPassword();
-            if (channel->hasMode('l') && channel->getLimit() != 0)
+            if (channel && channel->hasMode('l') && channel->getLimit() != 0)
                 stream << " " << channel->getLimit();
             client.sendToFD(server.rpl_channelmodesis_324(srcName, destName, stream.str()));
         }
@@ -254,7 +272,7 @@ void Command::modeAdd(const std::string &srcName, const std::string &destName, C
 
         /* Check if the channel exists */
         channel = server.findChannel(destName);
-        if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+        if (src && !channel) /* ERR_NOSUCHCHANNEL (403) */
         {
             src->sendToFD(server.err_nosuchchannel_403(srcName, destName));
             return ;
@@ -263,25 +281,25 @@ void Command::modeAdd(const std::string &srcName, const std::string &destName, C
         /* Check if modes exists */
         for (std::size_t i = 1; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
         {
-            if (!channel->isMode(modes[i]))
+            if (src && channel && !channel->isMode(modes[i]))
             {
                 src->sendToFD(server.err_umodeunknowflag_501(srcName));
                 return ;
             }
         }
 
-        if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+        if (src && channel && channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
             src->sendToFD(server.err_notonchannel_442(srcName, destName));
-        else if (!channel->isOp(*src)) /* ERR_CHANOPRIVSNEEDED (482) */
+        else if (src && channel && !channel->isOp(*src)) /* ERR_CHANOPRIVSNEEDED (482) */
             src->sendToFD(server.err_chanoprivsneeded_482(srcName, destName));
-        else /* MODES */
+        else if (src && channel) /* MODES */
             this->setModes(server, srcName, destName, channel, *src, modes, args);
     }
-    else /* Client */
+    else if (src) /* Client */
     {
         const std::string   &defaultNickname = src->getDefaultNickname();
         
-        if (srcName != destName && defaultNickname != destName) /* ERR_USERSDONTMATCH (502) */
+        if (src && srcName != destName && defaultNickname != destName) /* ERR_USERSDONTMATCH (502) */
         {
             src->sendToFD(server.err_usersdontmatch_502(srcName));
             return ;
@@ -290,11 +308,13 @@ void Command::modeAdd(const std::string &srcName, const std::string &destName, C
         /* Check if modes exists */
         for (std::size_t i = 0; i < modes.length(); ++i) /* ERR_UMODEUNKNOWNFLAG (501) */
         {
-            if (!src->isMode(modes[i]) && modes[i] != '+')
+            if (src && !src->isMode(modes[i]) && modes[i] != '+')
             {
                 src->sendToFD(server.err_umodeunknowflag_501(srcName));
                 return ;
             }
+            else if (!src)
+                return ;
         }
 
         /* Change modes of the user */
@@ -322,7 +342,7 @@ void Command::topic(const Server &server, const Client &src, const std::string &
 
     /* Check if the channel exists */
     channel = server.findChannel(destName);
-    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    if (!channel) /* ERR_NOSUCHCHANNEL (403) */
     {
         src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
         return ;
@@ -331,26 +351,27 @@ void Command::topic(const Server &server, const Client &src, const std::string &
     /* Used for messages */
     const std::string               &channelName = channel->getName();
 
-    if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+    if (channel && channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
         src.sendToFD(server.err_notonchannel_442(srcName, destName));
     else /* TOPIC */
     {
         if (topic.empty()) /* Send the topic */
         {
-            if (channel->hasTopic()) /* Send the topic */
+            if (channel && channel->hasTopic()) /* Send the topic */
                 src.sendToFD(server.rpl_topic_332(srcName, channelName, topic));
             else /* There is no topic */
                 src.sendToFD(server.rpl_notopic_331(srcName, channelName));
         }
         else /* Change the topic */
         {
-            if (channel->hasMode('t') && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+            if (channel && channel->hasMode('t') && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
                 src.sendToFD(server.err_chanoprivsneeded_482(srcName, destName));
             else /* Change the topic */
             {
                 std::string newTopic = topic.substr(1);
 
-                channel->setTopic(newTopic);
+                if (channel)
+                    channel->setTopic(newTopic);
                 src.sendToFD(server.rpl_topic_332(srcName, channelName, newTopic));
             }
         }
@@ -380,7 +401,7 @@ void Command::list(const Server &server, const Client &src, const std::string &d
         
         if (!channel) /* ERR_NOSUCHCHANNEL (403) */
             src.sendToFD(server.err_nosuchchannel_403(srcName, destName));
-        else
+        else if (channel)
             src.sendToFD(server.rpl_list_322(srcName, channel->getName(), channel->getTopic()));
     }
 }
@@ -407,7 +428,7 @@ void Command::names(const Server &server, const Client &src, const std::vector<s
 
         if (connected.size() > 100) /* ERR_TOMANYMATCHES (416) */
             src.sendToFD(server.err_toomanymatches_416(srcName));
-        else /* NAMES */
+        else if (channel) /* NAMES */
             src.sendToFD(server.rpl_namreplay_353(srcName, args[i], *channel) + server.rpl_endofnames_366(srcName, args[i]));
     }
 }
@@ -420,31 +441,33 @@ void Command::kick(Server *server, const Client &src, const std::string &destNam
     const std::string               &srcName = src.getNickname();
 
     /* Check if the channel and the user exists */
-    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    if (server && !channel) /* ERR_NOSUCHCHANNEL (403) */
     {
         src.sendToFD(server->err_nosuchchannel_403(srcName, channelName));
         return ;
     }
-    else if (dest == NULL) /* ERR_NOSUCHNICK (401) */
+    else if (server && !dest) /* ERR_NOSUCHNICK (401) */
     {
         src.sendToFD(server->err_nosuchnick_401(srcName, destName));
         return ;
     }
 
-    if (channel->findConnectedByName(destName) == channel->getConnectedEnd()) /* ERR_USERNOTINCHANNEL (441) */
+    if (server && channel && channel->findConnectedByName(destName) == channel->getConnectedEnd()) /* ERR_USERNOTINCHANNEL (441) */
         src.sendToFD(server->err_usernotinchannel_441(destName, channelName));
-    else if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+    else if (server && channel && channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
         src.sendToFD(server->err_notonchannel_442(srcName, channelName));
-    else if (!channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+    else if (server && channel && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
         src.sendToFD(server->err_chanoprivsneeded_482(srcName, channelName));
-    else /* KICK */
+    else if (server && channel) /* KICK */
     {
         /* Send to all users */
-        channel->sendToAll(server->kick(srcName, destName, channelName, message), srcName, true);
+        if (channel)
+            channel->sendToAll(server->kick(srcName, destName, channelName, message), srcName, true);
 
         /* Remove the user from the connected list */
-        channel->removeConnected(dest->getFd());
-        if (channel->getConnected().empty()) /* Delete the channel if there is no user left */
+        if (channel)
+            channel->removeConnected(dest->getFd());
+        if (channel && channel->getConnected().empty()) /* Delete the channel if there is no user left */
             server->removeChannel(channel);
     }
 }
@@ -492,7 +515,7 @@ void Command::invite(const Server &server, const Client &src, const std::string 
     std::map<int, Client*>::const_iterator  itClient = server.findClientByName(destName);
     
     /* Check if the channel and the user exists */
-    if (channel == NULL) /* ERR_NOSUCHCHANNEL (403) */
+    if (!channel) /* ERR_NOSUCHCHANNEL (403) */
     {
         src.sendToFD(server.err_nosuchchannel_403(srcName, channelName));
         return ;
@@ -505,25 +528,27 @@ void Command::invite(const Server &server, const Client &src, const std::string 
     dest = itClient->second;
 
     /* Send error or response if both channel and user exists */
-    if (channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
+    if (channel && channel->findConnectedByName(srcName) == channel->getConnectedEnd()) /* ERR_NOTONCHANNEL (442) */
         src.sendToFD(server.err_notonchannel_442(srcName, channelName));
-    else if (channel->findConnectedByName(destName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
+    else if (channel && channel->findConnectedByName(destName) != channel->getConnectedEnd()) /* ERR_USERONCHANNEL (443) */
         src.sendToFD(server.err_useronchannel_443(destName, channelName));
-    else if (channel->hasMode('i') && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
+    else if (channel && channel->hasMode('i') && !channel->isOp(src)) /* ERR_CHANOPRIVSNEEDED (482) */
         src.sendToFD(server.err_chanoprivsneeded_482(srcName, channelName));
-    else /* INVITE */
+    else if (channel && dest) /* INVITE */
     {
         dest->sendToFD(server.rpl_inviting_341(srcName, channelName, destName));
         channel->sendToAll(server.rpl_inviting_341(srcName, channelName, destName), srcName, true);
 
         /* Increase invited list */
-        if (channel->hasMode('i'))
+        if (channel && channel->hasMode('i'))
             channel->setInvited(destName);   
     }
 }
 
 void Command::user(const Server &server, Client *client) const
 {
+    if (!client)
+        return ;
     std::string realname;
     std::string bitmask;
     int         bitlen;
