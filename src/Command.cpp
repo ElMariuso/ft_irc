@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 15:51:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/04 12:42:35 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -579,7 +579,7 @@ void Command::user(const Server &server, Client *client) const
 }
 
 /* Nick Utils */
-bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const { return (newNickname == serverName || newNickname.substr(0, 8) == "ft_Guest"); }
+bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const { return (newNickname == serverName || newNickname.substr(0, 8) == "ft_Guest" || newNickname[0] == '#'); }
 
 /* MODE Utils */
 void Command::setModes(const Server &server, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const
