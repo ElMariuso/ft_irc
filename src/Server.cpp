@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/03 17:01:51 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/04 13:30:59 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,6 +439,7 @@ void Server::handleDisconnection(Client *client, const std::string &message)
     if (client && client->getIsConnected())
     {
         client->setIsConnected(false);
+        this->clientsList.erase(this->clientsList.find(fd));
         
         /* Clean channels */
         for (std::map<std::string, Channel*>::iterator it1 = this->channelsList.begin(); it1 != this->channelsList.end();)
@@ -468,7 +469,6 @@ void Server::handleDisconnection(Client *client, const std::string &message)
         /* Clean clientsList map */
         close(fd);
         delete client;
-        this->clientsList.erase(this->clientsList.find(fd));
         
         Utils::debug_message("Logout done");
     }
