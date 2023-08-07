@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/04 12:42:35 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/07 12:55:03 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void Command::nick(const Server &server, Client *client, const std::string &name
 
     if (client && name.empty()) /* ERR_NONICKNAMEGIVEN (431) */
         client->sendToFD(server.err_nonicknamegiven_431());
-    else if (client && this->isNotRightNickname(server.getName(), name)) /* ERR_ERRONEUSNICKNAME (432) */
+    else if (client && this->isNotRightNickname(server, server.getName(), name)) /* ERR_ERRONEUSNICKNAME (432) */
         client->sendToFD(server.err_erroneusnickname_432(name));
     else if (client && server.findClientByName(name) != server.getClientsListEnd()) /* ERR_NICKNAMEINUSE (433) */
         client->sendToFD(server.err_nicknameinuse_433(name));
@@ -579,7 +579,26 @@ void Command::user(const Server &server, Client *client) const
 }
 
 /* Nick Utils */
-bool Command::isNotRightNickname(const std::string &serverName, const std::string &newNickname) const { return (newNickname == serverName || newNickname.substr(0, 8) == "ft_Guest" || newNickname[0] == '#'); }
+bool Command::isNotRightNickname(const Server &server, const std::string &serverName, const std::string &newNickname) const
+{
+    const std::map<int, Client*>    &clients = server.getClientsList();
+
+    for (std::map<int, Client*>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        std::string clientName = newNickname;
+        std::string destName = it->second->getNickname();
+
+        for (std::size_t i = 0; i != clientName.size(); i++)
+            clientName[i] = std::toupper(clientName[i]);
+        for (std::size_t i = 0; i != destName.size(); i++)
+            destName[i] = std::toupper(destName[i]);
+        std::cout << "clientName: <" << clientName << ">" << std::endl;
+        std::cout << "destName: <" << destName << ">" << std::endl;
+        if (clientName == destName)
+            return (true);
+    }
+    return (newNickname == serverName || newNickname.substr(0, 8) == "ft_Guest" || newNickname[0] == '#');
+}
 
 /* MODE Utils */
 void Command::setModes(const Server &server, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const

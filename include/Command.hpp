@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:51 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/03 15:06:37 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/08/07 12:43:07 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ class Command
         void                        user(const Server &server, Client *client) const;
 
         /* Nick Utils */
-        bool                        isNotRightNickname(const std::string &serverName, const std::string &newNickname) const;
+        bool                        isNotRightNickname(const Server &server, const std::string &serverName, const std::string &newNickname) const;
 
         /* MODE Utils */
         void                        setModes(const Server &server, const std::string &srcName, const std::string &channelName, Channel *channel, const Client &src, const std::string &modes, const std::string &args) const;
