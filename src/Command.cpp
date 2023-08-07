@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/07 12:55:03 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/07 13:03:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -653,8 +653,12 @@ void Command::setModes(const Server &server, const std::string &srcName, const s
     {
         /* Setting modes */
         for (std::size_t i = 0; i < modes2.length(); ++i)
-            channel->addMode(modes2[i]);
-        channel->sendToAll(server.mode(srcName, src.getUsername(), src.getHostname(), channelName, "+" + channel->getModesList(), ""), srcName, true);
+        {
+            if (modes2[i] != 'o')
+                channel->addMode(modes2[i]);
+        }
+        if (modes2 != "o")
+            channel->sendToAll(server.mode(srcName, src.getUsername(), src.getHostname(), channelName, "+" + channel->getModesList(), ""), srcName, true);
         if (!args.empty() && modes2.length() <= 1) /* Change restrictions */
             this->changeRestriction(server, channel, src, modes2[0], args);
     }
