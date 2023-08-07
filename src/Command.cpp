@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/07 13:03:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/07 13:12:12 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,7 +372,7 @@ void Command::topic(const Server &server, const Client &src, const std::string &
 
                 if (channel)
                     channel->setTopic(newTopic);
-                src.sendToFD(server.rpl_topic_332(srcName, channelName, newTopic));
+                channel->sendToAll(server.rpl_topic_332(srcName, channelName, newTopic), srcName, true);
             }
         }
     }
@@ -592,8 +592,6 @@ bool Command::isNotRightNickname(const Server &server, const std::string &server
             clientName[i] = std::toupper(clientName[i]);
         for (std::size_t i = 0; i != destName.size(); i++)
             destName[i] = std::toupper(destName[i]);
-        std::cout << "clientName: <" << clientName << ">" << std::endl;
-        std::cout << "destName: <" << destName << ">" << std::endl;
         if (clientName == destName)
             return (true);
     }
