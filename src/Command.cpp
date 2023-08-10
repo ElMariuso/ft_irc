@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/10 18:35:55 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/10 20:16:49 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -754,13 +754,25 @@ void Command::setType()
     std::string type;
     size_t      pos;
 
-    type = this->message.substr(0, this->message.find(' '));
     pos = this->message.find(' ');
 
     if (pos == std::string::npos)
-        this->args.push_back("no");
+    {
+        this->args.push_back("");
+        if (this->message.size() >= 1 && this->message.substr(this->message.size() - 1) == "\n")
+            type = this->message.substr(0, this->message.size() - 1);
+        if (this->message.size() >= 1 && this->message.substr(this->message.size() - 1) == "\r")
+            type = this->message.substr(0, this->message.size() - 1);
+        else
+            type = this->message;
+    }
     else
+    {
+        type = this->message.substr(0, this->message.find(' '));
         this->message.erase(0, pos + 1);
+    }
+
+    std::cout << "TYPE: <" << type << ">" << std::endl;
 
     if (type == "PASS") /* Authentification */
         this->type = PASS;
