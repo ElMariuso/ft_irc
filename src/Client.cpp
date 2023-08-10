@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/30 13:27:06 by root              #+#    #+#             */
-/*   Updated: 2023/08/02 19:13:47 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/10 19:18:20 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ Client::Client(const std::string &nickname, const std::string &username, int fd,
 	this->setHostname();
 	this->setLastActivityTime(std::time(NULL));
 	this->setLastPingTime(std::time(NULL));
+	this->setLastCheckPingTime(std::time(NULL));
 }
 
 Client::~Client() {}
@@ -188,8 +189,9 @@ void Client::setHostname()
 	this->_hostname = clientHost;
 }
 void Client::setRealname(std::string realName) {this->_realname = realName; }
-void Client::setLastActivityTime(time_t time) { this->lastActivityTime = time; }
-void Client::setLastPingTime(time_t time) { this->lastPingTime = time; }
+void Client::setLastActivityTime(std::time_t time) { this->lastActivityTime = time; }
+void Client::setLastPingTime(std::time_t time) { this->lastPingTime = time; }
+void Client::setLastCheckPingTime(std::time_t time) { this->lastCheckPingTime = time; }
 void Client::setSavedCommand(std::string savedCommand) { this->savedCommand = savedCommand; }
 
 /* getters */
@@ -204,6 +206,7 @@ std::string	Client::getDefaultUsername() const { return (this->_defaultUsername)
 std::string	Client::getHostname() const { return (this->_hostname); } 
 std::string	Client::getRealname() const { return (this->_realname); }
 std::string	Client::getModesList() const { return (this->_modesList); }
-time_t Client::getLastActivityTime() const { return (this->lastActivityTime); }
-time_t Client::getLastPingTime() const { return (this->lastPingTime); }
+std::time_t Client::getLastActivityTime() const { return (this->lastActivityTime); }
+std::time_t Client::getLastPingTime() const { return (this->lastPingTime); }
+std::time_t	Client::getLastCheckPingTime() const { return (this->lastCheckPingTime); }
 std::string	Client::getSavedCommand() const { return (this->savedCommand); }
