@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/04 13:30:59 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/10 18:21:14 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,8 +276,19 @@ int Server::handleEvent(Client *client)
     buffer[ret] = '\0'; // null terminate the string received
 	msg = msg + buffer;
     debug = msg;
+
     if (msg.size() >= 2 && msg.substr(msg.size() - 2) == "\r\n")
-		debug.erase(msg.size() - 2);
+        debug.erase(msg.size() - 2);
+    else if (msg.size() >= 1 && msg.substr(msg.size() - 1) == "\n")
+    {
+        msg.insert(msg.size() - 1, "\r");
+        debug.erase(msg.size() - 1);
+    }
+    else if (msg.size() >= 1 && msg.substr(msg.size() - 1) == "\r")
+        debug.erase(msg.size() - 1);
+    else if (msg.size() >= 1 && msg.substr(msg.size() - 1) != "\r" && msg.substr(msg.size() - 1) != "\n")
+        msg += "\r";
+
     Utils::debug_message(nickname + " send a message - " + debug);
 
     /* Parsing message */
