@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/10 18:25:52 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/10 18:35:55 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,11 @@ void Command::join(Server *server, Client *client, const std::string &name, cons
     if (server && client && name.empty())
     {
         client->sendToFD(server->err_needmoreparams_461(clientName));
+        return ;
+    }
+    else if (server && client && name[0] != '#')
+    {
+        client->sendToFD(server->err_nosuchchannel_403(clientName, name));
         return ;
     }
     channel = server->findChannel(name);
@@ -148,11 +153,11 @@ void Command::part(Server *server, const Client &client, Channel *channel, const
     const std::string               &clientUser = client.getUsername();
     const std::string               &clientHost = client.getHostname();
     
-    if (!channel) /* ERR_NOSUCHCHANNEL (403) */
+    if (server && !channel) /* ERR_NOSUCHCHANNEL (403) */
         client.sendToFD(server->err_nosuchchannel_403(clientName, name));
-    else if (channel && (channel->findConnectedByName(clientName) == channel->getConnectedEnd())) /* ERR_NOTONCHANNEL (442) */
+    else if (server && channel && (channel->findConnectedByName(clientName) == channel->getConnectedEnd())) /* ERR_NOTONCHANNEL (442) */
         client.sendToFD(server->err_notonchannel_442(clientName, name));
-    else if (channel) /* PART */
+    else if (server && channel) /* PART */
     {
         /* Send to all users and Remove the user from the connected list */
         if (channel && isQuit)
