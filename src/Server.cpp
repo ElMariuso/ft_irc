@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/10 19:19:21 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/10 19:41:48 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -381,7 +381,7 @@ void Server::withoutAuthentication(const Command &command, Client *client, const
             break ;
         case PONG:
         {
-            if (arg0.empty())
+            if (arg0.empty() ^ (arg0[0] != ':'))
                 client->sendToFD(this->err_needmoreparams_461(nickname));
             else
             {
