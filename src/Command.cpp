@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/07 13:12:12 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/10 18:25:52 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ void Command::privmsg(const Server &server, const Client &src, const std::string
     /* Used for messages */
     const std::string   &srcName = src.getNickname();
     
-    if (destName.empty() || message.empty())
+    if (destName.empty() || message.empty() || (!message.empty() && message[0] != ':'))
         src.sendToFD(server.err_needmoreparams_461(srcName));
     else if (destName[0] == '#')
     {
