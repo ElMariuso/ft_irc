@@ -6,7 +6,7 @@
 /*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/10 18:32:29 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/10 18:48:15 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void Server::pingSystem(time_t currentTime)
     {
         for (std::map<int, Client*>::iterator it = this->clientsList.begin(); it != this->clientsList.end(); ++it)
         {
-            if (it->second->getLastActivityTime() + 120 < currentTime)
+            if (it->second->getLastActivityTime() + 120 < currentTime && it->second->getLastPingTime() + 120 < currentTime)
                 it->second->sendToFD(this->ping(this->name));
         }
     }
@@ -205,6 +205,7 @@ void Server::browseClients(time_t currentTime)
         }
         else if (client && (client->getLastActivityTime() + 120 < currentTime) && (client->getLastPingTime() + 600 < currentTime)) /* Time out */
         {
+            Utils::debug_message(nickname + " timed out");
             this->handleDisconnection(client, " timed out");
             it = this->fds.erase(it);
             continue ;
@@ -382,7 +383,7 @@ void Server::withoutAuthentication(const Command &command, Client *client, const
             {
                 const std::string &arg = arg0.substr(1);
                 if (arg == this->name)
-                    client->setLastPingTime(time(NULL));
+                    client->setLastPingTime(std::time(NULL));
                 else
                     client->sendToFD(this->err_nosuchserver_402(client->getNickname(), arg));
             }
