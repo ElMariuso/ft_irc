@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/11 12:09:50 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/08/11 12:14:46 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,14 @@ void Command::nick(const Server &server, Client *client, const std::string &name
         const std::map<std::string, Channel*>   &channels = server.getChannelsList();
         for (std::map<std::string, Channel*>::const_iterator it = channels.begin(); it != channels.end(); ++it)
         {
-			isInChannel = true;
             Channel *channel = NULL;
             if (it->second)
                 channel = it->second;
             if (channel && channel->findConnected(client->getFd()))
-                channel->sendToAll(server.nick(nickname, username, hostname, name), nickname, true);
+			{
+				isInChannel = true;
+				channel->sendToAll(server.nick(nickname, username, hostname, name), nickname, true);	
+			}
         }
         if (client)
             client->setNickname(name);
