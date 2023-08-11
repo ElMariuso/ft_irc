@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/11 11:27:09 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/08/11 11:53:28 by mthiry           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,8 +291,6 @@ int Server::handleEvent(Client *client)
     }
     else if (msg.size() >= 1 && msg.substr(msg.size() - 1) == "\r")
         debug.erase(msg.size() - 1);
-    else if (msg.size() >= 1 && msg.substr(msg.size() - 1) != "\r" && msg.substr(msg.size() - 1) != "\n")
-        msg += "\r";
 
     Utils::debug_message(nickname + " send a message - " + debug);
 
