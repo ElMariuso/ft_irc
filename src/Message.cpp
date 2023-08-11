@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Message.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/19 21:47:26 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/02 18:51:14 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/11 12:12:04 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,7 +257,7 @@ std::string Message::rpl_inviting_341(const std::string &srcNickname, const std:
 {
     std::ostringstream  stream;
 
-    stream << ":" << this->name << " 341 " << srcNickname << " " << channelName << " " << destNickname << "\r\n";
+    stream << ":" << this->name << " 341 " << srcNickname << " " << destNickname << " " << channelName << "\r\n";
     return (stream.str());
 }
 
