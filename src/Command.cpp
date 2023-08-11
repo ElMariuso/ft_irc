@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/11 12:02:49 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/08/11 12:09:50 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,12 @@ void Command::nick(const Server &server, Client *client, const std::string &name
         client->sendToFD(server.err_nicknameinuse_433(name));
     else /* NICK */
     {
+		bool isInChannel = false;
+		
         const std::map<std::string, Channel*>   &channels = server.getChannelsList();
         for (std::map<std::string, Channel*>::const_iterator it = channels.begin(); it != channels.end(); ++it)
         {
+			isInChannel = true;
             Channel *channel = NULL;
             if (it->second)
                 channel = it->second;
@@ -53,7 +56,9 @@ void Command::nick(const Server &server, Client *client, const std::string &name
                 channel->sendToAll(server.nick(nickname, username, hostname, name), nickname, true);
         }
         if (client)
-            client->setNickname(name);   
+            client->setNickname(name);
+		if (!isInChannel)
+			client->sendToFD(server.nick(nickname, username, hostname, name));
     }
 }
 
