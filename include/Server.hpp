@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:30:52 by mthiry            #+#    #+#             */
-/*   Updated: 2023/07/27 14:06:03 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/11 10:52:19 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Server: public Message
 
         /* Commands */
         int                                             handleEvent(Client *client);
-        void                                            getMessages(const std::string &message, Client *client);
+        int                                            getMessages(const std::string &message, Client *client);
 
         std::vector<std::string>                        setArgsCommands(const Command &command);
         /**

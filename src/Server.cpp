@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mthiry <mthiry@student.42.fr>              +#+  +:+       +#+        */
+/*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/29 21:42:57 by root              #+#    #+#             */
-/*   Updated: 2023/08/10 19:41:48 by mthiry           ###   ########.fr       */
+/*   Updated: 2023/08/11 11:27:09 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,13 +306,20 @@ int Server::handleEvent(Client *client)
     {
         commands = this->splitCommands(savedCommand, '\n');
         for (std::size_t i = 0; i != commands.size(); ++i)
-            this->getMessages(commands[i], client);
+		{
+			int ret = this->getMessages(commands[i], client);
+			if (ret == -1)
+			{
+				client = NULL;
+				return (-1);
+			}
+		}
         client->setSavedCommand("");
     }
     return (ret);
 }
 
-void Server::getMessages(const std::string &message, Client *client)
+int Server::getMessages(const std::string &message, Client *client)
 {
     Command                                 command(message);
     std::vector<std::string>                args = this->setArgsCommands(command);
@@ -324,7 +331,7 @@ void Server::getMessages(const std::string &message, Client *client)
         if (client && command.getType() == QUIT)
         {
             this->handleDisconnection(client, args[0]);
-            return ;
+            return (-1);
         }
         if (client && client->getIsConnected()) /* Process commands that don't require authentication */
             this->withoutAuthentication(command, client, args[0]);
@@ -339,6 +346,7 @@ void Server::getMessages(const std::string &message, Client *client)
         Utils::debug_message("Unknow command");
     else /* If the client does not exist */
         Utils::error_message("Client not found");
+	return (0);
 }
 
 std::vector<std::string> Server::setArgsCommands(const Command &command)
