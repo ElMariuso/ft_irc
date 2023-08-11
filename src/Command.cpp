@@ -6,7 +6,7 @@
 /*   By: bvernimm <bvernimm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/12 15:32:31 by mthiry            #+#    #+#             */
-/*   Updated: 2023/08/11 12:01:28 by bvernimm         ###   ########.fr       */
+/*   Updated: 2023/08/11 12:02:49 by bvernimm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,7 @@ void Command::nick(const Server &server, Client *client, const std::string &name
                 channel->sendToAll(server.nick(nickname, username, hostname, name), nickname, true);
         }
         if (client)
-        {
-            // client->sendToFD(server.nick(nickname, username, hostname, name));
             client->setNickname(name);   
-        }
     }
 }
 
